@@ -1,461 +1,725 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEARA – Solusi Komoditas Petani</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>SEARA – Splash Screen</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg:        #0b2e22;
-            --bg-mid:    #0f3d2d;
-            --teal:      #1a5c42;
-            --leaf:      #3dba7e;
-            --cream:     #f5ede0;
-            --warm:      #e8c97e;
-            --text:      #d6ede3;
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%; height: 100%;
+        :root {
+            --bg: #0b2e22;
+            --leaf: #3dba7e;
+            --cream: #f5ede0;
+            --text: #d6ede3;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
             background: var(--bg);
             overflow: hidden;
             font-family: 'DM Sans', sans-serif;
             color: var(--text);
         }
 
-        /* ─── NOISE GRAIN ─── */
-        body::before {
+        body::after {
             content: '';
-            position: fixed; inset: 0; z-index: 9999;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            opacity: .035;
+            opacity: .032;
         }
 
-        /* ─── STAGE WRAPPER ─── */
         #splash {
-            position: fixed; inset: 0;
-            display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            inset: 0;
         }
 
-        /* ─── PHASE 1 – blank dark ─── */
-        #phase-1 {
-            position: absolute; inset: 0;
+        .phase {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity .85s ease;
+            pointer-events: none;
+        }
+
+        .phase.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #ph1 {
             background: var(--bg);
             opacity: 1;
-            transition: opacity .8s ease;
         }
 
-        /* ─── PHASE 2 – wordmark ─── */
-        #phase-2 {
-            position: absolute; inset: 0;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0;
-            transition: opacity .9s ease;
+        .center-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 1.2rem;
         }
 
         .wordmark {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
-            font-size: clamp(2.8rem, 7vw, 5rem);
-            letter-spacing: .35em;
+            font-size: clamp(2.6rem, 6vw, 4.8rem);
+            letter-spacing: .38em;
             text-transform: uppercase;
             color: var(--cream);
-            text-shadow: 0 0 60px rgba(61,186,126,.25);
+            text-shadow: 0 0 60px rgba(61, 186, 126, .22);
         }
 
-        /* ─── PHASE 3 – icon + wordmark ─── */
-        #phase-3 {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 1.2rem;
-            opacity: 0;
-            transition: opacity .9s ease;
+        .logo-svg {
+            filter: drop-shadow(0 0 16px rgba(61, 186, 126, .55));
         }
 
-        .logo-icon svg {
-            width: clamp(40px, 6vw, 64px);
-            height: auto;
-            filter: drop-shadow(0 0 18px rgba(61,186,126,.5));
+        /* ══ PHASE 4 ══ */
+        #ph4 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5vh 6vw;
+            gap: 4vw;
         }
 
-        /* ─── PHASE 4 – ONBOARDING ─── */
-        #phase-4 {
-            position: absolute; inset: 0;
-            opacity: 0;
-            transition: opacity 1s ease;
-            overflow: hidden;
-        }
-
-        /* layered radial BG */
-        #phase-4::before {
+        #ph4::before {
             content: '';
-            position: absolute; inset: 0;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
             background:
-                radial-gradient(ellipse 80% 60% at 65% 30%, rgba(26,92,66,.9) 0%, transparent 70%),
-                radial-gradient(ellipse 100% 80% at 30% 80%, rgba(11,46,34,1) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 70% at 75% 20%, rgba(26, 92, 66, .95) 0%, transparent 65%),
+                radial-gradient(ellipse 90% 80% at 20% 90%, rgba(11, 46, 34, 1) 0%, transparent 55%),
                 var(--bg);
         }
 
-        /* decorative circles */
-        .ring {
+        /* LEFT */
+        .left-col {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 auto;
+            max-width: min(500px, 48vw);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            background: rgba(61, 186, 126, .1);
+            border: 1px solid rgba(61, 186, 126, .25);
+            border-radius: 100px;
+            padding: .35rem .9rem .35rem .5rem;
+            width: fit-content;
+            margin-bottom: 1.8rem;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .7s ease .2s, transform .7s ease .2s;
+        }
+
+        .brand-pill.in {
+            opacity: 1;
+            transform: none;
+        }
+
+        .brand-pill span {
+            font-size: .72rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--leaf);
+        }
+
+        .headline-stack {
+            position: relative;
+            min-height: clamp(4.5rem, 8vw, 9rem);
+            margin-bottom: 1.3rem;
+        }
+
+        .hl {
             position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(61,186,126,.15);
+            top: 0;
+            left: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.9rem, 4vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.18;
+            color: var(--cream);
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity .65s ease, transform .65s ease;
             pointer-events: none;
         }
-        .ring-1 { width: 520px; height: 520px; top: -100px; right: -80px; }
-        .ring-2 { width: 360px; height: 360px; top: -40px; right: -20px; }
-        .ring-3 { width: 200px; height: 200px; top: 30px; right: 40px; }
 
-        /* ── hero image circle ── */
-        .hero-wrap {
+        .hl.active {
+            opacity: 1;
+            transform: none;
+        }
+
+        .hl em {
+            font-style: normal;
+            color: var(--leaf);
+        }
+
+        .sub-stack {
+            position: relative;
+            min-height: clamp(3rem, 6vw, 5.5rem);
+            margin-bottom: 2.2rem;
+        }
+
+        .sub {
             position: absolute;
-            top: 6vh; right: 5vw;
-            width: clamp(280px, 42vw, 520px);
-            aspect-ratio: 1;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid rgba(61,186,126,.35);
-            box-shadow: 0 0 80px rgba(61,186,126,.2), inset 0 0 40px rgba(0,0,0,.4);
-            transform: scale(.85);
-            opacity: 0;
-            transition: transform 1s cubic-bezier(.16,1,.3,1), opacity 1s ease;
-        }
-        .hero-wrap.show { transform: scale(1); opacity: 1; }
-
-        .hero-wrap img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            filter: saturate(1.2) brightness(.9);
-        }
-
-        /* ── left content ── */
-        .onboard-content {
-            position: absolute;
-            bottom: 8vh; left: 6vw;
-            max-width: min(560px, 90vw);
-        }
-
-        .brand-tag {
-            display: flex; align-items: center; gap: .7rem;
-            margin-bottom: 2.4rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all .8s ease .3s;
-        }
-        .brand-tag.show { opacity: 1; transform: none; }
-
-        .brand-tag svg { width: 28px; }
-        .brand-tag span {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem; letter-spacing: .3em;
-            color: var(--cream);
-        }
-
-        .headline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2rem, 4.5vw, 3.6rem);
+            top: 0;
+            left: 0;
+            font-size: clamp(.82rem, 1.3vw, .96rem);
             font-weight: 300;
-            line-height: 1.15;
-            color: var(--cream);
-            margin-bottom: 1.2rem;
-            opacity: 0; transform: translateY(30px);
-            transition: all .9s ease .5s;
+            line-height: 1.82;
+            color: rgba(214, 237, 227, .6);
+            max-width: 380px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity .65s ease, transform .65s ease;
         }
-        .headline.show { opacity: 1; transform: none; }
-        .headline em { font-style: normal; color: var(--leaf); }
 
-        .subtext {
-            font-size: clamp(.85rem, 1.4vw, 1rem);
-            font-weight: 300;
-            line-height: 1.7;
-            color: rgba(214,237,227,.7);
-            max-width: 420px;
-            margin-bottom: 2.8rem;
-            opacity: 0; transform: translateY(30px);
-            transition: all .9s ease .7s;
+        .sub.active {
+            opacity: 1;
+            transform: none;
         }
-        .subtext.show { opacity: 1; transform: none; }
 
-        /* ── progress dots ── */
-        .dots {
-            display: flex; gap: .5rem; align-items: center;
+        .text-reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .9s ease, transform .9s ease;
+        }
+
+        .text-reveal.in {
+            opacity: 1;
+            transform: none;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: .45rem;
+            align-items: center;
             margin-bottom: 2rem;
-            opacity: 0; transition: opacity .6s ease 1s;
         }
-        .dots.show { opacity: 1; }
-        .dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: rgba(214,237,227,.25);
-            transition: all .4s ease;
-        }
-        .dot.active { width: 24px; border-radius: 4px; background: var(--leaf); }
 
-        /* ── CTA buttons ── */
-        .actions {
-            display: flex; gap: 1rem; align-items: center;
-            opacity: 0; transform: translateY(20px);
-            transition: all .9s ease .9s;
+        .pdot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(214, 237, 227, .18);
+            transition: all .45s ease;
         }
-        .actions.show { opacity: 1; transform: none; }
+
+        .pdot.on {
+            width: 24px;
+            border-radius: 3px;
+            background: var(--leaf);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 1.1rem;
+            align-items: center;
+        }
 
         .btn-skip {
-            font-family: 'DM Sans', sans-serif;
-            font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
-            color: rgba(214,237,227,.5);
-            background: none; border: none; cursor: pointer;
-            padding: .6rem 0;
+            font-size: .76rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: rgba(214, 237, 227, .4);
+            background: none;
+            border: none;
+            cursor: pointer;
             transition: color .3s;
         }
-        .btn-skip:hover { color: var(--cream); }
 
-        .btn-next {
-            display: inline-flex; align-items: center; gap: .6rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: .85rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
-            color: var(--bg);
+        .btn-skip:hover {
+            color: var(--cream);
+        }
+
+        .btn-go {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            font-size: .8rem;
+            font-weight: 500;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #0b2e22;
             background: var(--leaf);
-            border: none; cursor: pointer;
-            padding: .85rem 2rem;
-            border-radius: 3px;
-            transition: background .3s, transform .2s;
+            border: none;
+            cursor: pointer;
             text-decoration: none;
+            padding: .88rem 2rem;
+            border-radius: 3px;
+            transition: background .3s, transform .25s;
         }
-        .btn-next:hover { background: #4fd494; transform: translateX(3px); }
-        .btn-next svg { width: 14px; transition: transform .3s; }
-        .btn-next:hover svg { transform: translateX(4px); }
 
-        /* ── decorative leaf particles ── */
-        .particles {
-            position: absolute; inset: 0;
-            pointer-events: none; overflow: hidden;
+        .btn-go:hover {
+            background: #52dda0;
+            transform: translateX(3px);
         }
+
+        .btn-go svg {
+            width: 13px;
+            transition: transform .3s;
+        }
+
+        .btn-go:hover svg {
+            transform: translateX(5px);
+        }
+
+        /* ══ RIGHT — CARD STACK ══ */
+        .right-col {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 auto;
+            width: clamp(260px, 38vw, 460px);
+            height: clamp(320px, 52vh, 580px);
+        }
+
+        /* ─ CARD ─ */
+        .card {
+            position: absolute;
+            width: 72%;
+            aspect-ratio: 3/4;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(61, 186, 126, .2);
+            cursor: pointer;
+            /* smooth all transforms */
+            transition:
+                transform .9s cubic-bezier(.34, 1.2, .64, 1),
+                opacity .7s ease,
+                box-shadow .6s ease;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(1.15) brightness(.85);
+            display: block;
+        }
+
+        .card[data-pos="front"] {
+            transform: translate(0%, 0%) rotate(-4deg);
+            z-index: 3;
+            box-shadow: 0 28px 72px rgba(0, 0, 0, .55), 0 0 0 1px rgba(61, 186, 126, .2);
+        }
+
+        .card[data-pos="mid"] {
+            transform: translate(18%, 9%) rotate(5deg);
+            z-index: 2;
+            opacity: .85;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, .4);
+        }
+
+        .card[data-pos="back"] {
+            transform: translate(34%, 18%) rotate(13deg);
+            z-index: 1;
+            opacity: .65;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
+        }
+
+        /* gone: meluncur ke kiri-atas sambil putar */
+        .card[data-pos="gone"] {
+            transform: translate(-90%, -75%) rotate(-22deg);
+            z-index: 4;
+            opacity: 0;
+        }
+
+        /* label di kartu depan */
+        .card-badge {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            background: rgba(11, 46, 34, .75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(61, 186, 126, .18);
+            border-radius: 8px;
+            padding: .5rem .75rem;
+            font-size: .7rem;
+            letter-spacing: .05em;
+            color: rgba(214, 237, 227, .8);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity .45s ease .2s, transform .45s ease .2s;
+        }
+
+        .card[data-pos="front"] .card-badge {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* particles */
+        .particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
         .particle {
             position: absolute;
-            width: 4px; height: 4px;
             border-radius: 50%;
             background: var(--leaf);
             opacity: 0;
-            animation: float linear infinite;
+            animation: rise linear infinite;
         }
 
-        @keyframes float {
-            0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
-            10%  { opacity: .6; }
-            90%  { opacity: .2; }
-            100% { opacity: 0; transform: translateY(-100vh) rotate(360deg); }
+        @keyframes rise {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(1);
+            }
+
+            10% {
+                opacity: .4;
+            }
+
+            90% {
+                opacity: .08;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(.2);
+            }
         }
 
-        /* ─── PROGRESS BAR ─── */
-        #progress-bar {
-            position: fixed; top: 0; left: 0;
+        #pbar {
+            position: fixed;
+            top: 0;
+            left: 0;
             height: 2px;
-            background: var(--leaf);
             width: 0%;
-            transition: width .4s ease;
+            background: linear-gradient(90deg, var(--leaf), #e8c97e);
+            box-shadow: 0 0 10px var(--leaf);
             z-index: 100;
-            box-shadow: 0 0 12px var(--leaf);
+            transition: width .5s ease, opacity .5s ease;
         }
 
-        /* ─── ENTER SITE overlay ─── */
-        #enter-overlay {
-            position: fixed; inset: 0; z-index: 200;
+        #eoverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
             background: var(--bg);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity .6s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .8rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .7s ease;
         }
-        #enter-overlay.visible { opacity: 1; pointer-events: auto; }
-        #enter-overlay p {
+
+        #eoverlay.on {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #eoverlay .el {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.1rem; letter-spacing: .25em;
-            color: rgba(214,237,227,.6);
+            font-size: 2.4rem;
+            letter-spacing: .4em;
+            color: var(--cream);
+            opacity: 0;
+            animation: fu .9s ease .15s forwards;
+        }
+
+        #eoverlay .et {
+            font-size: .75rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: rgba(214, 237, 227, .38);
+            opacity: 0;
+            animation: fu .9s ease .45s forwards;
+        }
+
+        @keyframes fu {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @media (max-width:700px) {
+            #ph4 {
+                flex-direction: column;
+                padding: 4vh 5vw 3vh;
+                justify-content: center;
+            }
+
+            .left-col {
+                max-width: 100%;
+                order: 2;
+            }
+
+            .right-col {
+                order: 1;
+                width: 85vw;
+                height: 50vw;
+                align-self: center;
+            }
+
+            .card {
+                aspect-ratio: 4/3;
+                width: 65%;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div id="progress-bar"></div>
+    <div id="pbar"></div>
 
-<div id="splash">
+    <div id="splash">
 
-    {{-- PHASE 1: blank --}}
-    <div id="phase-1"></div>
+        <!-- Phase 1 -->
+        <div class="phase visible" id="ph1"></div>
 
-    {{-- PHASE 2: wordmark --}}
-    <div id="phase-2">
-        <span class="wordmark">SEARA</span>
-    </div>
-
-    {{-- PHASE 3: icon + wordmark --}}
-    <div id="phase-3">
-        <div class="logo-icon">
-            <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M30 52 C30 52 10 38 10 22 C10 14 18 8 30 8 C42 8 50 14 50 22 C50 38 30 52 30 52Z" fill="none" stroke="#3dba7e" stroke-width="1.5"/>
-                <path d="M22 28 Q30 14 38 28" fill="none" stroke="#3dba7e" stroke-width="1.2"/>
-                <path d="M26 20 Q30 30 30 38" fill="none" stroke="#3dba7e" stroke-width="1"/>
-                <circle cx="30" cy="22" r="3" fill="#3dba7e" opacity=".5"/>
-                <path d="M18 34 C22 30 38 30 42 34" fill="none" stroke="#3dba7e" stroke-width="1" opacity=".5"/>
-            </svg>
-        </div>
-        <span class="wordmark" style="font-size: clamp(2rem,5vw,3.6rem);">SEARA</span>
-    </div>
-
-    {{-- PHASE 4: Onboarding --}}
-    <div id="phase-4">
-
-        {{-- decorative rings --}}
-        <div class="ring ring-1"></div>
-        <div class="ring ring-2"></div>
-        <div class="ring ring-3"></div>
-
-        {{-- floating particles --}}
-        <div class="particles" id="particles"></div>
-
-        {{-- hero image --}}
-        <div class="hero-wrap" id="hero-wrap">
-            {{-- Replace src with your actual farm image --}}
-            <img
-                src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80"
-                alt="Hasil panen segar dari petani"
-            >
+        <!-- Phase 2: wordmark -->
+        <div class="phase" id="ph2">
+            <div class="center-stage">
+                <span class="wordmark">SEARA</span>
+            </div>
         </div>
 
-        {{-- left content --}}
-        <div class="onboard-content">
-
-            <div class="brand-tag" id="brand-tag">
-                <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M30 52 C30 52 10 38 10 22 C10 14 18 8 30 8 C42 8 50 14 50 22 C50 38 30 52 30 52Z" fill="none" stroke="#3dba7e" stroke-width="2"/>
-                    <path d="M22 28 Q30 14 38 28" fill="none" stroke="#3dba7e" stroke-width="1.5"/>
-                    <path d="M26 20 Q30 30 30 38" fill="none" stroke="#3dba7e" stroke-width="1.2"/>
+        <div class="phase" id="ph3">
+            <div class="center-stage">
+                <svg class="logo-svg" width="56" height="56" viewBox="0 0 60 60" fill="none">
+                    <path d="M30 54C30 54 8 38 8 22C8 13 18 7 30 7C42 7 52 13 52 22C52 38 30 54 30 54Z" stroke="#3dba7e"
+                        stroke-width="1.5" fill="none" />
+                    <path d="M20 29Q30 13 40 29" stroke="#3dba7e" stroke-width="1.3" fill="none" />
+                    <path d="M30 20Q28 34 30 42" stroke="#3dba7e" stroke-width="1.1" fill="none" />
+                    <ellipse cx="30" cy="21" rx="3.5" ry="3.5" fill="#3dba7e" opacity=".4" />
                 </svg>
-                <span>SEARA</span>
+                <span class="wordmark" style="font-size:clamp(1.8rem,4.5vw,3.2rem);letter-spacing:.42em">SEARA</span>
             </div>
+        </div>
 
-            <h1 class="headline" id="headline">
-                Selamat datang<br>di <em>SEARA</em>
-            </h1>
+        <!-- Phase 4 -->
+        <div class="phase" id="ph4">
+            <div class="particles" id="particles"></div>
 
-            <p class="subtext" id="subtext">
-                Solusi pintar untuk jual beli hasil komoditas langsung dari tangan petaninya — segar, terpercaya, dan tanpa perantara.
-            </p>
-
-            <div class="dots" id="dots">
-                <div class="dot active"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-
-            <div class="actions" id="actions">
-                <button class="btn-skip" onclick="skipToSite()">Lewati</button>
-                <a href="{{ route('home') }}" class="btn-next">
-                    Mulai Sekarang
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
+            <!-- LEFT -->
+            <div class="left-col">
+                <div class="brand-pill" id="brand-pill">
+                    <svg width="18" height="18" viewBox="0 0 60 60" fill="none">
+                        <path d="M30 54C30 54 8 38 8 22C8 13 18 7 30 7C42 7 52 13 52 22C52 38 30 54 30 54Z"
+                            stroke="#3dba7e" stroke-width="2" fill="none" />
+                        <path d="M20 29Q30 13 40 29" stroke="#3dba7e" stroke-width="1.5" fill="none" />
+                        <path d="M30 20Q28 34 30 42" stroke="#3dba7e" stroke-width="1.2" fill="none" />
                     </svg>
-                </a>
+                    <span>SEARA</span>
+                </div>
+
+                <div class="text-reveal" id="text-reveal">
+                    <div class="headline-stack">
+                        <h1 class="hl active" data-s="0">Selamat datang<br>di <em>SEARA</em></h1>
+                        <h1 class="hl" data-s="1">Langsung dari<br><em>tangan petani</em></h1>
+                        <h1 class="hl" data-s="2">Komoditas segar,<br><em>harga terbaik</em></h1>
+                    </div>
+                    <div class="sub-stack">
+                        <p class="sub active" data-s="0">Solusi pintar jual beli hasil komoditas langsung dari tangan
+                            petaninya — segar, terpercaya, dan tanpa perantara.</p>
+                        <p class="sub" data-s="1">Kami menghubungkan petani lokal dengan pembeli secara langsung,
+                            memastikan kesegaran dari ladang ke meja makanmu.</p>
+                        <p class="sub" data-s="2">Dapatkan buah, sayur, dan hasil bumi pilihan dengan harga transparan —
+                            langsung dari sumbernya, bukan tengkulak.</p>
+                    </div>
+                    <div class="progress-dots" id="pdots">
+                        <div class="pdot on"></div>
+                        <div class="pdot"></div>
+                        <div class="pdot"></div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-skip" onclick="enterSite()">Lewati</button>
+                        <a href="#" class="btn-go" onclick="enterSite();return false;">
+                            Mulai Sekarang
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
 
+            <!-- RIGHT: CARD STACK -->
+            <div class="right-col" id="card-stack">
+
+                <div class="card" data-pos="front" data-index="0">
+                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80"
+                        alt="Sayuran hijau segar">
+                    <div class="card-badge">🌿 Sayuran Segar</div>
+                </div>
+
+                <div class="card" data-pos="mid" data-index="1">
+                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80"
+                        alt="Panen padi di sawah">
+                    <div class="card-badge">🌾 Hasil Panen Padi</div>
+                </div>
+
+                <div class="card" data-pos="back" data-index="2">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=700&q=80"
+                        alt="Buah-buahan lokal">
+                    <div class="card-badge">🍊 Buah Lokal Pilihan</div>
+                </div>
+
+            </div>
         </div>
     </div>
 
-</div>
+    <div id="eoverlay">
+        <div class="el">SEARA</div>
+        <div class="et">Memuat halaman…</div>
+    </div>
 
-{{-- enter overlay --}}
-<div id="enter-overlay">
-    <p>Memasuki SEARA…</p>
-</div>
+    <script>
+        const $ = id => document.getElementById(id);
+        const pbar = $('pbar');
+        function prog(p) { pbar.style.width = p + '%'; }
 
-<script>
-const $ = id => document.getElementById(id);
-const bar = $('progress-bar');
+        /* particles */
+        (function () {
+            const c = $('particles');
+            for (let i = 0; i < 22; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const s = 2 + Math.random() * 3;
+                p.style.cssText = `left:${Math.random() * 100}%;bottom:-8px;width:${s}px;height:${s}px;animation-duration:${7 + Math.random() * 12}s;animation-delay:${Math.random() * 18}s;`;
+                c.appendChild(p);
+            }
+        })();
 
-function setProgress(pct) {
-    bar.style.width = pct + '%';
-}
+        /* splash sequence */
+        (function () {
+            const ph1 = $('ph1'), ph2 = $('ph2'), ph3 = $('ph3'), ph4 = $('ph4');
+            prog(8);
+            setTimeout(() => { ph1.classList.remove('visible'); ph2.classList.add('visible'); prog(35); }, 700);
+            setTimeout(() => { ph2.classList.remove('visible'); ph3.classList.add('visible'); prog(62); }, 1900);
+            setTimeout(() => { ph3.classList.remove('visible'); ph4.classList.add('visible'); prog(85); }, 3300);
+            setTimeout(() => {
+                $('brand-pill').classList.add('in');
+                $('text-reveal').classList.add('in');
+                prog(100);
+                setTimeout(startShuffle, 900);
+            }, 3650);
+            setTimeout(() => { pbar.style.opacity = '0'; }, 4700);
+        })();
 
-function show(el, delay = 0) {
-    setTimeout(() => { el.style.opacity = '1'; }, delay);
-}
-function hide(el, delay = 0) {
-    setTimeout(() => { el.style.opacity = '0'; }, delay);
-}
+        /* ══ CARD SHUFFLE ══ */
+        const INTERVAL = 3200; // ms — ganti untuk ubah kecepatan
+        const POSITIONS = ['front', 'mid', 'back'];
+        const cards = Array.from(document.querySelectorAll('.card'));
+        let busy = false;
+        let timer = null;
 
-// ── particle rain ──
-(function spawnParticles() {
-    const container = $('particles');
-    for (let i = 0; i < 18; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.bottom = '-10px';
-        p.style.animationDuration = (6 + Math.random() * 10) + 's';
-        p.style.animationDelay = (Math.random() * 14) + 's';
-        p.style.opacity = 0;
-        container.appendChild(p);
-    }
-})();
+        // order[cardIndex] = positionIndex (0=front,1=mid,2=back)
+        let order = [0, 1, 2];
 
-// ── SEQUENCE ──
-(function runSequence() {
-    const p1 = $('phase-1');
-    const p2 = $('phase-2');
-    const p3 = $('phase-3');
-    const p4 = $('phase-4');
+        function cardAt(posIdx) { return cards[order.indexOf(posIdx)]; }
 
-    // t=0: Phase 1 visible (blank teal) for 600ms
-    setProgress(5);
+        function shuffle() {
+            if (busy) return;
+            busy = true;
 
-    // t=600: fade Phase 1 out, fade Phase 2 in (wordmark only)
-    setTimeout(() => {
-        p1.style.opacity = '0';
-        p2.style.opacity = '1';
-        setProgress(30);
-    }, 600);
+            const front = cardAt(0);
+            const mid = cardAt(1);
+            const back = cardAt(2);
 
-    // t=1800: fade Phase 2 out, fade Phase 3 in (icon + wordmark)
-    setTimeout(() => {
-        p2.style.opacity = '0';
-        p3.style.opacity = '1';
-        setProgress(55);
-    }, 1800);
+            // step 1: terbangkan front ke "gone"
+            front.setAttribute('data-pos', 'gone');
 
-    // t=3200: fade Phase 3 out, fade Phase 4 in (onboarding)
-    setTimeout(() => {
-        p3.style.opacity = '0';
-        p4.style.opacity = '1';
-        setProgress(80);
-    }, 3200);
+            // step 2: sedikit delay, mid dan back maju
+            setTimeout(() => {
+                mid.setAttribute('data-pos', 'front');
+                back.setAttribute('data-pos', 'mid');
+            }, 60);
 
-    // t=3500: reveal hero + content stagger
-    setTimeout(() => {
-        $('hero-wrap').classList.add('show');
-        $('brand-tag').classList.add('show');
-        $('headline').classList.add('show');
-        $('subtext').classList.add('show');
-        $('dots').classList.add('show');
-        $('actions').classList.add('show');
-        setProgress(100);
-    }, 3500);
+            // step 3: setelah gone selesai (~950ms), letakkan front ke back tanpa transisi
+            setTimeout(() => {
+                front.style.transition = 'none';
+                front.setAttribute('data-pos', 'back');
+                front.getBoundingClientRect(); // force reflow
+                front.style.transition = '';   // kembalikan transisi
 
-    // t=4000: hide progress bar
-    setTimeout(() => { bar.style.opacity = '0'; }, 4500);
-})();
+                // update order
+                const fi = cards.indexOf(front);
+                const mi = cards.indexOf(mid);
+                const bi = cards.indexOf(back);
+                order[mi] = 0; // front
+                order[bi] = 1; // mid
+                order[fi] = 2; // back
 
-// ── SKIP ──
-function skipToSite() {
-    const overlay = $('enter-overlay');
-    overlay.classList.add('visible');
-    setTimeout(() => {
-        window.location.href = '{{ route("home") }}';
-    }, 800);
-}
-</script>
+                // sync teks & dots ke kartu yang sekarang di depan
+                const newFrontIdx = parseInt(mid.getAttribute('data-index'));
+                syncText(newFrontIdx);
+
+                busy = false;
+            }, 960);
+        }
+
+        function syncText(idx) {
+            document.querySelectorAll('.hl').forEach(el => el.classList.toggle('active', +el.dataset.s === idx));
+            document.querySelectorAll('.sub').forEach(el => el.classList.toggle('active', +el.dataset.s === idx));
+            document.querySelectorAll('.pdot').forEach((el, i) => el.classList.toggle('on', i === idx));
+        }
+
+        function startShuffle() {
+            timer = setInterval(shuffle, INTERVAL);
+        }
+
+        // klik kartu non-front = shuffle manual
+        cards.forEach(c => {
+            c.addEventListener('click', () => {
+                if (c.getAttribute('data-pos') !== 'front') {
+                    clearInterval(timer);
+                    shuffle();
+                    timer = setInterval(shuffle, INTERVAL);
+                }
+            });
+        });
+
+        function enterSite() {
+            clearInterval(timer);
+            $('eoverlay').classList.add('on');
+            setTimeout(() => {
+                // window.location.href = '/home';
+                alert('→ Redirect ke route("home") di Laravel-mu');
+            }, 1000);
+        }
+    </script>
 </body>
+
 </html>
