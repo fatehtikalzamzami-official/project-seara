@@ -1,12 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 
-// ── Splash Screen ──
+/*
+|--------------------------------------------------------------------------
+| SEARA — Web Routes
+|--------------------------------------------------------------------------
+| Alur: / (Splash) → /home (E-Commerce) → /dashboard (Admin Dashboard)
+*/
+
+// ── Splash Screen ──────────────────────────────────────────────────────
 Route::get('/', function () {
     return view('splash.index');
-});
-// ── Main App ──
-Route::get('/home', function () {
-    return view('home'); // ganti dengan controller kamu
-})->name('home');
+})->name('splash');
+
+// ── E-Commerce / Toko ──────────────────────────────────────────────────
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+// ── Dashboard Admin ─────────────────────────────────────────────────────
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
