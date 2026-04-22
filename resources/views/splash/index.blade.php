@@ -147,30 +147,53 @@
             color: var(--leaf);
         }
 
+        /* ══ FIX: headline-stack pakai relative positioning ══ */
         .headline-stack {
             position: relative;
+            /* Tetap pakai fixed height agar layout tidak loncat */
             min-height: clamp(4.5rem, 8vw, 9rem);
             margin-bottom: 1.3rem;
+            /* Clip overflow agar teks yg sedang transit tidak keliatan */
+            overflow: hidden;
         }
 
         .hl {
             position: absolute;
             top: 0;
             left: 0;
+            right: 0;
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(1.9rem, 4vw, 3.5rem);
             font-weight: 300;
             line-height: 1.18;
             color: var(--cream);
+            /* Default: sembunyikan ke bawah + invisible */
             opacity: 0;
-            transform: translateY(14px);
-            transition: opacity .65s ease, transform .65s ease;
+            transform: translateY(20px);
+            /* Pastikan tidak bisa diklik saat tidak aktif */
             pointer-events: none;
+            /* Transisi masuk */
+            transition: opacity .55s ease, transform .55s ease;
+            /* Sangat penting: visibility hidden saat tidak aktif
+               agar tidak mengambil hit area / overlap visual */
+            visibility: hidden;
         }
 
         .hl.active {
             opacity: 1;
-            transform: none;
+            transform: translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        /* Teks yang keluar: geser ke atas */
+        .hl.leaving {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+            transition: opacity .45s ease, transform .45s ease;
+            /* Tetap visible saat animasi keluar berlangsung */
+            visibility: visible;
         }
 
         .hl em {
@@ -178,29 +201,44 @@
             color: var(--leaf);
         }
 
+        /* ══ FIX: sub-stack sama seperti headline-stack ══ */
         .sub-stack {
             position: relative;
             min-height: clamp(3rem, 6vw, 5.5rem);
             margin-bottom: 2.2rem;
+            overflow: hidden;
         }
 
         .sub {
             position: absolute;
             top: 0;
             left: 0;
+            right: 0;
             font-size: clamp(.82rem, 1.3vw, .96rem);
             font-weight: 300;
             line-height: 1.82;
             color: rgba(214, 237, 227, .6);
             max-width: 380px;
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity .65s ease, transform .65s ease;
+            transform: translateY(14px);
+            pointer-events: none;
+            transition: opacity .55s ease, transform .55s ease;
+            visibility: hidden;
         }
 
         .sub.active {
             opacity: 1;
-            transform: none;
+            transform: translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .sub.leaving {
+            opacity: 0;
+            transform: translateY(-14px);
+            pointer-events: none;
+            transition: opacity .45s ease, transform .45s ease;
+            visibility: visible;
         }
 
         .text-reveal {
@@ -297,7 +335,6 @@
             height: clamp(320px, 52vh, 580px);
         }
 
-        /* ─ CARD ─ */
         .card {
             position: absolute;
             width: 72%;
@@ -306,7 +343,6 @@
             overflow: hidden;
             border: 2px solid rgba(61, 186, 126, .2);
             cursor: pointer;
-            /* smooth all transforms */
             transition:
                 transform .9s cubic-bezier(.34, 1.2, .64, 1),
                 opacity .7s ease,
@@ -341,14 +377,12 @@
             box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
         }
 
-        /* gone: meluncur ke kiri-atas sambil putar */
         .card[data-pos="gone"] {
             transform: translate(-90%, -75%) rotate(-22deg);
             z-index: 4;
             opacity: 0;
         }
 
-        /* label di kartu depan */
         .card-badge {
             position: absolute;
             bottom: 12px;
@@ -372,7 +406,6 @@
             transform: none;
         }
 
-        /* particles */
         .particles {
             position: absolute;
             inset: 0;
@@ -494,6 +527,15 @@
                 aspect-ratio: 4/3;
                 width: 65%;
             }
+
+            /* Mobile: tinggi stack lebih kecil */
+            .headline-stack {
+                min-height: clamp(5rem, 20vw, 7rem);
+            }
+
+            .sub-stack {
+                min-height: clamp(4rem, 14vw, 6rem);
+            }
         }
     </style>
 </head>
@@ -503,11 +545,8 @@
     <div id="pbar"></div>
 
     <div id="splash">
-
-        <!-- Phase 1 -->
         <div class="phase visible" id="ph1"></div>
 
-        <!-- Phase 2: wordmark -->
         <div class="phase" id="ph2">
             <div class="center-stage">
                 <span class="wordmark">SEARA</span>
@@ -527,11 +566,9 @@
             </div>
         </div>
 
-        <!-- Phase 4 -->
         <div class="phase" id="ph4">
             <div class="particles" id="particles"></div>
 
-            <!-- LEFT -->
             <div class="left-col">
                 <div class="brand-pill" id="brand-pill">
                     <svg width="18" height="18" viewBox="0 0 60 60" fill="none">
@@ -575,27 +612,22 @@
                 </div>
             </div>
 
-            <!-- RIGHT: CARD STACK -->
             <div class="right-col" id="card-stack">
-
                 <div class="card" data-pos="front" data-index="0">
                     <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=80"
                         alt="Sayuran hijau segar">
                     <div class="card-badge">🌿 Sayuran Segar</div>
                 </div>
-
                 <div class="card" data-pos="mid" data-index="1">
                     <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80"
                         alt="Panen padi di sawah">
                     <div class="card-badge">🌾 Hasil Panen Padi</div>
                 </div>
-
                 <div class="card" data-pos="back" data-index="2">
                     <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=700&q=80"
                         alt="Buah-buahan lokal">
                     <div class="card-badge">🍊 Buah Lokal Pilihan</div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -639,13 +671,10 @@
         })();
 
         /* ══ CARD SHUFFLE ══ */
-        const INTERVAL = 3200; // ms — ganti untuk ubah kecepatan
-        const POSITIONS = ['front', 'mid', 'back'];
+        const INTERVAL = 3200;
         const cards = Array.from(document.querySelectorAll('.card'));
         let busy = false;
         let timer = null;
-
-        // order[cardIndex] = positionIndex (0=front,1=mid,2=back)
         let order = [0, 1, 2];
 
         function cardAt(posIdx) { return cards[order.indexOf(posIdx)]; }
@@ -658,31 +687,26 @@
             const mid = cardAt(1);
             const back = cardAt(2);
 
-            // step 1: terbangkan front ke "gone"
             front.setAttribute('data-pos', 'gone');
 
-            // step 2: sedikit delay, mid dan back maju
             setTimeout(() => {
                 mid.setAttribute('data-pos', 'front');
                 back.setAttribute('data-pos', 'mid');
             }, 60);
 
-            // step 3: setelah gone selesai (~950ms), letakkan front ke back tanpa transisi
             setTimeout(() => {
                 front.style.transition = 'none';
                 front.setAttribute('data-pos', 'back');
-                front.getBoundingClientRect(); // force reflow
-                front.style.transition = '';   // kembalikan transisi
+                front.getBoundingClientRect();
+                front.style.transition = '';
 
-                // update order
                 const fi = cards.indexOf(front);
                 const mi = cards.indexOf(mid);
                 const bi = cards.indexOf(back);
-                order[mi] = 0; // front
-                order[bi] = 1; // mid
-                order[fi] = 2; // back
+                order[mi] = 0;
+                order[bi] = 1;
+                order[fi] = 2;
 
-                // sync teks & dots ke kartu yang sekarang di depan
                 const newFrontIdx = parseInt(mid.getAttribute('data-index'));
                 syncText(newFrontIdx);
 
@@ -690,9 +714,38 @@
             }, 960);
         }
 
+        /* ══ FIX: syncText pakai class "leaving" agar transisi keluar smooth ══ */
         function syncText(idx) {
-            document.querySelectorAll('.hl').forEach(el => el.classList.toggle('active', +el.dataset.s === idx));
-            document.querySelectorAll('.sub').forEach(el => el.classList.toggle('active', +el.dataset.s === idx));
+            document.querySelectorAll('.hl').forEach(el => {
+                const isActive = +el.dataset.s === idx;
+                if (isActive) {
+                    el.classList.remove('leaving');
+                    el.classList.add('active');
+                } else if (el.classList.contains('active')) {
+                    // Sedang aktif → animasikan keluar
+                    el.classList.add('leaving');
+                    el.classList.remove('active');
+                    // Hapus class leaving setelah transisi selesai
+                    setTimeout(() => el.classList.remove('leaving'), 500);
+                } else {
+                    el.classList.remove('active', 'leaving');
+                }
+            });
+
+            document.querySelectorAll('.sub').forEach(el => {
+                const isActive = +el.dataset.s === idx;
+                if (isActive) {
+                    el.classList.remove('leaving');
+                    el.classList.add('active');
+                } else if (el.classList.contains('active')) {
+                    el.classList.add('leaving');
+                    el.classList.remove('active');
+                    setTimeout(() => el.classList.remove('leaving'), 500);
+                } else {
+                    el.classList.remove('active', 'leaving');
+                }
+            });
+
             document.querySelectorAll('.pdot').forEach((el, i) => el.classList.toggle('on', i === idx));
         }
 
@@ -700,7 +753,6 @@
             timer = setInterval(shuffle, INTERVAL);
         }
 
-        // klik kartu non-front = shuffle manual
         cards.forEach(c => {
             c.addEventListener('click', () => {
                 if (c.getAttribute('data-pos') !== 'front') {
@@ -715,7 +767,6 @@
             clearInterval(timer);
             $('eoverlay').classList.add('on');
             setTimeout(() => {
-                // window.location.href = '/home';
                 alert('→ Redirect ke route("home") di Laravel-mu');
             }, 1000);
         }
