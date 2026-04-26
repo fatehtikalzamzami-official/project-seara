@@ -19,4 +19,6 @@ Route::get('/', function () {
 // ── E-Commerce / Toko ──────────────────────────────────────────────────
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+// ── Dashboard Admin ─────────────────────────────────────────────────────
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
