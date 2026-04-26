@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
+    'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
@@ -5026,7 +5028,6 @@ return array(
     'Psy\\Readline\\Interactive\\Helper\\CurrentWord' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Helper/CurrentWord.php',
     'Psy\\Readline\\Interactive\\Helper\\DebugLog' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Helper/DebugLog.php',
     'Psy\\Readline\\Interactive\\Helper\\HistorySearchRenderer' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Helper/HistorySearchRenderer.php',
-    'Psy\\Readline\\Interactive\\Helper\\TokenHelper' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Helper/TokenHelper.php',
     'Psy\\Readline\\Interactive\\HistorySearch' => $vendorDir . '/psy/psysh/src/Readline/Interactive/HistorySearch.php',
     'Psy\\Readline\\Interactive\\Input\\Buffer' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Input/Buffer.php',
     'Psy\\Readline\\Interactive\\Input\\History' => $vendorDir . '/psy/psysh/src/Readline/Interactive/Input/History.php',
