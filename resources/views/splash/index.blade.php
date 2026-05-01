@@ -618,25 +618,70 @@
             }
         }
 
+        .login-header {
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.6rem;
+            border-bottom: 1px solid #f0f4f2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .login-header-text {
+            flex: 1;
+        }
+
+        .login-header-text::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #3dba7e;
+            margin-bottom: .8rem;
+            border-radius: 2px;
+        }
+
         .login-header h2 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 500;
-            color: #0a2c1e;
-            letter-spacing: -0.3px;
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: #0a2118;
+            letter-spacing: -0.5px;
+            line-height: 1.18;
+            margin-bottom: 0.45rem;
         }
 
         .login-header h2 span {
-            color: var(--leaf);
+            color: #3dba7e;
+            font-style: italic;
+            font-weight: 300;
         }
 
         .login-header p {
-            font-size: 0.85rem;
-            color: #54705f;
+            font-size: 0.75rem;
+            color: #8aa396;
+            line-height: 1.6;
+        }
+
+        .login-header-logo {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            border: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8faf9;
+            color: #8faa9d;
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
             line-height: 1.5;
-            margin-bottom: 1.8rem;
+            font-weight: 600;
+            padding: 0.6rem;
         }
 
         /* Auth Tabs */
@@ -647,7 +692,7 @@
             background: #f1f5f4;
             border-radius: 16px;
             padding: 4px;
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.0rem;
         }
 
         .auth-tab {
@@ -686,7 +731,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.6rem;
-            margin-bottom: 1.4rem;
+            margin-bottom: 2.4rem;
+            margin-top: 0.4rem;
         }
 
         .btn-google:hover {
@@ -1143,11 +1189,13 @@
                 <div class="login-inner">
                     <button class="login-close-x" id="closeLoginBtn" title="Tutup">✕</button>
 
-                    <div class="login-badge"><i></i> Akses Aman & Terverifikasi</div>
-
                     <div class="login-header">
-                        <h2>Selamat datang di <span>SEARA</span></h2>
-                        <p>Masuk atau buat akun baru untuk mulai bertransaksi</p>
+                        <div class="login-header-text">
+                            <h2>Selamat datang<br>di <span>SEARA</span></h2>
+                            <p>Masuk atau buat akun baru untuk<br>mulai bertransaksi.</p>
+                        </div>
+                        <img src="{{ asset('assets/logo-dark.png') }}" alt="SEARA Logo" class="login-header-logo"
+                            id="headerLogo">
                     </div>
 
                     <div class="auth-tabs">
@@ -1224,12 +1272,6 @@
 
                     <div class="reg-row">
                         Belum punya akun? <a href="#" id="registerRedirect">Daftar sekarang</a>
-                    </div>
-
-                    <div class="trust-row">
-                        <div class="trust-item"><span class="ti">🔐</span> SSL Aman</div>
-                        <div class="trust-item"><span class="ti">✅</span> Terverifikasi</div>
-                        <div class="trust-item"><span class="ti">🇮🇩</span> Server Lokal</div>
                     </div>
                 </div>
             </div>
