@@ -39,4 +39,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(SellerProfile::class);
     }
+
+    public function seller()
+{
+    return $this->hasOne(Seller::class);
 }
+}
+
