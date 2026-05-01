@@ -6,9 +6,15 @@ use App\Http\Controllers\SellerProfileController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/dashboard', function () {
-    return view('pembeli.dashboard');
-})->name('dashboard');
+use App\Http\Controllers\BuyerDashboardController;
+
+Route::middleware(['auth', 'role:buyer,seller,admin'])
+    ->prefix('buyer')
+    ->name('buyer.')
+    ->group(function () {
+        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])
+            ->name('dashboard');
+    });
 
 Route::get('/logout', function () {
     \Illuminate\Support\Facades\Auth::logout();
@@ -44,7 +50,13 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // ─────────────────────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('buyer.')->group(function () {
-    Route::get('/dashboard', fn() => view('pembeli.dashboard'))->name('dashboard');
+Route::middleware(['auth', 'role:buyer,seller,admin'])
+    ->prefix('buyer')
+    ->name('buyer.')
+    ->group(function () {
+        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])
+            ->name('dashboard');
+    });
 
     // Pengajuan jadi seller
     Route::get('/daftar-seller', [SellerApplicationController::class, 'create'])->name('apply.create');

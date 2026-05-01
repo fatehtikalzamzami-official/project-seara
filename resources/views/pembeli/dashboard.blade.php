@@ -66,14 +66,41 @@
 .countdown-box { background: var(--green-dark); color: white; padding: 4px 9px; border-radius: 6px; font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; min-width: 34px; text-align: center; }
 
 /* Product cards */
-.prod-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.prod-grid {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 6px;
+}
+
+.prod-grid::-webkit-scrollbar {
+    height: 6px;
+}
+.prod-grid::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
 .prod-grid-6 { grid-template-columns: repeat(6, 1fr); }
-.prod-card { background: white; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: all 0.25s; position: relative; }
+.prod-card { background: white; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: all 0.25s; position: relative; min-width: 220px;
+    max-width: 220px;
+    flex-shrink: 0;}
 .prod-card:hover { border-color: var(--green-main); transform: translateY(-4px); box-shadow: var(--shadow-md); }
 .prod-img { width: 100%; aspect-ratio: 1; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; }
 .prod-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 4px; z-index: 1; }
 .prod-badge.organic { background: var(--green-main); }
 .prod-badge.new-badge { background: #5696ff; }
+/* Time badge — warna dinamis */
+.prod-badge.time {
+    background: #166534;  /* default hijau */
+    color: #bbf7d0;
+    transition: background 0.4s, color 0.4s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.prod-badge.time.badge-yellow { background: #854d0e; color: #fef08a; }
+.prod-badge.time.badge-red    { background: #991b1b; color: #fecaca; }
 .prod-wishlist { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); z-index: 1; opacity: 0; transition: opacity 0.2s; border: none; cursor: pointer; }
 .prod-card:hover .prod-wishlist { opacity: 1; }
 .prod-body { padding: 12px; }
@@ -229,6 +256,78 @@
         </div>
     </div>
 
+ {{-- Panen Hari ini --}}
+<div class="anim-3" style="margin-bottom:24px">
+    <div class="section-hd">
+        <h2>Panen Hari ini</h2>
+        <a href="#" class="see-all">Lihat Semua →</a>
+    </div>
+
+    <div class="prod-grid"> {{-- INI YANG KURANG --}}
+        
+        @foreach($harvests as $h)
+        <div class="prod-card">
+            <div class="prod-img">
+                🌾
+
+                @if($h->is_organic)
+                    <span class="prod-badge organic">Organik</span>
+                @endif
+
+                @php
+$harvestDate = \Carbon\Carbon::parse($h->harvest_date)->format('Y-m-d');
+$harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
+@endphp
+
+                <span class="prod-badge time"
+                    data-deadline="{{ $harvestDateTime->format('Y-m-d H:i:s') }}">
+                    ⏱ --:--:--
+                </span>
+
+                <button class="prod-wishlist">🤍</button>
+            </div>
+
+            <div class="prod-body">
+                <div class="prod-name">
+                    {{ $h->product->name ?? 'Produk Tidak Diketahui' }}
+                </div>
+
+                <div class="prod-farmer">
+                    👨‍🌾 {{ $h->seller->user->name ?? 'Petani' }}
+                </div>
+
+                <div class="prod-price-row">
+                    <div class="prod-price">
+                        Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}
+                    </div>
+                    <div class="prod-unit">
+                        /{{ $h->product->unit ?? 'kg' }}
+                    </div>
+                </div>
+
+                <div class="prod-meta">
+                    <div class="prod-stars">
+                        📦 {{ $h->remaining_stock }} stok
+                    </div>
+                    <div class="prod-sold">
+                        Panen hari ini
+                    </div>
+                </div>
+
+                <div class="prod-location">
+                    📍 {{ $h->seller->user->alamat ?? 'Indonesia' }}
+                </div>
+
+                <button class="add-to-cart-btn">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+        @endforeach
+
+    </div>
+</div>
+
     {{-- Flash Sale --}}
     <div class="flash-section anim-3" id="produk">
         <div class="flash-header">
@@ -245,38 +344,53 @@
             </div>
         </div>
         <div class="prod-grid prod-grid-6">
-            @foreach([
-                ['🥦','Brokoli Organik','Ibu Ratna · Lembang','Rp 12.500','Rp 19.000','-35%','4.9','1.120'],
-                ['🌶️','Cabai Merah Keriting','Pak Joko · Kediri','Rp 25.000','Rp 42.000','-40%','4.8','842'],
-                ['🌾','Beras Pandan Wangi','Pak Hendra · Cianjur','Rp 14.000','Rp 18.000','-22%','5.0','2.304'],
-                ['🍅','Tomat Kebun Segar','Pak Ali · Malang','Rp 8.500','Rp 12.000','-28%','4.7','480'],
-                ['🥕','Wortel Dataran Tinggi','Ibu Susi · Dieng','Rp 9.000','Rp 13.500','-33%','4.8','660'],
-                ['🧅','Bawang Merah Super','Pak Slamet · Brebes','Rp 22.000','Rp 28.000','-20%','4.9','1.502'],
-            ] as $p)
-            <div class="prod-card">
-                <div class="prod-img">{{ $p[0] }}
-                    <span class="prod-badge">{{ $p[5] }}</span>
-                    <button class="prod-wishlist">🤍</button>
-                </div>
-                <div class="prod-body">
-                    <div class="prod-name">{{ $p[1] }}</div>
-                    <div class="prod-farmer">👨‍🌾 {{ $p[2] }}</div>
-                    <div class="prod-price-row">
-                        <div class="prod-price">{{ $p[3] }}</div>
-                        <div class="prod-unit">/kg</div>
-                    </div>
-                    <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
-                        <span class="prod-old-price">{{ $p[4] }}</span>
-                        <span class="prod-discount">{{ $p[5] }}</span>
-                    </div>
-                    <div class="prod-meta">
-                        <div class="prod-stars"><span>★</span> {{ $p[6] }}</div>
-                        <div class="prod-sold">{{ $p[7] }} terjual</div>
-                    </div>
-                    <button class="add-to-cart-btn">+ Keranjang</button>
-                </div>
+            @foreach($harvests as $h)
+<div class="prod-card">
+    <div class="prod-img">
+        🌾
+        @if($h->is_organic)
+            <span class="prod-badge organic">Organik</span>
+        @endif
+        <button class="prod-wishlist">🤍</button>
+    </div>
+
+    <div class="prod-body">
+        <div class="prod-name">
+            {{ $h->product->name }}
+        </div>
+
+        <div class="prod-farmer">
+            👨‍🌾 {{ $h->seller->user->name }}
+        </div>
+
+        <div class="prod-price-row">
+            <div class="prod-price">
+                Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}
             </div>
-            @endforeach
+            <div class="prod-unit">
+                /{{ $h->product->unit ?? 'kg' }}
+            </div>
+        </div>
+
+        <div class="prod-meta">
+            <div class="prod-stars">
+                📦 {{ $h->remaining_stock }} stok
+            </div>
+            <div class="prod-sold">
+                Panen hari ini
+            </div>
+        </div>
+
+        <div class="prod-location">
+            📍 {{ $h->seller->user->alamat ?? 'Indonesia' }}
+        </div>
+
+        <button class="add-to-cart-btn">
+            + Keranjang
+        </button>
+    </div>
+</div>
+@endforeach
         </div>
     </div>
 
@@ -390,5 +504,46 @@ document.querySelectorAll('.prod-wishlist').forEach(btn => {
         btn.textContent = btn.textContent === '🤍' ? '❤️' : '🤍';
     });
 });
+
+function updateTimeBadges() {
+    const now = new Date();
+
+    document.querySelectorAll('.prod-badge.time').forEach(badge => {
+        const deadline = badge.dataset.deadline;
+
+        if (!deadline) {
+            badge.textContent = '⏱ --:--:--';
+            return;
+        }
+
+        const panenDate = new Date(deadline);
+        let diffMs = now - panenDate;
+
+        if (diffMs < 0) {
+            badge.textContent = '⏱ Belum Panen';
+            badge.classList.remove('badge-yellow', 'badge-red');
+            return;
+        }
+
+        const totalSec = Math.floor(diffMs / 1000);
+        const hrs  = Math.floor(totalSec / 3600);
+        const mins = Math.floor((totalSec % 3600) / 60);
+        const secs = totalSec % 60;
+
+        badge.textContent = '⏱ '
+            + String(hrs).padStart(2,'0') + ':'
+            + String(mins).padStart(2,'0') + ':'
+            + String(secs).padStart(2,'0');
+
+        badge.classList.remove('badge-yellow', 'badge-red');
+
+        const jamBerlalu = diffMs / 3600000;
+        if (jamBerlalu >= 4) badge.classList.add('badge-red');
+        else if (jamBerlalu >= 2) badge.classList.add('badge-yellow');
+    });
+}
+
+setInterval(updateTimeBadges, 1000);
+updateTimeBadges();
 </script>
 @endpush

@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,              // 1. users dulu
             SellerApplicationSeeder::class, // 2. butuh user_id dari UserSeeder
             SellerProfileSeeder::class,     // 3. butuh user_id + application_id
+            CategorySeeder::class,
+            ProductSeeder::class,
+            SellerSeeder::class,
+            HarvestSeeder::class,
         ]);
     }
 }
