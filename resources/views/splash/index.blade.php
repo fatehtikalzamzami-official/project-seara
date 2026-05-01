@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SEARA – Pasar Tani Digital Indonesia</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600;700&display=swap"
@@ -1513,17 +1514,47 @@
             }
 
             /* ── LOGIN SUBMIT ── */
-            $('doLoginBtn').addEventListener('click', e => {
+            $('doLoginBtn').addEventListener('click', async e => {
                 e.preventDefault();
                 const email = $('loginEmail')?.value.trim();
-                const pass = $('loginPassword')?.value.trim();
+                const pass = $('loginPassword')?.value;
+                const remember = $('rememberCheck')?.checked;
+
                 if (!email || !pass) { alert('Harap isi email dan kata sandi.'); return; }
-                // TODO: ganti dengan AJAX / form submit Laravel
-                alert(`✨ Selamat datang, ${email}!\nMengarahkan ke dashboard…`);
+
+                const btn = $('doLoginBtn');
+                btn.textContent = 'Memproses…';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                                ?? '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password: pass, remember }),
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message ?? 'Login gagal. Periksa email dan kata sandi.');
+                    }
+                } catch (err) {
+                    alert('Terjadi kesalahan jaringan. Coba lagi.');
+                } finally {
+                    btn.textContent = 'Masuk ke Dashboard';
+                    btn.disabled = false;
+                }
             });
 
             /* ── REGISTER SUBMIT ── */
-            $('doRegisterBtn').addEventListener('click', e => {
+            $('doRegisterBtn').addEventListener('click', async e => {
                 e.preventDefault();
                 const email = $('regEmail')?.value.trim();
                 const nama = $('regNama')?.value.trim();
@@ -1535,14 +1566,50 @@
                 if (!email || !nama || !alamat || !wa || !pass || !confirm) {
                     alert('Harap lengkapi semua field pendaftaran.'); return;
                 }
-                if (pass !== confirm) {
-                    alert('Kata sandi dan konfirmasi tidak cocok.'); return;
+                if (pass !== confirm) { alert('Kata sandi dan konfirmasi tidak cocok.'); return; }
+                if (pass.length < 8) { alert('Kata sandi minimal 8 karakter.'); return; }
+
+                const btn = $('doRegisterBtn');
+                btn.textContent = 'Membuat akun…';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                                ?? '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email,
+                            nama_lengkap: nama,
+                            alamat,
+                            no_whatsapp: wa,
+                            password: pass,
+                            password_confirmation: confirm,
+                        }),
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.href = data.redirect;
+                    } else {
+                        // Tampilkan error validasi dari Laravel
+                        const errs = data.errors
+                            ? Object.values(data.errors).flat().join('\n')
+                            : data.message ?? 'Pendaftaran gagal.';
+                        alert(errs);
+                    }
+                } catch (err) {
+                    alert('Terjadi kesalahan jaringan. Coba lagi.');
+                } finally {
+                    btn.textContent = 'Buat Akun Sekarang →';
+                    btn.disabled = false;
                 }
-                if (pass.length < 8) {
-                    alert('Kata sandi minimal 8 karakter.'); return;
-                }
-                // TODO: ganti dengan AJAX / form submit Laravel
-                alert(`🌱 Akun berhasil dibuat untuk ${nama}!\nSilakan cek email ${email} untuk verifikasi.`);
             });
 
             /* ── GOOGLE ── */
