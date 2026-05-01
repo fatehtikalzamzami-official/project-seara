@@ -563,7 +563,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f8faf9;
             object-fit: contain;
         }
 
@@ -912,6 +911,19 @@
             font-weight: 700;
         }
 
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .card {
+            width: 220px;
+            height: 340px;
+            overflow: hidden;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 900px) {
             #ph3 {
@@ -969,6 +981,23 @@
                 min-width: unset;
             }
         }
+
+        .corner-logo {
+            position: absolute;
+            top: 40px;
+            left: 54px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .corner-logo img {
+            height: 66px;
+            width: 66px;
+            object-fit: contain;
+            filter: brightness(1.1);
+        }
     </style>
 </head>
 
@@ -983,6 +1012,10 @@
 
         <!-- Phase 3: main UI -->
         <div class="phase" id="ph3">
+            <!-- Corner Logo -->
+            <div class="corner-logo">
+                <img src="{{ asset('assets/logo-gold.png') }}" alt="SEARA Logo" />
+            </div>
             <canvas id="bg-canvas" aria-hidden="true"
                 style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
 
@@ -1024,48 +1057,67 @@
                 <!-- Card stack -->
                 <div class="right-col">
                     <div class="cards-stack" id="cardsStack">
+
                         <div class="card" data-idx="0">
-                            <div class="card-thumb">🌾</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card1.jpeg') }}" alt="Explore">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Beras Premium Cianjur</div>
-                                <div class="card-price">Rp 14.000 / kg</div>
+                                <div class="card-name">Temukan Produk Segar</div>
+                                <div class="card-price">Langsung dari petani lokal</div>
                             </div>
                         </div>
+
                         <div class="card" data-idx="1">
-                            <div class="card-thumb">🥦</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card2.jpeg') }}" alt="Shop">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Brokoli Organik Bandung</div>
-                                <div class="card-price">Rp 18.500 / kg</div>
+                                <div class="card-name">Belanja Lebih Mudah</div>
+                                <div class="card-price">Tanpa ribet, tinggal klik</div>
                             </div>
                         </div>
+
                         <div class="card" data-idx="2">
-                            <div class="card-thumb">🍅</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card3.jpeg') }}" alt="Quality">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Tomat Cherry Segar</div>
-                                <div class="card-price">Rp 22.000 / kg</div>
+                                <div class="card-name">Kualitas Terjamin</div>
+                                <div class="card-price">Segar & terpercaya</div>
                             </div>
                         </div>
+
                         <div class="card" data-idx="3">
-                            <div class="card-thumb">🌽</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card4.jpeg') }}" alt="Support">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Jagung Manis Magelang</div>
-                                <div class="card-price">Rp 8.000 / kg</div>
+                                <div class="card-name">Dukung Petani Lokal</div>
+                                <div class="card-price">Setiap pembelian berarti</div>
                             </div>
                         </div>
+
                         <div class="card" data-idx="4">
-                            <div class="card-thumb">🧅</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card5.jpeg') }}" alt="Delivery">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Bawang Merah Brebes</div>
-                                <div class="card-price">Rp 32.000 / kg</div>
+                                <div class="card-name">Pengiriman Cepat</div>
+                                <div class="card-price">Langsung ke rumahmu</div>
                             </div>
                         </div>
+
                         <div class="card" data-idx="5">
-                            <div class="card-thumb">🥕</div>
+                            <div class="card-thumb">
+                                <img src="{{ asset('assets/card7.jpeg') }}" alt="Start">
+                            </div>
                             <div class="card-info">
-                                <div class="card-name">Wortel Organik Lembang</div>
-                                <div class="card-price">Rp 12.500 / kg</div>
+                                <div class="card-name">Mulai Sekarang</div>
+                                <div class="card-price">Gabung & rasakan bedanyak</div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -1155,56 +1207,53 @@
 
                     <!-- ══ FORM DAFTAR ══ -->
                     <div id="formDaftar" style="display:none;">
+
                         <div class="field">
                             <label>Email</label>
                             <div class="field-inner">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </span>
-                                <input type="email" id="regEmail" placeholder="Masukkan Email Aktif"
-                                    autocomplete="email" />
+                                <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" id="regEmail" placeholder="contoh@seara.id" autocomplete="email" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Username</label>
+                            <div class="field-inner">
+                                <span class="field-icon"><i class="fa-solid fa-at"></i></span>
+                                <input type="text" id="regUsername" placeholder="Nama pengguna unik (tanpa spasi)"
+                                    autocomplete="username" oninput="this.value = this.value.replace(/\s/g, '')" />
                             </div>
                         </div>
 
                         <div class="field">
                             <label>Nama Lengkap (Sesuai KTP)</label>
                             <div class="field-inner">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-user"></i>
-                                </span>
+                                <span class="field-icon"><i class="fa-solid fa-user"></i></span>
                                 <input type="text" id="regNama" placeholder="Masukkan Nama Lengkap"
                                     autocomplete="name" />
                             </div>
                         </div>
 
                         <div class="field">
-                            <div class="field">
-                                <label>ALAMAT RUMAH</label>
-                                <div class="field-inner textarea">
-                                    <span class="field-icon">
-                                        <i class="fa-solid fa-house"></i>
-                                    </span>
-                                    <textarea id="regAlamat" rows="3" placeholder="Masukkan Alamat Rumah"></textarea>
-                                </div>
+                            <label>Alamat Rumah</label>
+                            <div class="field-inner textarea">
+                                <span class="field-icon"><i class="fa-solid fa-house"></i></span>
+                                <textarea id="regAlamat" rows="3" placeholder="Masukkan Alamat Rumah"></textarea>
                             </div>
                         </div>
 
                         <div class="field">
                             <label>No. WhatsApp</label>
                             <div class="field-inner">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-phone"></i>
-                                </span>
-                                <input type="tel" id="regWa" placeholder="Masukkan No. WhatsApp" autocomplete="tel" />
+                                <span class="field-icon"><i class="fa-solid fa-phone"></i></span>
+                                <input type="tel" id="regWa" placeholder="Contoh: 08123456789" autocomplete="tel" />
                             </div>
                         </div>
 
                         <div class="field">
                             <label>Kata Sandi</label>
                             <div class="field-inner pwd-row">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+                                <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
                                 <input type="password" id="regPassword" placeholder="Min. 8 karakter"
                                     autocomplete="new-password" />
                                 <button class="toggle-pwd" type="button"
@@ -1219,9 +1268,7 @@
                         <div class="field">
                             <label>Konfirmasi Kata Sandi</label>
                             <div class="field-inner pwd-row">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+                                <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
                                 <input type="password" id="regPasswordConfirm" placeholder="Ulangi kata sandi"
                                     autocomplete="new-password" />
                                 <button class="toggle-pwd" type="button"
@@ -1229,9 +1276,9 @@
                             </div>
                         </div>
 
-                        <button class="btn-login" id="doRegisterBtn" style="margin-top:0.6rem;">Buat Akun Sekarang
-                            →</button>
-
+                        <button class="btn-login" id="doRegisterBtn" style="margin-top:0.6rem;">
+                            Buat Akun Sekarang →
+                        </button>
                     </div>
 
                 </div>
@@ -1301,34 +1348,6 @@
                         }
                     }
                 });
-
-                function wheatStalk(x, y, angle, opacity, color) {
-                    ctx.save(); ctx.translate(x, y); ctx.rotate(angle * Math.PI / 180);
-                    ctx.globalAlpha = opacity; ctx.strokeStyle = color; ctx.lineWidth = 1.4;
-                    ctx.beginPath(); ctx.moveTo(0, 140); ctx.lineTo(0, 0); ctx.stroke();
-                    [20, 46, 72, 98].forEach((gy, i) => {
-                        const side = i % 2 === 0 ? -1 : 1;
-                        ctx.save(); ctx.translate(0, gy); ctx.rotate(side * 28 * Math.PI / 180);
-                        ctx.fillStyle = color; ctx.beginPath();
-                        ctx.ellipse(0, 0, 6, 16, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-                    }); ctx.restore();
-                }
-                wheatStalk(55, 80, -18, 0.20, '#3dba7e');
-                wheatStalk(W - 65, H - 55, 165, 0.18, '#3dba7e');
-
-                function leaf(x, y, angle, opacity, color) {
-                    ctx.save(); ctx.translate(x, y); ctx.rotate(angle * Math.PI / 180);
-                    ctx.globalAlpha = opacity; ctx.fillStyle = color;
-                    ctx.beginPath(); ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(20, -40, 60, -50, 60, -80);
-                    ctx.bezierCurveTo(60, -50, 20, -20, 0, 0); ctx.fill();
-                    ctx.strokeStyle = color; ctx.lineWidth = 0.8; ctx.globalAlpha = opacity * 0.6;
-                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(40, -55); ctx.stroke();
-                    ctx.restore();
-                }
-                leaf(30, H * 0.52, 38, 0.10, '#3dba7e');
-                leaf(W - 30, H * 0.35, -42, 0.08, '#e8c97e');
-                leaf(W * 0.48, H - 20, 10, 0.07, '#3dba7e');
 
                 function bracket(x, y, dx, dy, opacity) {
                     ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 1.2;
@@ -1557,14 +1576,18 @@
             $('doRegisterBtn').addEventListener('click', async e => {
                 e.preventDefault();
                 const email = $('regEmail')?.value.trim();
+                const username = $('regUsername')?.value.trim();
                 const nama = $('regNama')?.value.trim();
                 const alamat = $('regAlamat')?.value.trim();
                 const wa = $('regWa')?.value.trim();
                 const pass = $('regPassword')?.value;
                 const confirm = $('regPasswordConfirm')?.value;
 
-                if (!email || !nama || !alamat || !wa || !pass || !confirm) {
+                if (!email || !username || !nama || !alamat || !wa || !pass || !confirm) {
                     alert('Harap lengkapi semua field pendaftaran.'); return;
+                }
+                if (/\s/.test(username)) {
+                    alert('Username tidak boleh mengandung spasi.'); return;
                 }
                 if (pass !== confirm) { alert('Kata sandi dan konfirmasi tidak cocok.'); return; }
                 if (pass.length < 8) { alert('Kata sandi minimal 8 karakter.'); return; }
@@ -1578,12 +1601,12 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
-                                ?? '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                             'Accept': 'application/json',
                         },
                         body: JSON.stringify({
                             email,
+                            username,               // ← tambah ini
                             nama_lengkap: nama,
                             alamat,
                             no_whatsapp: wa,
@@ -1593,12 +1616,10 @@
                     });
 
                     const data = await res.json();
-
                     if (data.success) {
                         alert(data.message);
                         window.location.href = data.redirect;
                     } else {
-                        // Tampilkan error validasi dari Laravel
                         const errs = data.errors
                             ? Object.values(data.errors).flat().join('\n')
                             : data.message ?? 'Pendaftaran gagal.';
