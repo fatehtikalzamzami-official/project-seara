@@ -67,12 +67,24 @@
 
 /* Product cards */
 .prod-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    display: flex;
     gap: 14px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 6px;
+}
+
+.prod-grid::-webkit-scrollbar {
+    height: 6px;
+}
+.prod-grid::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }
 .prod-grid-6 { grid-template-columns: repeat(6, 1fr); }
-.prod-card { background: white; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: all 0.25s; position: relative; }
+.prod-card { background: white; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; cursor: pointer; transition: all 0.25s; position: relative; min-width: 220px;
+    max-width: 220px;
+    flex-shrink: 0;}
 .prod-card:hover { border-color: var(--green-main); transform: translateY(-4px); box-shadow: var(--shadow-md); }
 .prod-img { width: 100%; aspect-ratio: 1; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; }
 .prod-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 4px; z-index: 1; }
