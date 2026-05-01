@@ -8,6 +8,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *,
         *::before,
@@ -40,7 +42,6 @@
             color: var(--text);
         }
 
-        /* GRAIN OVERLAY */
         body::after {
             content: '';
             position: fixed;
@@ -51,7 +52,6 @@
             opacity: .025;
         }
 
-        /* BACKGROUND GRADIENTS */
         body::before {
             content: '';
             position: fixed;
@@ -64,7 +64,6 @@
                 radial-gradient(ellipse 40% 35% at 55% 50%, rgba(232, 201, 126, .05) 0%, transparent 60%);
         }
 
-        /* CANVAS PATTERN */
         #bg-canvas {
             position: fixed;
             inset: 0;
@@ -72,7 +71,6 @@
             pointer-events: none;
         }
 
-        /* DECO DIV LAYER */
         #bg-deco {
             position: fixed;
             inset: 0;
@@ -81,7 +79,6 @@
             overflow: hidden;
         }
 
-        /* DECO ELEMENTS */
         .deco-ring {
             position: absolute;
             border-radius: 50%;
@@ -124,47 +121,7 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: repeating-linear-gradient(-52deg,
-                    transparent 0px,
-                    transparent 22px,
-                    rgba(61, 186, 126, .032) 22px,
-                    rgba(61, 186, 126, .032) 23px);
-        }
-
-        .deco-cross {
-            position: absolute;
-            pointer-events: none;
-            opacity: .18;
-        }
-
-        .deco-cross::before,
-        .deco-cross::after {
-            content: '';
-            position: absolute;
-            background: var(--leaf);
-        }
-
-        .deco-cross::before {
-            width: 1px;
-            height: 24px;
-            left: 50%;
-            top: 0;
-            transform: translateX(-50%);
-        }
-
-        .deco-cross::after {
-            width: 24px;
-            height: 1px;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-        }
-
-        .deco-dot {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--leaf);
-            pointer-events: none;
+            background: repeating-linear-gradient(-52deg, transparent 0px, transparent 22px, rgba(61, 186, 126, .032) 22px, rgba(61, 186, 126, .032) 23px);
         }
 
         @keyframes drift-a {
@@ -234,7 +191,6 @@
             transition: width .4s ease;
         }
 
-        /* SPLASH WRAPPER */
         #splash {
             position: fixed;
             inset: 0;
@@ -254,7 +210,6 @@
             pointer-events: auto;
         }
 
-        /* PHASE 1 – wordmark */
         #ph1 {
             background: var(--bg);
             display: flex;
@@ -287,7 +242,6 @@
             }
         }
 
-        /* PHASE 3 LAYOUT - fix height */
         #ph3 {
             display: flex;
             flex-direction: row;
@@ -295,7 +249,6 @@
             overflow: hidden;
             position: relative;
             height: 100vh;
-            /* kunci agar child bisa punya tinggi terbatas */
         }
 
         .main-content {
@@ -441,26 +394,6 @@
             box-shadow: 0 8px 24px rgba(61, 186, 126, .3);
         }
 
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid rgba(61, 186, 126, .3);
-            color: var(--muted);
-            padding: .75rem 1.8rem;
-            border-radius: 40px;
-            font-size: .75rem;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all .25s;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--leaf);
-            color: var(--leaf);
-        }
-
-        /* CARD STACK */
         .right-col {
             flex: 0 0 auto;
             width: clamp(320px, 44vw, 580px);
@@ -518,7 +451,7 @@
             color: var(--leaf);
         }
 
-        /* ─── LOGIN PANEL – SCROLLABLE FIX (height terbatas) ─── */
+        /* ─── LOGIN PANEL ─── */
         .login-panel {
             width: 0;
             flex-shrink: 0;
@@ -531,28 +464,24 @@
         }
 
         #ph3.login-active .login-panel {
-            width: 480px;
+            width: 500px;
             overflow-y: auto;
             overflow-x: hidden;
             height: 100vh;
-            /* batasi tinggi, lalu scroll */
         }
 
         .login-inner {
-            width: 480px;
+            width: 500px;
             min-height: 100%;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 2.5rem 2rem 4rem;
-            /* tambah padding bawah */
-            border-left: none;
+            padding: 2.5rem 2.2rem 4rem;
             box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
             position: relative;
         }
 
-        /* Tombol close X */
         .login-close-x {
             position: absolute;
             top: 20px;
@@ -579,48 +508,9 @@
             background: #f0fdf4;
         }
 
-        .login-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: #eef9f1;
-            border: 1px solid rgba(61, 186, 126, 0.3);
-            border-radius: 40px;
-            padding: 0.35rem 1rem;
-            font-size: 0.7rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #1e6645;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            width: fit-content;
-        }
-
-        .login-badge i {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--leaf);
-            animation: pulse-dot 1.8s ease infinite;
-        }
-
-        @keyframes pulse-dot {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(1.5);
-            }
-        }
-
         .login-header {
-            margin-bottom: 1.2rem;
-            padding-bottom: 1.6rem;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.4rem;
             border-bottom: 1px solid #f0f4f2;
             display: flex;
             align-items: center;
@@ -666,22 +556,14 @@
 
         .login-header-logo {
             flex-shrink: 0;
-            width: 100px;
-            height: 100px;
-            border-radius: 16px;
-            border: contain;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #f8faf9;
-            color: #8faa9d;
-            font-size: 0.6rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            text-align: center;
-            line-height: 1.5;
-            font-weight: 600;
-            padding: 0.6rem;
+            object-fit: contain;
         }
 
         /* Auth Tabs */
@@ -692,7 +574,7 @@
             background: #f1f5f4;
             border-radius: 16px;
             padding: 4px;
-            margin-bottom: 1.0rem;
+            margin-bottom: 1.4rem;
         }
 
         .auth-tab {
@@ -731,8 +613,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.6rem;
-            margin-bottom: 2.4rem;
-            margin-top: 0.4rem;
+            margin-bottom: 1.6rem;
         }
 
         .btn-google:hover {
@@ -747,12 +628,11 @@
             height: 18px;
         }
 
-        /* Divider */
         .form-divider {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2.2rem;
         }
 
         .form-divider::before,
@@ -770,9 +650,14 @@
             text-transform: uppercase;
         }
 
+        /* Divider text dinamis */
+        #dividerText {
+            /* updated by JS */
+        }
+
         /* Input Fields */
         .field {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
 
         .field label {
@@ -782,7 +667,7 @@
             letter-spacing: 0.08em;
             font-weight: 600;
             color: #3d6951;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
         }
 
         .field-inner {
@@ -791,27 +676,37 @@
 
         .field-icon {
             position: absolute;
-            left: 1rem;
+            left: 1.2rem;
             top: 50%;
             transform: translateY(-50%);
             font-size: 1rem;
             pointer-events: none;
-            opacity: 0.5;
+            color: #0a2118;
         }
 
-        .field input {
+        .field input,
+        .field textarea {
             width: 100%;
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 14px;
-            padding: 0.85rem 1rem 0.85rem 2.6rem;
-            font-size: 0.9rem;
+            padding: 0.82rem 1rem 0.82rem 2.6rem;
+            font-size: 0.88rem;
             color: #1a2e24;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.2s;
+            resize: none;
+            left: 10rem;
         }
 
-        .field input:focus {
+        .field textarea {
+            min-height: 72px;
+            padding-top: 2.0rem;
+            padding-bottom: 0.6rem;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
             outline: none;
             border-color: var(--leaf);
             box-shadow: 0 0 0 3px rgba(61, 186, 126, 0.12);
@@ -821,7 +716,10 @@
             color: #cbd5e1;
         }
 
-        /* Password Row */
+        .field textarea::placeholder {
+            color: #cbd5e1;
+        }
+
         .pwd-row input {
             padding-right: 4.5rem;
         }
@@ -851,7 +749,7 @@
             height: 4px;
             border-radius: 4px;
             background: #e2e8f0;
-            margin-top: 0.6rem;
+            margin-top: 0.5rem;
             overflow: hidden;
         }
 
@@ -862,11 +760,20 @@
             transition: width 0.3s, background 0.3s;
         }
 
+        .strength-label {
+            font-size: 0.65rem;
+            color: #8ba396;
+            margin-top: 0.3rem;
+            height: 14px;
+            transition: color 0.3s;
+        }
+
+        /* Remember + Lupa — hanya muncul saat tab Masuk */
         .options-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 0.8rem 0 1.5rem;
+            margin: 1.6rem 0 1.2rem;
             font-size: 0.8rem;
         }
 
@@ -896,7 +803,8 @@
             text-decoration: underline;
         }
 
-        /* Login Button */
+
+        /* Submit Button */
         .btn-login {
             width: 100%;
             background: linear-gradient(105deg, #3dba7e 0%, #2a9d6e 100%);
@@ -910,7 +818,7 @@
             color: white;
             cursor: pointer;
             transition: all 0.25s;
-            margin-bottom: 1.2rem;
+            margin-top: 1.0rem;
             font-family: 'DM Sans', sans-serif;
             box-shadow: 0 4px 12px rgba(61, 186, 126, 0.25);
             position: relative;
@@ -940,27 +848,11 @@
             background: linear-gradient(105deg, #52dda0 0%, #3dba7e 100%);
         }
 
-        .reg-row {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #6b8378;
-        }
-
-        .reg-row a {
-            color: var(--leaf);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .reg-row a:hover {
-            text-decoration: underline;
-        }
-
         .trust-row {
             display: flex;
             justify-content: center;
             gap: 1.2rem;
-            margin-top: 1.8rem;
+            margin-top: 1.6rem;
             padding-top: 1.2rem;
             border-top: 1px solid #e2e8f0;
         }
@@ -972,10 +864,6 @@
             font-size: 0.65rem;
             color: #8ba396;
             letter-spacing: 0.03em;
-        }
-
-        .trust-item .ti {
-            font-size: 0.85rem;
         }
 
         /* STAT TICKER */
@@ -1023,20 +911,17 @@
             font-weight: 700;
         }
 
-        /* RESPONSIVE: mobile layout dengan panel scroll penuh */
+        /* RESPONSIVE */
         @media (max-width: 900px) {
             #ph3 {
                 flex-direction: column;
                 height: 100%;
-                /* fallback */
             }
 
-            /* Sembunyikan main content saat login aktif di mobile */
             #ph3.login-active .main-content {
                 display: none;
             }
 
-            /* Panel login menjadi slide-in dari kanan, full height, scrollable */
             .login-panel {
                 position: fixed !important;
                 top: 0;
@@ -1184,25 +1069,29 @@
                 </div>
             </div>
 
-            <!-- Login Panel - Scrollable -->
+            <!-- ═══════════════════════════════════════
+                 LOGIN PANEL – Masuk / Daftar
+            ════════════════════════════════════════ -->
             <div class="login-panel" id="loginPanel">
                 <div class="login-inner">
                     <button class="login-close-x" id="closeLoginBtn" title="Tutup">✕</button>
 
+                    <!-- Header -->
                     <div class="login-header">
                         <div class="login-header-text">
-                            <h2>Selamat datang<br>di <span>SEARA</span></h2>
-                            <p>Masuk atau buat akun baru untuk<br>mulai bertransaksi.</p>
+                            <h2 id="panelTitle">Selamat datang<br>di <span>SEARA</span></h2>
+                            <p id="panelSubtitle">Masuk untuk mulai bertransaksi.</p>
                         </div>
-                        <img src="{{ asset('assets/logo-dark.png') }}" alt="SEARA Logo" class="login-header-logo"
-                            id="headerLogo">
+                        <img src="{{ asset('assets/logo-dark.png') }}" alt="SEARA Logo" class="login-header-logo">
                     </div>
 
+                    <!-- Auth Tabs -->
                     <div class="auth-tabs">
                         <button class="auth-tab active" id="tabMasuk" onclick="switchTab('masuk')">Masuk</button>
                         <button class="auth-tab" id="tabDaftar" onclick="switchTab('daftar')">Daftar</button>
                     </div>
 
+                    <!-- Google -->
                     <button class="btn-google" id="googleBtn">
                         <svg viewBox="0 0 24 24" fill="none">
                             <path
@@ -1218,61 +1107,132 @@
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                 fill="#EA4335" />
                         </svg>
-                        Lanjutkan dengan Google
+                        <span id="googleBtnText">Lanjutkan dengan Google</span>
                     </button>
 
-                    <div class="form-divider"><span>atau masuk dengan email</span></div>
+                    <!-- Divider -->
+                    <div class="form-divider">
+                        <span id="dividerText">atau masuk dengan email</span>
+                    </div>
 
-                    <div class="field">
-                        <label>Email / Nomor Ponsel</label>
-                        <div class="field-inner">
-                            <span class="field-icon">✉️</span>
-                            <input type="email" id="loginEmail" placeholder="contoh@seara.id" autocomplete="email" />
+                    <!-- ══ FORM MASUK ══ -->
+                    <div id="formMasuk">
+                        <div class="field">
+                            <label>Email / Nomor Ponsel</label>
+                            <div class="field-inner">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </span>
+                                <input type="email" id="loginEmail" placeholder="contoh@seara.id"
+                                    autocomplete="email" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="field" id="namaField" style="display:none;">
-                        <label>Nama Lengkap</label>
-                        <div class="field-inner">
-                            <span class="field-icon">👤</span>
-                            <input type="text" placeholder="Nama sesuai KTP" autocomplete="name" />
+                        <div class="field">
+                            <label>Kata Sandi</label>
+                            <div class="field-inner pwd-row">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" id="loginPassword" placeholder="Kata sandi Anda"
+                                    autocomplete="current-password" />
+                                <button class="toggle-pwd" type="button"
+                                    onclick="togglePwd('loginPassword', this)">Lihat</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="field">
-                        <label>Kata Sandi</label>
-                        <div class="field-inner pwd-row">
-                            <span class="field-icon">🔒</span>
-                            <input type="password" id="loginPassword" placeholder="Min. 8 karakter"
-                                autocomplete="current-password" />
-                            <button class="toggle-pwd" type="button" id="togglePwdBtn"
-                                onclick="togglePwd()">Lihat</button>
+                        <div class="options-row">
+                            <label class="check-label">
+                                <input type="checkbox" id="rememberCheck" /> Ingat saya
+                            </label>
+                            <a href="#" class="forgot" id="forgotLink">Lupa kata sandi?</a>
                         </div>
-                        <div class="strength-bar">
-                            <div class="strength-fill" id="strengthFill"></div>
+
+                        <button class="btn-login" id="doLoginBtn">Masuk ke Dashboard</button>
+
+                    </div>
+
+                    <!-- ══ FORM DAFTAR ══ -->
+                    <div id="formDaftar" style="display:none;">
+                        <div class="field">
+                            <label>Email</label>
+                            <div class="field-inner">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </span>
+                                <input type="email" id="regEmail" placeholder="Masukkan Email Aktif"
+                                    autocomplete="email" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="field" id="konfirmasiField" style="display:none;">
-                        <label>Konfirmasi Kata Sandi</label>
-                        <div class="field-inner">
-                            <span class="field-icon">🔒</span>
-                            <input type="password" placeholder="Ulangi kata sandi" />
+                        <div class="field">
+                            <label>Nama Lengkap (Sesuai KTP)</label>
+                            <div class="field-inner">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                                <input type="text" id="regNama" placeholder="Masukkan Nama Lengkap"
+                                    autocomplete="name" />
+                            </div>
                         </div>
+
+                        <div class="field">
+                            <div class="field">
+                                <label>ALAMAT RUMAH</label>
+                                <div class="field-inner textarea">
+                                    <span class="field-icon">
+                                        <i class="fa-solid fa-house"></i>
+                                    </span>
+                                    <textarea id="regAlamat" rows="3" placeholder="Masukkan Alamat Rumah"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>No. WhatsApp</label>
+                            <div class="field-inner">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                </span>
+                                <input type="tel" id="regWa" placeholder="Masukkan No. WhatsApp" autocomplete="tel" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Kata Sandi</label>
+                            <div class="field-inner pwd-row">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" id="regPassword" placeholder="Min. 8 karakter"
+                                    autocomplete="new-password" />
+                                <button class="toggle-pwd" type="button"
+                                    onclick="togglePwd('regPassword', this)">Lihat</button>
+                            </div>
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-label" id="strengthLabel"></div>
+                        </div>
+
+                        <div class="field">
+                            <label>Konfirmasi Kata Sandi</label>
+                            <div class="field-inner pwd-row">
+                                <span class="field-icon">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" id="regPasswordConfirm" placeholder="Ulangi kata sandi"
+                                    autocomplete="new-password" />
+                                <button class="toggle-pwd" type="button"
+                                    onclick="togglePwd('regPasswordConfirm', this)">Lihat</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-login" id="doRegisterBtn" style="margin-top:0.6rem;">Buat Akun Sekarang
+                            →</button>
+
                     </div>
 
-                    <div class="options-row" id="optionsRow">
-                        <label class="check-label">
-                            <input type="checkbox" id="rememberCheck" /> Ingat saya
-                        </label>
-                        <a href="#" class="forgot" id="forgotLink">Lupa kata sandi?</a>
-                    </div>
-
-                    <button class="btn-login" id="doLoginBtn">Masuk ke Dashboard →</button>
-
-                    <div class="reg-row">
-                        Belum punya akun? <a href="#" id="registerRedirect">Daftar sekarang</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1283,7 +1243,7 @@
     </div>
 
     <script>
-        /* ── BACKGROUND CANVAS PATTERN (sama seperti sebelumnya) ── */
+        /* ── BACKGROUND CANVAS ── */
         (function () {
             const canvas = document.getElementById('bg-canvas');
             if (!canvas) return;
@@ -1292,14 +1252,11 @@
             function draw() {
                 const W = canvas.offsetWidth || window.innerWidth;
                 const H = canvas.offsetHeight || window.innerHeight;
-                canvas.width = W;
-                canvas.height = H;
+                canvas.width = W; canvas.height = H;
                 ctx.clearRect(0, 0, W, H);
 
                 const green = 'rgba(61,186,126,';
                 const gold = 'rgba(232,201,126,';
-
-                // 1. HEX CLUSTERS
                 const hexR = 26;
                 const hexW = hexR * Math.sqrt(3);
                 const hexH = hexR * 2;
@@ -1321,10 +1278,8 @@
 
                 clusters.forEach(cl => {
                     const pad = hexR * 2;
-                    const startX = cl.cx - cl.r - pad;
-                    const startY = cl.cy - cl.r - pad;
-                    const endX = cl.cx + cl.r + pad;
-                    const endY = cl.cy + cl.r + pad;
+                    const startX = cl.cx - cl.r - pad, startY = cl.cy - cl.r - pad;
+                    const endX = cl.cx + cl.r + pad, endY = cl.cy + cl.r + pad;
                     const rows = Math.ceil((endY - startY) / (hexH * 0.75)) + 2;
                     const cols = Math.ceil((endX - startX) / hexW) + 2;
 
@@ -1336,151 +1291,81 @@
                             if (dist > cl.r) continue;
                             const fade = Math.pow(1 - dist / cl.r, 1.4);
                             const alpha = fade * cl.oMax;
-                            ctx.save();
-                            ctx.globalAlpha = alpha;
-                            ctx.strokeStyle = '#3dba7e';
-                            ctx.lineWidth = 0.9;
-                            hexPath(hx, hy, hexR - 1);
-                            ctx.stroke();
-                            ctx.fillStyle = '#3dba7e';
-                            ctx.globalAlpha = alpha * 1.8;
-                            ctx.beginPath();
-                            ctx.arc(hx, hy, 1.2, 0, Math.PI * 2);
-                            ctx.fill();
+                            ctx.save(); ctx.globalAlpha = alpha;
+                            ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.9;
+                            hexPath(hx, hy, hexR - 1); ctx.stroke();
+                            ctx.fillStyle = '#3dba7e'; ctx.globalAlpha = alpha * 1.8;
+                            ctx.beginPath(); ctx.arc(hx, hy, 1.2, 0, Math.PI * 2); ctx.fill();
                             ctx.restore();
                         }
                     }
                 });
 
-                // 2. WHEAT STALKS
                 function wheatStalk(x, y, angle, opacity, color) {
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(angle * Math.PI / 180);
-                    ctx.globalAlpha = opacity;
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 1.4;
-                    ctx.beginPath();
-                    ctx.moveTo(0, 140); ctx.lineTo(0, 0);
-                    ctx.stroke();
-                    const grains = [20, 46, 72, 98];
-                    grains.forEach((gy, i) => {
+                    ctx.save(); ctx.translate(x, y); ctx.rotate(angle * Math.PI / 180);
+                    ctx.globalAlpha = opacity; ctx.strokeStyle = color; ctx.lineWidth = 1.4;
+                    ctx.beginPath(); ctx.moveTo(0, 140); ctx.lineTo(0, 0); ctx.stroke();
+                    [20, 46, 72, 98].forEach((gy, i) => {
                         const side = i % 2 === 0 ? -1 : 1;
-                        ctx.save();
-                        ctx.translate(0, gy);
-                        ctx.rotate(side * 28 * Math.PI / 180);
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.ellipse(0, 0, 6, 16, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                    });
-                    ctx.restore();
+                        ctx.save(); ctx.translate(0, gy); ctx.rotate(side * 28 * Math.PI / 180);
+                        ctx.fillStyle = color; ctx.beginPath();
+                        ctx.ellipse(0, 0, 6, 16, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+                    }); ctx.restore();
                 }
                 wheatStalk(55, 80, -18, 0.20, '#3dba7e');
                 wheatStalk(W - 65, H - 55, 165, 0.18, '#3dba7e');
 
-                // 3. LEAVES
                 function leaf(x, y, angle, opacity, color) {
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(angle * Math.PI / 180);
-                    ctx.globalAlpha = opacity;
-                    ctx.fillStyle = color;
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
+                    ctx.save(); ctx.translate(x, y); ctx.rotate(angle * Math.PI / 180);
+                    ctx.globalAlpha = opacity; ctx.fillStyle = color;
+                    ctx.beginPath(); ctx.moveTo(0, 0);
                     ctx.bezierCurveTo(20, -40, 60, -50, 60, -80);
-                    ctx.bezierCurveTo(60, -50, 20, -20, 0, 0);
-                    ctx.fill();
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 0.8;
-                    ctx.globalAlpha = opacity * 0.6;
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0); ctx.lineTo(40, -55);
-                    ctx.stroke();
+                    ctx.bezierCurveTo(60, -50, 20, -20, 0, 0); ctx.fill();
+                    ctx.strokeStyle = color; ctx.lineWidth = 0.8; ctx.globalAlpha = opacity * 0.6;
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(40, -55); ctx.stroke();
                     ctx.restore();
                 }
                 leaf(30, H * 0.52, 38, 0.10, '#3dba7e');
                 leaf(W - 30, H * 0.35, -42, 0.08, '#e8c97e');
                 leaf(W * 0.48, H - 20, 10, 0.07, '#3dba7e');
 
-                // 4. BRACKETS
                 function bracket(x, y, dx, dy, opacity) {
-                    ctx.save();
-                    ctx.globalAlpha = opacity;
-                    ctx.strokeStyle = '#3dba7e';
-                    ctx.lineWidth = 1.2;
-                    ctx.beginPath();
-                    ctx.moveTo(x + dx * 36, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 36);
-                    ctx.stroke();
-                    ctx.restore();
+                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 1.2;
+                    ctx.beginPath(); ctx.moveTo(x + dx * 36, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 36);
+                    ctx.stroke(); ctx.restore();
                 }
-                bracket(30, 24, 1, 1, 0.32);
-                bracket(W - 30, 24, -1, 1, 0.32);
-                bracket(30, H - 24, 1, -1, 0.24);
-                bracket(W - 30, H - 24, -1, -1, 0.24);
+                bracket(30, 24, 1, 1, 0.32); bracket(W - 30, 24, -1, 1, 0.32);
+                bracket(30, H - 24, 1, -1, 0.24); bracket(W - 30, H - 24, -1, -1, 0.24);
 
-                // 5. CROSSES
                 function cross(x, y, size, opacity) {
-                    ctx.save();
-                    ctx.globalAlpha = opacity;
-                    ctx.strokeStyle = '#3dba7e';
-                    ctx.lineWidth = 0.8;
-                    ctx.beginPath();
-                    ctx.moveTo(x - size, y); ctx.lineTo(x + size, y);
-                    ctx.moveTo(x, y - size); ctx.lineTo(x, y + size);
-                    ctx.stroke();
-                    ctx.restore();
+                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.8;
+                    ctx.beginPath(); ctx.moveTo(x - size, y); ctx.lineTo(x + size, y);
+                    ctx.moveTo(x, y - size); ctx.lineTo(x, y + size); ctx.stroke(); ctx.restore();
                 }
-                cross(W * 0.38, H * 0.18, 10, 0.35);
-                cross(W * 0.22, H * 0.68, 10, 0.28);
-                cross(W * 0.62, H * 0.42, 10, 0.32);
-                cross(W * 0.72, H * 0.78, 10, 0.24);
-                cross(W * 0.85, H * 0.22, 8, 0.26);
+                cross(W * .38, H * .18, 10, .35); cross(W * .22, H * .68, 10, .28);
+                cross(W * .62, H * .42, 10, .32); cross(W * .72, H * .78, 10, .24);
 
-                // 6. DOTS
                 const dots = [
-                    { x: W * .30, y: H * .24, r: 3, o: .30, c: green },
-                    { x: W * .48, y: H * .55, r: 2, o: .25, c: green },
-                    { x: W * .58, y: H * .72, r: 2.5, o: .22, c: green },
-                    { x: W * .78, y: H * .34, r: 4, o: .18, c: gold },
-                    { x: W * .18, y: H * .82, r: 2, o: .20, c: green },
-                    { x: W * .90, y: H * .60, r: 3, o: .15, c: gold },
+                    { x: W * .30, y: H * .24, r: 3, o: .30, c: green }, { x: W * .48, y: H * .55, r: 2, o: .25, c: green },
+                    { x: W * .78, y: H * .34, r: 4, o: .18, c: gold }, { x: W * .90, y: H * .60, r: 3, o: .15, c: gold },
                 ];
                 dots.forEach(d => {
-                    ctx.beginPath();
-                    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-                    ctx.fillStyle = d.c + '1)';
-                    ctx.globalAlpha = d.o;
-                    ctx.fill();
+                    ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                    ctx.fillStyle = d.c + '1)'; ctx.globalAlpha = d.o; ctx.fill();
                 });
 
-                // 7. DASHED LINES
                 function dashedLine(x1, y1, x2, y2, opacity) {
-                    ctx.save();
-                    ctx.globalAlpha = opacity;
-                    ctx.strokeStyle = '#3dba7e';
-                    ctx.lineWidth = 0.7;
-                    ctx.setLineDash([4, 10]);
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.restore();
+                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e';
+                    ctx.lineWidth = 0.7; ctx.setLineDash([4, 10]);
+                    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+                    ctx.setLineDash([]); ctx.restore();
                 }
                 dashedLine(0, H * .33, W * .28, H * .33, 0.14);
                 dashedLine(W * .72, H * .67, W, H * .67, 0.14);
 
-                // 8. ARCS
                 function arc(cx, cy, r, startA, endA, opacity, color) {
-                    ctx.save();
-                    ctx.globalAlpha = opacity;
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 0.8;
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r, startA, endA);
-                    ctx.stroke();
-                    ctx.restore();
+                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = color; ctx.lineWidth = 0.8;
+                    ctx.beginPath(); ctx.arc(cx, cy, r, startA, endA); ctx.stroke(); ctx.restore();
                 }
                 arc(W + 60, -60, 420, Math.PI * .55, Math.PI * 1.05, 0.12, '#3dba7e');
                 arc(-60, H + 60, 280, -Math.PI * .3, Math.PI * .2, 0.10, '#3dba7e');
@@ -1496,7 +1381,7 @@
             'use strict';
             const $ = id => document.getElementById(id);
 
-            /* PROGRESS BAR */
+            /* ── PROGRESS BAR ── */
             const pbar = $('pbar');
             function prog(v) { if (pbar) pbar.style.width = v + '%'; }
             prog(10);
@@ -1506,17 +1391,15 @@
                 prog(100);
                 $('ph1').classList.remove('visible');
                 $('ph3').classList.add('visible');
-                setTimeout(() => {
-                    const ev = new Event('resize');
-                    window.dispatchEvent(ev);
-                }, 50);
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
                 setTimeout(() => { if (pbar) pbar.style.opacity = '0'; }, 700);
             }, 1700);
 
-            /* ROTATING TEXT */
+            /* ── ROTATING TEXT ── */
             const phrases = ['langsung dari sumbernya.', 'tanpa perantara, lebih adil.', 'dari petani, untuk Anda.', 'segar, terpercaya, terdekat.', 'harga terbaik tiap hari.'];
             let phraseIdx = 0;
             const rotEl = $('rotText');
+
             function rotatePhrases() {
                 phraseIdx = (phraseIdx + 1) % phrases.length;
                 rotEl.classList.remove('enter');
@@ -1527,12 +1410,9 @@
                     rotEl.classList.add('enter');
                 }, 420);
             }
-            setTimeout(() => {
-                rotEl.classList.add('enter');
-                setInterval(rotatePhrases, 3000);
-            }, 2200);
+            setTimeout(() => { rotEl.classList.add('enter'); setInterval(rotatePhrases, 3000); }, 2200);
 
-            /* CARD CAROUSEL */
+            /* ── CARD CAROUSEL ── */
             (function () {
                 const cards = Array.from(document.querySelectorAll('.card'));
                 const N = cards.length;
@@ -1545,62 +1425,76 @@
                     { x: '86%', y: '104px', s: .55, z: 5, o: .18, r: 25 },
                 ];
                 let order = cards.map((_, i) => i);
+
                 function applyAll() {
                     order.forEach((ci, pi) => {
-                        const c = cards[ci];
-                        const p = pos[pi];
-                        c.style.zIndex = p.z;
-                        c.style.opacity = p.o;
+                        const c = cards[ci], p = pos[pi];
+                        c.style.zIndex = p.z; c.style.opacity = p.o;
                         c.style.transform = `translateX(${p.x}) translateY(${p.y}) scale(${p.s}) rotate(${p.r}deg)`;
                         c.style.boxShadow = pi === 0 ? '0 28px 60px rgba(0,0,0,.6), 0 0 0 1.5px rgba(61,186,126,.4)' : '0 16px 40px rgba(0,0,0,.35)';
                     });
                 }
+
                 function rotate() {
                     const front = cards[order[0]];
                     front.style.transition = 'transform .5s cubic-bezier(.5,0,1,.8), opacity .45s ease';
                     front.style.transform = `translateX(-140%) translateY(80px) scale(.42) rotate(-18deg)`;
-                    front.style.opacity = '0';
-                    front.style.zIndex = '1';
+                    front.style.opacity = '0'; front.style.zIndex = '1';
                     setTimeout(() => {
                         order.push(order.shift());
                         const lp = pos[N - 1];
                         front.style.transition = 'none';
                         front.style.transform = `translateX(${lp.x}) translateY(${lp.y}) scale(${lp.s}) rotate(${lp.r}deg)`;
-                        front.style.opacity = String(lp.o);
-                        front.style.zIndex = String(lp.z);
+                        front.style.opacity = String(lp.o); front.style.zIndex = String(lp.z);
                         void front.getBoundingClientRect();
                         cards.forEach(c => { c.style.transition = 'transform .9s cubic-bezier(.25,.9,.35,1.05), opacity .9s ease, box-shadow .4s ease'; });
                         applyAll();
                     }, 520);
                 }
+
                 applyAll();
                 setInterval(rotate, 2800);
             })();
 
-            /* LOGIN PANEL CONTROLS */
+            /* ── PANEL OPEN / CLOSE ── */
             window.openLogin = function () { $('ph3').classList.add('login-active'); };
-            const closeBtn = $('closeLoginBtn');
-            if (closeBtn) closeBtn.addEventListener('click', () => { $('ph3').classList.remove('login-active'); });
+            $('closeLoginBtn').addEventListener('click', () => $('ph3').classList.remove('login-active'));
 
+            /* ── TAB SWITCH ── */
             window.switchTab = function (tab) {
                 const isMasuk = tab === 'masuk';
-                document.getElementById('tabMasuk').classList.toggle('active', isMasuk);
-                document.getElementById('tabDaftar').classList.toggle('active', !isMasuk);
-                document.getElementById('namaField').style.display = isMasuk ? 'none' : 'block';
-                document.getElementById('konfirmasiField').style.display = isMasuk ? 'none' : 'block';
-                document.getElementById('optionsRow').style.display = isMasuk ? 'flex' : 'none';
-                document.getElementById('doLoginBtn').textContent = isMasuk ? 'Masuk ke Dashboard →' : 'Buat Akun Sekarang →';
+
+                $('tabMasuk').classList.toggle('active', isMasuk);
+                $('tabDaftar').classList.toggle('active', !isMasuk);
+
+                $('formMasuk').style.display = isMasuk ? 'block' : 'none';
+                $('formDaftar').style.display = isMasuk ? 'none' : 'block';
+
+                // Header dinamis
+                $('panelTitle').innerHTML = isMasuk
+                    ? 'Selamat datang<br>di <span>SEARA</span>'
+                    : 'Buat akun<br><span>SEARA</span> Anda';
+                $('panelSubtitle').textContent = isMasuk
+                    ? 'Masuk untuk mulai bertransaksi.'
+                    : 'Daftar gratis, mulai berjualan & berbelanja.';
+
+                // Teks pendukung
+                $('googleBtnText').textContent = isMasuk ? 'Lanjutkan dengan Google' : 'Daftar dengan Google';
+                $('dividerText').textContent = isMasuk ? 'atau masuk dengan email' : 'atau daftar dengan email';
             };
 
-            window.togglePwd = function () {
-                const inp = $('loginPassword');
-                const btn = $('togglePwdBtn');
-                if (inp.type === 'password') { inp.type = 'text'; if (btn) btn.textContent = 'Sembunyikan'; }
-                else { inp.type = 'password'; if (btn) btn.textContent = 'Lihat'; }
+            /* ── TOGGLE PASSWORD ── */
+            window.togglePwd = function (inputId, btn) {
+                const inp = $(inputId);
+                if (!inp) return;
+                if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Sembunyikan'; }
+                else { inp.type = 'password'; btn.textContent = 'Lihat'; }
             };
 
-            const pwdInp = $('loginPassword');
+            /* ── PASSWORD STRENGTH ── */
+            const pwdInp = $('regPassword');
             const fill = $('strengthFill');
+            const label = $('strengthLabel');
             if (pwdInp && fill) {
                 pwdInp.addEventListener('input', () => {
                     const v = pwdInp.value;
@@ -1610,30 +1504,59 @@
                     if (/[A-Z]/.test(v)) s += 20;
                     if (/[0-9]/.test(v)) s += 20;
                     if (/[^A-Za-z0-9]/.test(v)) s += 15;
-                    fill.style.width = Math.min(s, 100) + '%';
-                    fill.style.background = s < 35 ? '#e05c5c' : s < 65 ? '#e8c97e' : '#3dba7e';
+                    const score = Math.min(s, 100);
+                    fill.style.width = score + '%';
+                    if (score < 35) { fill.style.background = '#e05c5c'; if (label) { label.textContent = 'Kata sandi terlalu lemah'; label.style.color = '#e05c5c'; } }
+                    else if (score < 65) { fill.style.background = '#e8c97e'; if (label) { label.textContent = 'Kata sandi cukup'; label.style.color = '#c49d3e'; } }
+                    else { fill.style.background = '#3dba7e'; if (label) { label.textContent = 'Kata sandi kuat'; label.style.color = '#3dba7e'; } }
                 });
             }
 
-            const doLoginBtn = $('doLoginBtn');
-            if (doLoginBtn) {
-                doLoginBtn.addEventListener('click', e => {
-                    e.preventDefault();
-                    const email = $('loginEmail')?.value.trim();
-                    const pass = $('loginPassword')?.value.trim();
-                    if (!email || !pass) { alert('Harap isi email dan kata sandi.'); return; }
-                    alert(`✨ Selamat datang, ${email}!\nMengarahkan ke dashboard…`);
-                });
-            }
-            const googleBtn = $('googleBtn');
-            if (googleBtn) googleBtn.addEventListener('click', () => alert('Login Google segera hadir.'));
-            const regLink = $('registerRedirect');
-            if (regLink) regLink.addEventListener('click', e => { e.preventDefault(); alert('Halaman daftar segera hadir.'); });
-            const forgotLink = $('forgotLink');
-            if (forgotLink) forgotLink.addEventListener('click', e => { e.preventDefault(); alert('Reset password akan dikirim ke email terdaftar.'); });
+            /* ── LOGIN SUBMIT ── */
+            $('doLoginBtn').addEventListener('click', e => {
+                e.preventDefault();
+                const email = $('loginEmail')?.value.trim();
+                const pass = $('loginPassword')?.value.trim();
+                if (!email || !pass) { alert('Harap isi email dan kata sandi.'); return; }
+                // TODO: ganti dengan AJAX / form submit Laravel
+                alert(`✨ Selamat datang, ${email}!\nMengarahkan ke dashboard…`);
+            });
 
-            /* TICKER */
-            const stats = [{ l: 'Petani Aktif', v: '12.400+' }, { l: 'Transaksi Hari Ini', v: '3.218' }, { l: 'Produk Tersedia', v: '8.200+' }, { l: 'Provinsi Terjangkau', v: '27' }, { l: 'Nilai Transaksi Bulan Ini', v: 'Rp 4,2M' }, { l: 'Rating Kepuasan', v: '4.9 / 5' }];
+            /* ── REGISTER SUBMIT ── */
+            $('doRegisterBtn').addEventListener('click', e => {
+                e.preventDefault();
+                const email = $('regEmail')?.value.trim();
+                const nama = $('regNama')?.value.trim();
+                const alamat = $('regAlamat')?.value.trim();
+                const wa = $('regWa')?.value.trim();
+                const pass = $('regPassword')?.value;
+                const confirm = $('regPasswordConfirm')?.value;
+
+                if (!email || !nama || !alamat || !wa || !pass || !confirm) {
+                    alert('Harap lengkapi semua field pendaftaran.'); return;
+                }
+                if (pass !== confirm) {
+                    alert('Kata sandi dan konfirmasi tidak cocok.'); return;
+                }
+                if (pass.length < 8) {
+                    alert('Kata sandi minimal 8 karakter.'); return;
+                }
+                // TODO: ganti dengan AJAX / form submit Laravel
+                alert(`🌱 Akun berhasil dibuat untuk ${nama}!\nSilakan cek email ${email} untuk verifikasi.`);
+            });
+
+            /* ── GOOGLE ── */
+            $('googleBtn').addEventListener('click', () => alert('Login Google segera hadir.'));
+
+            /* ── FORGOT ── */
+            $('forgotLink').addEventListener('click', e => { e.preventDefault(); alert('Link reset password akan dikirim ke email Anda.'); });
+
+            /* ── TICKER ── */
+            const stats = [
+                { l: 'TIM DEVELOPER', v: 'POLITEKNIK MANUFAKTUR NEGERI BANGKA BELITUNG' }, { l: 'Eksplor Produk Segar', v: 'Dapatkan hasil tani langsung dari petani' },
+                { l: 'Mulai Jual Hasil Panen', v: 'Pasarkan produk pertanianmu lebih luas' }, { l: 'Provinsi Terjangkau', v: '27' },
+                { l: 'Gabung Sekarang', v: 'Bangun ekosistem pertanian digital bersama' }, { l: 'Dijamin Kepuasan Berbelanja', v: '⭐ Bintang 5' },
+            ];
             const doubled = [...stats, ...stats];
             const track = $('tickerTrack');
             if (track) {
