@@ -287,13 +287,15 @@
             }
         }
 
-        /* PHASE 3 LAYOUT */
+        /* PHASE 3 LAYOUT - fix height */
         #ph3 {
             display: flex;
             flex-direction: row;
             background: var(--bg);
             overflow: hidden;
             position: relative;
+            height: 100vh;
+            /* kunci agar child bisa punya tinggi terbatas */
         }
 
         .main-content {
@@ -516,7 +518,7 @@
             color: var(--leaf);
         }
 
-        /* ─── LOGIN PANEL – PROFESSIONAL STYLE ─── */
+        /* ─── LOGIN PANEL – SCROLLABLE FIX (height terbatas) ─── */
         .login-panel {
             width: 0;
             flex-shrink: 0;
@@ -525,17 +527,15 @@
             transition: width .75s cubic-bezier(.2, .9, .4, 1.05);
             position: relative;
             z-index: 15;
+            background: #ffffff;
         }
 
         #ph3.login-active .login-panel {
             width: 480px;
             overflow-y: auto;
             overflow-x: hidden;
-        }
-
-        #ph3.login-active .main-content {
-            opacity: .25;
-            pointer-events: none;
+            height: 100vh;
+            /* batasi tinggi, lalu scroll */
         }
 
         .login-inner {
@@ -544,8 +544,9 @@
             background: #ffffff;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: 2.8rem 2.2rem;
+            justify-content: flex-start;
+            padding: 2.5rem 2rem 4rem;
+            /* tambah padding bawah */
             border-left: none;
             box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
             position: relative;
@@ -638,7 +639,7 @@
             margin-bottom: 1.8rem;
         }
 
-        /* Auth Tabs - Premium */
+        /* Auth Tabs */
         .auth-tabs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -976,19 +977,46 @@
             font-weight: 700;
         }
 
-        /* RESPONSIVE */
-        @media(max-width:900px) {
+        /* RESPONSIVE: mobile layout dengan panel scroll penuh */
+        @media (max-width: 900px) {
             #ph3 {
                 flex-direction: column;
+                height: 100%;
+                /* fallback */
+            }
+
+            /* Sembunyikan main content saat login aktif di mobile */
+            #ph3.login-active .main-content {
+                display: none;
+            }
+
+            /* Panel login menjadi slide-in dari kanan, full height, scrollable */
+            .login-panel {
+                position: fixed !important;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: auto;
+                width: 100%;
+                max-width: 440px;
+                background: white;
+                z-index: 1000;
+                overflow-y: auto !important;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                height: 100vh !important;
             }
 
             #ph3.login-active .login-panel {
-                width: 100%;
-                height: auto;
+                transform: translateX(0);
+                width: 100% !important;
+                overflow-y: auto !important;
             }
 
-            #ph3.login-active .main-content {
-                display: none;
+            .login-inner {
+                width: 100%;
+                padding: 1.5rem;
+                min-height: auto;
             }
 
             .main-content {
@@ -1007,22 +1035,6 @@
                 width: 100%;
                 height: 45vw;
                 min-width: unset;
-            }
-
-            .login-inner {
-                width: 100%;
-                max-width: 460px;
-                margin: 0 auto;
-                padding: 2rem 1.5rem;
-            }
-
-            .login-panel {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                background: white;
-                z-index: 20;
             }
         }
     </style>
@@ -1126,10 +1138,12 @@
                 </div>
             </div>
 
-            <!-- Login Panel - Professional -->
+            <!-- Login Panel - Scrollable -->
             <div class="login-panel" id="loginPanel">
                 <div class="login-inner">
                     <button class="login-close-x" id="closeLoginBtn" title="Tutup">✕</button>
+
+                    <div class="login-badge"><i></i> Akses Aman & Terverifikasi</div>
 
                     <div class="login-header">
                         <h2>Selamat datang di <span>SEARA</span></h2>
@@ -1232,17 +1246,204 @@
             const canvas = document.getElementById('bg-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
+
             function draw() {
                 const W = canvas.offsetWidth || window.innerWidth;
                 const H = canvas.offsetHeight || window.innerHeight;
                 canvas.width = W;
                 canvas.height = H;
                 ctx.clearRect(0, 0, W, H);
+
                 const green = 'rgba(61,186,126,';
-                // ... (konten canvas pattern tetap sama seperti kode asli untuk menghemat tempat, saya singkat)
-                // Asumsikan pattern canvas di sini sama persis dengan kode sebelumnya.
-                // Untuk menjaga panjang, saya tidak tulis ulang seluruh fungsi draw, karena tidak relevan dengan perbaikan login.
+                const gold = 'rgba(232,201,126,';
+
+                // 1. HEX CLUSTERS
+                const hexR = 26;
+                const hexW = hexR * Math.sqrt(3);
+                const hexH = hexR * 2;
+
+                function hexPath(cx, cy, r) {
+                    ctx.beginPath();
+                    for (let i = 0; i < 6; i++) {
+                        const a = Math.PI / 180 * (60 * i - 30);
+                        i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+                    }
+                    ctx.closePath();
+                }
+
+                const clusters = [
+                    { cx: W * 0.82, cy: H * 0.22, r: 180, oMax: 0.18 },
+                    { cx: W * 0.10, cy: H * 0.72, r: 150, oMax: 0.14 },
+                    { cx: W * 0.55, cy: H * 0.88, r: 120, oMax: 0.10 },
+                ];
+
+                clusters.forEach(cl => {
+                    const pad = hexR * 2;
+                    const startX = cl.cx - cl.r - pad;
+                    const startY = cl.cy - cl.r - pad;
+                    const endX = cl.cx + cl.r + pad;
+                    const endY = cl.cy + cl.r + pad;
+                    const rows = Math.ceil((endY - startY) / (hexH * 0.75)) + 2;
+                    const cols = Math.ceil((endX - startX) / hexW) + 2;
+
+                    for (let row = 0; row < rows; row++) {
+                        for (let col = 0; col < cols; col++) {
+                            const hx = startX + col * hexW + (row % 2 === 0 ? 0 : hexW / 2);
+                            const hy = startY + row * (hexH * 0.75);
+                            const dist = Math.sqrt((hx - cl.cx) ** 2 + (hy - cl.cy) ** 2);
+                            if (dist > cl.r) continue;
+                            const fade = Math.pow(1 - dist / cl.r, 1.4);
+                            const alpha = fade * cl.oMax;
+                            ctx.save();
+                            ctx.globalAlpha = alpha;
+                            ctx.strokeStyle = '#3dba7e';
+                            ctx.lineWidth = 0.9;
+                            hexPath(hx, hy, hexR - 1);
+                            ctx.stroke();
+                            ctx.fillStyle = '#3dba7e';
+                            ctx.globalAlpha = alpha * 1.8;
+                            ctx.beginPath();
+                            ctx.arc(hx, hy, 1.2, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                    }
+                });
+
+                // 2. WHEAT STALKS
+                function wheatStalk(x, y, angle, opacity, color) {
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(angle * Math.PI / 180);
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 1.4;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 140); ctx.lineTo(0, 0);
+                    ctx.stroke();
+                    const grains = [20, 46, 72, 98];
+                    grains.forEach((gy, i) => {
+                        const side = i % 2 === 0 ? -1 : 1;
+                        ctx.save();
+                        ctx.translate(0, gy);
+                        ctx.rotate(side * 28 * Math.PI / 180);
+                        ctx.fillStyle = color;
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, 6, 16, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                    ctx.restore();
+                }
+                wheatStalk(55, 80, -18, 0.20, '#3dba7e');
+                wheatStalk(W - 65, H - 55, 165, 0.18, '#3dba7e');
+
+                // 3. LEAVES
+                function leaf(x, y, angle, opacity, color) {
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(angle * Math.PI / 180);
+                    ctx.globalAlpha = opacity;
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(20, -40, 60, -50, 60, -80);
+                    ctx.bezierCurveTo(60, -50, 20, -20, 0, 0);
+                    ctx.fill();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 0.8;
+                    ctx.globalAlpha = opacity * 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0); ctx.lineTo(40, -55);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                leaf(30, H * 0.52, 38, 0.10, '#3dba7e');
+                leaf(W - 30, H * 0.35, -42, 0.08, '#e8c97e');
+                leaf(W * 0.48, H - 20, 10, 0.07, '#3dba7e');
+
+                // 4. BRACKETS
+                function bracket(x, y, dx, dy, opacity) {
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#3dba7e';
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+                    ctx.moveTo(x + dx * 36, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 36);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                bracket(30, 24, 1, 1, 0.32);
+                bracket(W - 30, 24, -1, 1, 0.32);
+                bracket(30, H - 24, 1, -1, 0.24);
+                bracket(W - 30, H - 24, -1, -1, 0.24);
+
+                // 5. CROSSES
+                function cross(x, y, size, opacity) {
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#3dba7e';
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(x - size, y); ctx.lineTo(x + size, y);
+                    ctx.moveTo(x, y - size); ctx.lineTo(x, y + size);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                cross(W * 0.38, H * 0.18, 10, 0.35);
+                cross(W * 0.22, H * 0.68, 10, 0.28);
+                cross(W * 0.62, H * 0.42, 10, 0.32);
+                cross(W * 0.72, H * 0.78, 10, 0.24);
+                cross(W * 0.85, H * 0.22, 8, 0.26);
+
+                // 6. DOTS
+                const dots = [
+                    { x: W * .30, y: H * .24, r: 3, o: .30, c: green },
+                    { x: W * .48, y: H * .55, r: 2, o: .25, c: green },
+                    { x: W * .58, y: H * .72, r: 2.5, o: .22, c: green },
+                    { x: W * .78, y: H * .34, r: 4, o: .18, c: gold },
+                    { x: W * .18, y: H * .82, r: 2, o: .20, c: green },
+                    { x: W * .90, y: H * .60, r: 3, o: .15, c: gold },
+                ];
+                dots.forEach(d => {
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                    ctx.fillStyle = d.c + '1)';
+                    ctx.globalAlpha = d.o;
+                    ctx.fill();
+                });
+
+                // 7. DASHED LINES
+                function dashedLine(x1, y1, x2, y2, opacity) {
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = '#3dba7e';
+                    ctx.lineWidth = 0.7;
+                    ctx.setLineDash([4, 10]);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                }
+                dashedLine(0, H * .33, W * .28, H * .33, 0.14);
+                dashedLine(W * .72, H * .67, W, H * .67, 0.14);
+
+                // 8. ARCS
+                function arc(cx, cy, r, startA, endA, opacity, color) {
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, startA, endA);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                arc(W + 60, -60, 420, Math.PI * .55, Math.PI * 1.05, 0.12, '#3dba7e');
+                arc(-60, H + 60, 280, -Math.PI * .3, Math.PI * .2, 0.10, '#3dba7e');
             }
+
             draw();
             window.addEventListener('resize', draw);
         })();
@@ -1289,7 +1490,7 @@
                 setInterval(rotatePhrases, 3000);
             }, 2200);
 
-            /* CARD CAROUSEL (sama seperti sebelumnya) */
+            /* CARD CAROUSEL */
             (function () {
                 const cards = Array.from(document.querySelectorAll('.card'));
                 const N = cards.length;
@@ -1334,7 +1535,7 @@
                 setInterval(rotate, 2800);
             })();
 
-            /* LOGIN PANEL */
+            /* LOGIN PANEL CONTROLS */
             window.openLogin = function () { $('ph3').classList.add('login-active'); };
             const closeBtn = $('closeLoginBtn');
             if (closeBtn) closeBtn.addEventListener('click', () => { $('ph3').classList.remove('login-active'); });
