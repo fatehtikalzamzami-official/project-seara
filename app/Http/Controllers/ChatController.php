@@ -171,6 +171,18 @@ class ChatController extends Controller
         return response()->json(['messages' => $messages]);
     }
 
+
+    // ── Online status user (untuk polling di chat)
+    public function onlineStatus(Request $request)
+    {
+        $request->validate(['user_id' => 'required|exists:users,id']);
+        $user = \App\Models\User::find($request->user_id);
+        return response()->json([
+            'is_online' => $user->isOnline(),
+            'label'     => $user->onlineLabel(),
+        ]);
+    }
+
     // ── Hitung unread untuk badge di topbar (AJAX)
     public function unreadCount()
     {

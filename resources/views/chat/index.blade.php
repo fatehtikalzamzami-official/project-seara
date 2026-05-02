@@ -200,6 +200,87 @@
 
 @keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .msg-row { animation: msgIn .2s ease both; }
+
+/* ── Online status ── */
+.online-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.online-dot.online  { background: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.25); }
+.online-dot.offline { background: #9ca3af; }
+.status-text { font-size: 11px; }
+.status-text.online  { color: #16a34a; font-weight: 700; }
+.status-text.offline { color: var(--text-muted); }
+
+/* ── Offer Card dalam chat ── */
+.offer-card {
+    background: white; border: 2px solid var(--green-main);
+    border-radius: 14px; padding: 14px 16px;
+    max-width: 320px; width: 100%;
+}
+.offer-card.mine-card { align-self: flex-end; border-color: var(--green-light); }
+.offer-card-head { font-size: 12px; font-weight: 800; color: var(--green-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.offer-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.offer-price-new { font-size: 22px; font-weight: 900; color: var(--accent); }
+.offer-price-old { font-size: 13px; color: var(--text-muted); text-decoration: line-through; }
+.offer-disc { font-size: 11px; font-weight: 800; background: #fff3ee; color: var(--accent); padding: 2px 7px; border-radius: 5px; }
+.offer-qty { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.offer-note { font-size: 12px; color: var(--text-mid); font-style: italic; margin-bottom: 10px; padding: 6px 10px; background: var(--green-pale); border-radius: 8px; }
+.offer-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 6px; margin-bottom: 10px; }
+.offer-status.pending   { background: #fef9c3; color: #854d0e; }
+.offer-status.accepted  { background: #dcfce7; color: #166534; }
+.offer-status.rejected  { background: #fee2e2; color: #991b1b; }
+.offer-status.countered { background: #e0f2fe; color: #075985; }
+.offer-status.cancelled { background: #f3f4f6; color: #6b7280; }
+.offer-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+.offer-btn { padding: 7px 14px; border-radius: 8px; font-family: 'Nunito',sans-serif; font-size: 12px; font-weight: 800; border: none; cursor: pointer; transition: all .2s; }
+.offer-btn.accept  { background: var(--green-main); color: white; }
+.offer-btn.accept:hover { background: var(--green-dark); }
+.offer-btn.reject  { background: #fee2e2; color: #dc2626; }
+.offer-btn.reject:hover { background: #fecaca; }
+.offer-btn.counter { background: #e0f2fe; color: #0369a1; }
+.offer-btn.counter:hover { background: #bae6fd; }
+
+/* ── Modal Tawar Harga ── */
+.offer-modal-bg {
+    display: none; position: fixed; inset: 0; z-index: 9500;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center; padding: 20px;
+}
+.offer-modal-bg.open { display: flex; }
+.offer-modal {
+    background: white; border-radius: 20px; width: 100%; max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.2);
+    animation: modalIn .28s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.95) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.offer-modal-head { padding: 20px 22px 0; display: flex; align-items: center; justify-content: space-between; }
+.offer-modal-head h3 { font-size: 18px; font-weight: 800; color: var(--text-dark); }
+.offer-modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--green-pale); color: var(--text-mid); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.offer-modal-body { padding: 16px 22px 22px; }
+.offer-product-info { background: var(--green-pale); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.offer-product-emoji { font-size: 28px; }
+.offer-product-name { font-size: 14px; font-weight: 800; color: var(--text-dark); }
+.offer-product-orig { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.offer-form-group { margin-bottom: 14px; }
+.offer-form-label { font-size: 12px; font-weight: 800; color: var(--text-mid); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; display: block; }
+.offer-form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: 'Nunito',sans-serif; font-size: 15px;
+    font-weight: 800; outline: none; transition: border-color .2s; color: var(--text-dark);
+}
+.offer-form-input:focus { border-color: var(--green-main); }
+.offer-savings { background: #fff3ee; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+.offer-savings-label { font-size: 12px; color: var(--text-muted); }
+.offer-savings-val { font-size: 15px; font-weight: 900; color: var(--accent); }
+.offer-submit-btn { width: 100%; padding: 13px; background: var(--green-main); color: white; border: none; border-radius: 12px; font-family: 'Nunito',sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .2s; }
+.offer-submit-btn:hover { background: var(--green-dark); }
+.offer-submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* ── Counter Modal ── */
+.counter-modal-bg {
+    display: none; position: fixed; inset: 0; z-index: 9600;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
+    align-items: center; justify-content: center; padding: 20px;
+}
+.counter-modal-bg.open { display: flex; }
 </style>
 @endpush
 
@@ -284,11 +365,23 @@
                     </div>
                     <div class="msg-head-info">
                         <div class="msg-head-name" id="headName">{{ $activeOther->nama_lengkap ?? $activeOther->name ?? 'Pengguna' }}</div>
-                        <div class="msg-head-status"><span class="dot"></span> Online sekarang</div>
+                        <div class="msg-head-status" id="onlineStatusRow">
+                            <span class="online-dot {{ $activeOther->isOnline() ? 'online' : 'offline' }}" id="onlineDot"></span>
+                            <span class="status-text {{ $activeOther->isOnline() ? 'online' : 'offline' }}" id="onlineText">
+                                {{ $activeOther->onlineLabel() }}
+                            </span>
+                        </div>
                     </div>
-                    @if($activeRoom->harvest)
-                        <div class="msg-head-product">🌾 {{ $activeRoom->harvest->product->name ?? '' }}</div>
-                    @endif
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        @if($activeRoom->harvest)
+                            <div class="msg-head-product">🌾 {{ $activeRoom->harvest->product->name ?? '' }}</div>
+                            @if(Auth::id() !== $activeRoom->seller->buyer_id ?? 0)
+                            <button onclick="openOfferModal()" style="padding:6px 12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .2s;" onmouseover="this.style.background='#e55a2b'" onmouseout="this.style.background='var(--accent)'">
+                                💰 Tawar Harga
+                            </button>
+                            @endif
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Pesan --}}
@@ -316,10 +409,46 @@
                             </div>
                             @php $lastDate = $msgDate; @endphp
                         @endif
+                        @php
+                            $isOfferMsg = preg_match('/\[offer:(\d+)\]/', $msg->body, $offerMatch);
+                            $offerObj   = $isOfferMsg ? \App\Models\PriceOffer::find($offerMatch[1]) : null;
+                            $cleanBody  = $isOfferMsg ? preg_replace('/\[offer:\d+\]/', '', $msg->body) : $msg->body;
+                        @endphp
                         <div class="msg-row {{ $isMine ? 'mine' : '' }}" data-id="{{ $msg->id }}">
                             <div class="msg-ava {{ $isMine ? 'mine' : '' }}">{{ $ini }}</div>
-                            <div class="msg-grp">
-                                <div class="bubble {{ $isMine ? 'mine' : 'other' }}">{{ $msg->body }}</div>
+                            <div class="msg-grp" style="max-width:70%;">
+                                @if($offerObj)
+                                    {{-- Render offer card --}}
+                                    <div class="offer-card {{ $isMine ? 'mine-card' : '' }}" data-offer-id="{{ $offerObj->id }}">
+                                        <div class="offer-card-head">💰 Penawaran Harga</div>
+                                        <div class="offer-price-row">
+                                            <span class="offer-price-new">Rp {{ number_format($offerObj->counter_price ?? $offerObj->offer_price, 0, ',', '.') }}</span>
+                                            <span class="offer-price-old">Rp {{ number_format($offerObj->original_price, 0, ',', '.') }}</span>
+                                            <span class="offer-disc">-{{ $offerObj->discountPct() }}%</span>
+                                        </div>
+                                        <div class="offer-qty">Jumlah: {{ $offerObj->quantity }} {{ $activeRoom->harvest->product->unit ?? 'unit' }}</div>
+                                        @if($offerObj->buyer_note)<div class="offer-note">"{{ $offerObj->buyer_note }}"</div>@endif
+                                        @if($offerObj->seller_note && $offerObj->status !== 'pending')<div class="offer-note" style="background:#e0f2fe;">Penjual: "{{ $offerObj->seller_note }}"</div>@endif
+                                        @if($offerObj->counter_price && $offerObj->status === 'countered')
+                                            <div style="font-size:12px;color:#0369a1;font-weight:700;margin-bottom:8px;">🔄 Tawar balik: Rp {{ number_format($offerObj->counter_price, 0, ',', '.') }}</div>
+                                        @endif
+                                        <div class="offer-status {{ $offerObj->status }}">{{ $offerObj->statusLabel() }}</div>
+                                        @if($offerObj->isPending() && !$isMine && Auth::id() === $activeRoom->harvest->seller->user_id)
+                                            <div class="offer-actions">
+                                                <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅ Terima</button>
+                                                <button class="offer-btn counter" onclick="openCounterModal({{ $offerObj->id }}, {{ $offerObj->offer_price }})">🔄 Tawar Balik</button>
+                                                <button class="offer-btn reject" onclick="rejectOffer({{ $offerObj->id }})">❌ Tolak</button>
+                                            </div>
+                                        @elseif($offerObj->isCountered() && $isMine)
+                                            <div class="offer-actions">
+                                                <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅ Terima Tawar Balik</button>
+                                                <button class="offer-btn reject" onclick="cancelOffer({{ $offerObj->id }})">🚫 Batalkan</button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="bubble {{ $isMine ? 'mine' : 'other' }}" style="white-space:pre-line;">{{ $cleanBody }}</div>
+                                @endif
                                 <div class="btime">{{ $msg->created_at->format('H:i') }}@if($isMine && $msg->read_at) <span class="bread">✓✓</span>@endif</div>
                             </div>
                         </div>
@@ -355,6 +484,82 @@
 
     </div>
 </div>
+
+@if(isset($activeRoom) && $activeRoom->harvest)
+{{-- ── MODAL TAWAR HARGA ── --}}
+<div class="offer-modal-bg" id="offerModalBg" onclick="closeOfferModal(event)">
+    <div class="offer-modal">
+        <div class="offer-modal-head">
+            <h3>💰 Tawar Harga</h3>
+            <button class="offer-modal-close" onclick="closeOfferModal()">✕</button>
+        </div>
+        <div class="offer-modal-body">
+            <div class="offer-product-info">
+                <div class="offer-product-emoji">🌾</div>
+                <div>
+                    <div class="offer-product-name">{{ $activeRoom->harvest->product->name ?? 'Produk' }}</div>
+                    <div class="offer-product-orig">Harga asli: <strong>Rp {{ number_format($activeRoom->harvest->price_per_unit, 0, ',', '.') }}</strong> / {{ $activeRoom->harvest->product->unit ?? 'kg' }}</div>
+                </div>
+            </div>
+
+            <div class="offer-form-group">
+                <label class="offer-form-label">Harga Tawarmu (per {{ $activeRoom->harvest->product->unit ?? 'kg' }})</label>
+                <input type="number" class="offer-form-input" id="offerPriceInput"
+                    placeholder="Contoh: {{ round($activeRoom->harvest->price_per_unit * 0.85) }}"
+                    min="1" max="{{ $activeRoom->harvest->price_per_unit }}"
+                    oninput="updateSavings(this.value)"
+                    value="{{ round($activeRoom->harvest->price_per_unit * 0.9) }}">
+            </div>
+
+            <div class="offer-form-group">
+                <label class="offer-form-label">Jumlah ({{ $activeRoom->harvest->product->unit ?? 'kg' }})</label>
+                <input type="number" class="offer-form-input" id="offerQtyInput" min="1"
+                    max="{{ $activeRoom->harvest->remaining_stock }}" value="1"
+                    oninput="updateSavings(document.getElementById('offerPriceInput').value)">
+            </div>
+
+            <div class="offer-form-group">
+                <label class="offer-form-label">Catatan (opsional)</label>
+                <input type="text" class="offer-form-input" id="offerNoteInput"
+                    placeholder="Misal: saya beli rutin tiap minggu..." style="font-weight:500;font-size:13px;">
+            </div>
+
+            <div class="offer-savings" id="offerSavingsBox">
+                <span class="offer-savings-label">Hemat per unit</span>
+                <span class="offer-savings-val" id="offerSavingsVal">Rp 0</span>
+            </div>
+
+            <button class="offer-submit-btn" id="offerSubmitBtn" onclick="submitOffer()">
+                Kirim Penawaran
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- ── MODAL COUNTER OFFER ── --}}
+<div class="counter-modal-bg" id="counterModalBg" onclick="closeCounterModal(event)">
+    <div class="offer-modal">
+        <div class="offer-modal-head">
+            <h3>🔄 Tawar Balik</h3>
+            <button class="offer-modal-close" onclick="closeCounterModal()">✕</button>
+        </div>
+        <div class="offer-modal-body">
+            <input type="hidden" id="counterOfferId">
+            <div class="offer-form-group">
+                <label class="offer-form-label">Harga Tawar Balikmu</label>
+                <input type="number" class="offer-form-input" id="counterPriceInput" min="1" placeholder="Masukkan harga...">
+            </div>
+            <div class="offer-form-group">
+                <label class="offer-form-label">Catatan</label>
+                <input type="text" class="offer-form-input" id="counterNoteInput"
+                    placeholder="Misal: ini harga terendah saya..." style="font-weight:500;font-size:13px;">
+            </div>
+            <button class="offer-submit-btn" onclick="submitCounter()">Kirim Tawar Balik</button>
+        </div>
+    </div>
+</div>
+@endif
+
 @endsection
 
 @push('scripts')
@@ -475,10 +680,166 @@ function updateRoomPreview(roomId, text) {
     if (item) item.textContent = 'Kamu: ' + text.substring(0, 40);
 }
 
-// ── Klik room — navigasi biasa (full page load)
-// Untuk SPA feel bisa pakai fetch partial, tapi full reload lebih stabil
-function loadRoom(e, roomId) {
-    // biarkan link berjalan normal
+function loadRoom(e, roomId) { /* biarkan link berjalan normal */ }
+
+// ══════════════════════════════════
+// ONLINE STATUS POLLING
+// ══════════════════════════════════
+@if(isset($activeOther))
+const OTHER_USER_ID = {{ $activeOther->id }};
+
+async function pollOnlineStatus() {
+    try {
+        const res  = await fetch(`/chat/online-status?user_id=${OTHER_USER_ID}`, {
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+        });
+        const data = await res.json();
+        const dot  = document.getElementById('onlineDot');
+        const txt  = document.getElementById('onlineText');
+        if (!dot || !txt) return;
+
+        dot.className = 'online-dot ' + (data.is_online ? 'online' : 'offline');
+        txt.className = 'status-text ' + (data.is_online ? 'online' : 'offline');
+        txt.textContent = data.label;
+    } catch(e) {}
+}
+setInterval(pollOnlineStatus, 15000); // cek tiap 15 detik
+@endif
+
+// ══════════════════════════════════
+// TAWAR HARGA
+// ══════════════════════════════════
+@if(isset($activeRoom) && $activeRoom->harvest)
+const HARVEST_ID      = {{ $activeRoom->harvest->id }};
+const ORIG_PRICE      = {{ $activeRoom->harvest->price_per_unit }};
+const ROOM_ID_OFFER   = {{ $activeRoom->id }};
+const SELLER_USER_ID  = {{ $activeRoom->harvest->seller->user_id ?? 0 }};
+
+function openOfferModal() {
+    document.getElementById('offerModalBg').classList.add('open');
+    updateSavings(document.getElementById('offerPriceInput').value);
+    document.getElementById('offerPriceInput').focus();
+}
+
+function closeOfferModal(e) {
+    if (!e || e.target === document.getElementById('offerModalBg'))
+        document.getElementById('offerModalBg').classList.remove('open');
+}
+
+function updateSavings(priceVal) {
+    const price   = parseFloat(priceVal) || 0;
+    const qty     = parseInt(document.getElementById('offerQtyInput').value) || 1;
+    const saving  = Math.max(0, ORIG_PRICE - price);
+    const total   = saving * qty;
+    const pct     = ORIG_PRICE > 0 ? Math.round((saving / ORIG_PRICE) * 100) : 0;
+    const box     = document.getElementById('offerSavingsBox');
+    const val     = document.getElementById('offerSavingsVal');
+    val.textContent = 'Rp ' + total.toLocaleString('id-ID') + (pct > 0 ? ` (-${pct}%)` : '');
+    box.style.display = saving > 0 ? 'flex' : 'none';
+}
+
+async function submitOffer() {
+    const price = parseFloat(document.getElementById('offerPriceInput').value);
+    const qty   = parseInt(document.getElementById('offerQtyInput').value) || 1;
+    const note  = document.getElementById('offerNoteInput').value.trim();
+
+    if (!price || price <= 0) { alert('Masukkan harga tawar yang valid.'); return; }
+    if (price >= ORIG_PRICE)  { alert('Harga tawar harus lebih rendah dari harga asli.'); return; }
+
+    const btn = document.getElementById('offerSubmitBtn');
+    btn.disabled = true; btn.textContent = 'Mengirim...';
+
+    try {
+        const res  = await fetch('/offers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+            body: JSON.stringify({ harvest_id: HARVEST_ID, offer_price: price, quantity: qty, buyer_note: note, chat_room_id: ROOM_ID_OFFER })
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('offerModalBg').classList.remove('open');
+            showChatToast('💰 Penawaran berhasil dikirim!');
+            setTimeout(() => location.reload(), 800);
+        }
+    } catch(e) { alert('Gagal mengirim tawaran.'); }
+    finally { btn.disabled = false; btn.textContent = 'Kirim Penawaran'; }
+}
+
+async function acceptOffer(offerId) {
+    if (!confirm('Terima tawaran ini?')) return;
+    try {
+        const res  = await fetch(`/offers/${offerId}/accept`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.success) { showChatToast('✅ Tawaran diterima!'); setTimeout(() => location.reload(), 800); }
+    } catch(e) {}
+}
+
+async function rejectOffer(offerId) {
+    const note = prompt('Alasan penolakan (opsional):') ?? '';
+    try {
+        const res  = await fetch(`/offers/${offerId}/reject`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+            body: JSON.stringify({ seller_note: note })
+        });
+        const data = await res.json();
+        if (data.success) { showChatToast('❌ Tawaran ditolak.'); setTimeout(() => location.reload(), 800); }
+    } catch(e) {}
+}
+
+async function cancelOffer(offerId) {
+    if (!confirm('Batalkan tawaran ini?')) return;
+    try {
+        const res  = await fetch(`/offers/${offerId}/cancel`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.success) { showChatToast('🚫 Tawaran dibatalkan.'); setTimeout(() => location.reload(), 800); }
+    } catch(e) {}
+}
+
+function openCounterModal(offerId, offerPrice) {
+    document.getElementById('counterOfferId').value = offerId;
+    document.getElementById('counterPriceInput').value = Math.round(offerPrice * 1.05);
+    document.getElementById('counterModalBg').classList.add('open');
+    document.getElementById('counterPriceInput').focus();
+}
+function closeCounterModal(e) {
+    if (!e || e.target === document.getElementById('counterModalBg'))
+        document.getElementById('counterModalBg').classList.remove('open');
+}
+async function submitCounter() {
+    const id    = document.getElementById('counterOfferId').value;
+    const price = parseFloat(document.getElementById('counterPriceInput').value);
+    const note  = document.getElementById('counterNoteInput').value.trim();
+    if (!price || price <= 0) { alert('Masukkan harga yang valid.'); return; }
+    try {
+        const res  = await fetch(`/offers/${id}/counter`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+            body: JSON.stringify({ counter_price: price, seller_note: note })
+        });
+        const data = await res.json();
+        if (data.success) { closeCounterModal(); showChatToast('🔄 Tawar balik terkirim!'); setTimeout(() => location.reload(), 800); }
+    } catch(e) {}
+}
+@endif
+
+function showChatToast(msg) {
+    let t = document.getElementById('chatToast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'chatToast';
+        t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green-dark);color:white;padding:11px 22px;border-radius:50px;font-size:14px;font-weight:700;opacity:0;transition:all .35s cubic-bezier(.22,1,.36,1);z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2);white-space:nowrap;';
+        document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2800);
 }
 </script>
 @endpush
