@@ -9,7 +9,18 @@
     padding: 12px 24px;
     display: flex; align-items: center; gap: 20px;
 }
-.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 2%
+}
+
+.logo img {
+    height: 80px; /* bisa lu adjust */
+    width: auto;
+    object-fit: contain;
+}
 .logo-badge {
     background: var(--white); color: var(--green-dark);
     font-weight: 900; font-size: 15px;
@@ -148,6 +159,18 @@
 .udrop-logout:hover { background: #fef2f2; color: #b91c1c; }
 .udrop-logout .udrop-icon { background: #fef2f2; }
 .udrop-logout:hover .udrop-icon { background: #fecaca; }
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 40px; /* bisa lu adjust */
+    width: auto;
+    object-fit: contain;
+}
 </style>
 
 <header class="topbar">
@@ -156,8 +179,9 @@
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="logo">
             <div>
-                <div class="logo-badge">🌾 SEARA</div>
-                <div class="logo-sub">Dari Petani, Untuk Petani</div>
+                <div class="logo">
+    <img src="{{ asset('assets/logo.png') }}" alt="SEARA Logo">
+</div>
             </div>
         </a>
 
