@@ -9,6 +9,7 @@ use App\Http\Controllers\ChatController;
 
 
 use App\Http\Controllers\BuyerDashboardController;
+use App\Http\Controllers\PriceOfferController;
 
 Route::middleware(['auth', 'role:buyer,seller,admin'])
     ->prefix('buyer')
@@ -28,6 +29,20 @@ Route::middleware(['auth'])->prefix('chat')->name('chat.')->group(function () {
     Route::post('/{chatRoom}/send',     [ChatController::class, 'send'])->name('send');
     Route::get('/{chatRoom}/poll',      [ChatController::class, 'poll'])->name('poll');
     Route::get('/unread/count',         [ChatController::class, 'unreadCount'])->name('unread');
+    Route::get('/online-status',        [ChatController::class, 'onlineStatus'])->name('online-status');
+});
+
+// ─────────────────────────────────────────────────────────────
+//  PRICE OFFER ROUTES
+// ─────────────────────────────────────────────────────────────
+
+Route::middleware(['auth'])->prefix('offers')->name('offers.')->group(function () {
+    Route::post('/',                          [PriceOfferController::class, 'store'])->name('store');
+    Route::post('/{priceOffer}/accept',       [PriceOfferController::class, 'accept'])->name('accept');
+    Route::post('/{priceOffer}/reject',       [PriceOfferController::class, 'reject'])->name('reject');
+    Route::post('/{priceOffer}/counter',      [PriceOfferController::class, 'counter'])->name('counter');
+    Route::post('/{priceOffer}/cancel',       [PriceOfferController::class, 'cancel'])->name('cancel');
+    Route::get('/status',                     [PriceOfferController::class, 'status'])->name('status');
 });
 
 Route::get('/logout', function () {

@@ -375,7 +375,7 @@
                     <div style="display:flex;align-items:center;gap:8px;">
                         @if($activeRoom->harvest)
                             <div class="msg-head-product">🌾 {{ $activeRoom->harvest->product->name ?? '' }}</div>
-                            @if(Auth::id() !== $activeRoom->seller->buyer_id ?? 0)
+                            @if(Auth::id() !== ($activeRoom->harvest->seller->user_id ?? -1))
                             <button onclick="openOfferModal()" style="padding:6px 12px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .2s;" onmouseover="this.style.background='#e55a2b'" onmouseout="this.style.background='var(--accent)'">
                                 💰 Tawar Harga
                             </button>
@@ -433,7 +433,7 @@
                                             <div style="font-size:12px;color:#0369a1;font-weight:700;margin-bottom:8px;">🔄 Tawar balik: Rp {{ number_format($offerObj->counter_price, 0, ',', '.') }}</div>
                                         @endif
                                         <div class="offer-status {{ $offerObj->status }}">{{ $offerObj->statusLabel() }}</div>
-                                        @if($offerObj->isPending() && !$isMine && Auth::id() === $activeRoom->harvest->seller->user_id)
+                                        @if($offerObj->isPending() && !$isMine && Auth::id() === ($activeRoom->harvest->seller->user_id ?? -1))
                                             <div class="offer-actions">
                                                 <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅ Terima</button>
                                                 <button class="offer-btn counter" onclick="openCounterModal({{ $offerObj->id }}, {{ $offerObj->offer_price }})">🔄 Tawar Balik</button>
@@ -603,12 +603,27 @@ function renderBubble(msg) {
     const div    = document.createElement('div');
     div.className = 'msg-row ' + (isMine ? 'mine' : '');
     div.dataset.id = msg.id;
-    div.innerHTML = `
-        <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
-        <div class="msg-grp">
-            <div class="bubble ${isMine ? 'mine' : 'other'}">${escHtml(msg.body)}</div>
-            <div class="btime">${msg.time}</div>
-        </div>`;
+
+    // Cek apakah pesan ini adalah offer card
+    const offerMatch = msg.body.match(/\[offer:(\d+)\]/);
+    if (offerMatch && msg.offer_card) {
+        // Offer card sudah dirender server-side via reload — tampilkan bubble biasa dulu
+        const cleanBody = msg.body.replace(/\[offer:\d+\]/, '').trim();
+        div.innerHTML = `
+            <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
+            <div class="msg-grp" style="max-width:70%">
+                <div class="bubble ${isMine ? 'mine' : 'other'}" style="white-space:pre-line">${escHtml(cleanBody)}</div>
+                <div class="btime">${msg.time}</div>
+            </div>`;
+    } else {
+        const cleanBody = msg.body.replace(/\[offer:\d+\]/, '').trim();
+        div.innerHTML = `
+            <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
+            <div class="msg-grp">
+                <div class="bubble ${isMine ? 'mine' : 'other'}" style="white-space:pre-line">${escHtml(cleanBody)}</div>
+                <div class="btime">${msg.time}</div>
+            </div>`;
+    }
     return div;
 }
 

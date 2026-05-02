@@ -477,6 +477,89 @@
                 </div>
             </div>
 
+
+            {{-- ── Kirim Penawaran Harga ── --}}
+            <div class="det-card" id="offerCard">
+                <div class="det-card-title">💰 Tawar Harga</div>
+
+                <div id="offerStatusWrap" style="display:none; margin-bottom:12px;">
+                    <div id="offerStatusBadge" style="
+                        padding:10px 14px; border-radius:10px;
+                        font-size:13px; font-weight:700;
+                        background:#f0fdf4; border:1px solid #bbf7d0; color:#15803d;
+                    "></div>
+                </div>
+
+                <form id="offerForm">
+                    @csrf
+                    <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
+                    <input type="hidden" name="chat_room_id" id="offerChatRoomId" value="">
+
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
+                            Harga Tawar per {{ $harvest->product->unit ?? 'kg' }}
+                        </label>
+                        <div style="position:relative;">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--text-muted);">Rp</span>
+                            <input type="number" name="offer_price" id="offerPrice"
+                                min="1" max="{{ $harvest->price_per_unit }}"
+                                placeholder="{{ number_format($harvest->price_per_unit * 0.85, 0) }}"
+                                style="width:100%;border:1.5px solid var(--border);border-radius:10px;
+                                       padding:10px 12px 10px 34px;font-family:'Nunito',sans-serif;
+                                       font-size:14px;font-weight:700;outline:none;box-sizing:border-box;"
+                                oninput="updateOfferPreview()"
+                                onfocus="this.style.borderColor='var(--green-main)'"
+                                onblur="this.style.borderColor='var(--border)'">
+                        </div>
+                        <div id="offerPreview" style="margin-top:6px;font-size:12px;color:var(--text-muted);"></div>
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
+                            Jumlah ({{ $harvest->product->unit ?? 'kg' }})
+                        </label>
+                        <input type="number" name="quantity" id="offerQty"
+                            min="1" max="{{ $harvest->remaining_stock }}" value="1"
+                            style="width:100%;border:1.5px solid var(--border);border-radius:10px;
+                                   padding:10px 12px;font-family:'Nunito',sans-serif;
+                                   font-size:14px;font-weight:700;outline:none;box-sizing:border-box;"
+                            oninput="updateOfferPreview()"
+                            onfocus="this.style.borderColor='var(--green-main)'"
+                            onblur="this.style.borderColor='var(--border)'">
+                    </div>
+
+                    <div style="margin-bottom:14px;">
+                        <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
+                            Catatan (opsional)
+                        </label>
+                        <textarea name="buyer_note" rows="2"
+                            placeholder="Misal: minta sortir ukuran besar, atau ambil sendiri..."
+                            style="width:100%;border:1.5px solid var(--border);border-radius:10px;
+                                   padding:10px 12px;font-family:'Nunito',sans-serif;font-size:13px;
+                                   outline:none;resize:none;box-sizing:border-box;"
+                            onfocus="this.style.borderColor='var(--green-main)'"
+                            onblur="this.style.borderColor='var(--border)'"></textarea>
+                    </div>
+
+                    <div id="offerTotalPreview" style="
+                        background:var(--green-pale);border-radius:10px;
+                        padding:10px 14px;margin-bottom:12px;display:none;
+                        font-size:13px;color:var(--green-dark);font-weight:700;
+                    "></div>
+
+                    <button type="button" onclick="submitOffer()" id="offerSubmitBtn"
+                        style="width:100%;padding:13px;border-radius:12px;
+                               border:none;background:var(--accent);color:white;
+                               font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;
+                               cursor:pointer;transition:opacity .2s;display:flex;
+                               align-items:center;justify-content:center;gap:8px;">
+                        💰 Kirim Penawaran
+                    </button>
+
+                    <div id="offerError" style="margin-top:8px;font-size:12px;color:#ef4444;font-weight:700;display:none;"></div>
+                </form>
+            </div>
+
             {{-- Petani --}}
             <div class="det-card">
                 <div class="det-card-title">Tentang Petani</div>
@@ -796,6 +879,101 @@ function appendMsg(text, who) {
 function scrollChat() {
     const el = document.getElementById('chatMessages');
     el.scrollTop = el.scrollHeight;
+}
+
+
+// ── Price Offer
+const hargaAsli = {{ $harvest->price_per_unit }};
+const offerUrl  = '{{ route("offers.store") }}';
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+                  || '{{ csrf_token() }}';
+
+function updateOfferPreview() {
+    const price = parseFloat(document.getElementById('offerPrice').value) || 0;
+    const qty   = parseInt(document.getElementById('offerQty').value)    || 1;
+
+    const previewEl = document.getElementById('offerPreview');
+    const totalEl   = document.getElementById('offerTotalPreview');
+
+    if (price > 0) {
+        const disc = Math.max(0, ((1 - price / hargaAsli) * 100)).toFixed(1);
+        previewEl.textContent = disc > 0
+            ? `Diskon ${disc}% dari harga asli Rp ${hargaAsli.toLocaleString('id-ID')}`
+            : `Sama dengan harga asli`;
+        const total = price * qty;
+        totalEl.style.display = 'block';
+        totalEl.textContent = `Total: Rp ${total.toLocaleString('id-ID')} (${qty} × Rp ${price.toLocaleString('id-ID')})`;
+    } else {
+        previewEl.textContent = '';
+        totalEl.style.display = 'none';
+    }
+}
+
+async function submitOffer() {
+    const btn      = document.getElementById('offerSubmitBtn');
+    const errEl    = document.getElementById('offerError');
+    const price    = document.getElementById('offerPrice').value;
+    const qty      = document.getElementById('offerQty').value;
+    const note     = document.querySelector('[name="buyer_note"]').value;
+    const harvestId= document.querySelector('[name="harvest_id"]').value;
+    const chatRoomId= document.getElementById('offerChatRoomId').value;
+
+    errEl.style.display = 'none';
+
+    if (!price || parseFloat(price) < 1) {
+        errEl.textContent = 'Masukkan harga tawar yang valid.';
+        errEl.style.display = 'block';
+        return;
+    }
+    if (!qty || parseInt(qty) < 1) {
+        errEl.textContent = 'Jumlah minimal 1.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Mengirim...';
+
+    try {
+        const res = await fetch(offerUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                harvest_id:   harvestId,
+                offer_price:  price,
+                quantity:     qty,
+                buyer_note:   note,
+                chat_room_id: chatRoomId || null,
+            }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            showToast('💰 Penawaran berhasil dikirim!');
+            btn.innerHTML = '✅ Penawaran Terkirim';
+            const statusWrap  = document.getElementById('offerStatusWrap');
+            const statusBadge = document.getElementById('offerStatusBadge');
+            statusWrap.style.display  = 'block';
+            statusBadge.textContent   = `${data.offer.status_label} — Rp ${parseFloat(data.offer.offer_price).toLocaleString('id-ID')} × ${data.offer.quantity} unit`;
+            document.getElementById('offerForm').querySelectorAll('input,textarea').forEach(el => el.disabled = true);
+        } else {
+            const msg = data.message || (data.errors ? Object.values(data.errors).flat().join(' ') : 'Terjadi kesalahan.');
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '💰 Kirim Penawaran';
+        }
+    } catch (e) {
+        errEl.textContent = 'Gagal terhubung ke server. Coba lagi.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '💰 Kirim Penawaran';
+    }
 }
 
 // ── Toast notification
