@@ -263,13 +263,23 @@
 .sp-empty p { font-size: 13px; }
 
 /* ── Back link ── */
+.sp-hero-content {
+    position: relative;
+}
+
 .sp-back {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-size: 13px; font-weight: 700; color: var(--text-muted);
-    text-decoration: none; padding: 8px 14px;
-    border-radius: 10px; border: 1.5px solid var(--border);
-    background: white; transition: all .2s;
-    margin: 20px 28px 0;
+    position: absolute;
+    top: -70px; /* naik ke atas banner */
+    left: 0;
+    margin-left: 2.6%;
+    margin-bottom: 5%
+
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
 }
 .sp-back:hover { border-color: var(--green-main); color: var(--green-main); background: var(--green-pale); }
 
@@ -285,7 +295,7 @@
 /* Mobile */
 @media (max-width: 768px) {
     .sp-body { grid-template-columns: 1fr; padding: 16px; }
-    .sp-hero-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 16px 20px; }
+    .sp-hero-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 16px 20px; position: relative;}
     .sp-hero-actions { flex-direction: row; align-self: auto; }
     .sp-stats-strip { grid-template-columns: repeat(2, 1fr); }
     .sp-products-grid { grid-template-columns: repeat(2, 1fr); }
@@ -296,14 +306,22 @@
 
 @section('content')
 
-{{-- Back link --}}
-<a href="{{ url()->previous() }}" class="sp-back">← Kembali</a>
-
 {{-- ══ HERO BANNER ══ --}}
-<div class="sp-hero anim-1">
+<div class="sp-hero anim-1"
+     style="
+        background: 
+        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+        url('{{ $sellerProfile->banner ? asset('storage/' . $sellerProfile->banner) : asset('images/default-banner.jpg') }}');
+        background-size: cover;
+        background-position: center;
+     ">
+
+
     <div class="sp-hero-pattern"></div>
     <div class="sp-hero-leaves">🌿</div>
     <div class="sp-hero-content">
+             {{-- Back link --}}
+<a href="{{ url()->previous() }}" class="sp-back">←</a>
         {{-- Foto toko --}}
         <div class="sp-shop-photo">
             @if($sellerProfile->foto_toko)
