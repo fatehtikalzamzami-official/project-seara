@@ -439,6 +439,12 @@
                                                 <button class="offer-btn counter" onclick="openCounterModal({{ $offerObj->id }}, {{ $offerObj->offer_price }})">🔄 Tawar Balik</button>
                                                 <button class="offer-btn reject" onclick="rejectOffer({{ $offerObj->id }})">❌ Tolak</button>
                                             </div>
+                                        @elseif($offerObj->isPending() && $isMine)
+                                            {{-- Buyer: edit atau batalkan tawaran pending miliknya --}}
+                                            <div class="offer-actions">
+                                                <button class="offer-btn counter" onclick="openEditOfferModal({{ $offerObj->id }}, {{ $offerObj->offer_price }}, {{ $offerObj->quantity }}, '{{ addslashes($offerObj->buyer_note ?? '') }}')">✏️ Edit</button>
+                                                <button class="offer-btn reject" onclick="cancelOffer({{ $offerObj->id }})">🚫 Batalkan</button>
+                                            </div>
                                         @elseif($offerObj->isCountered() && $isMine)
                                             <div class="offer-actions">
                                                 <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅ Terima Tawar Balik</button>
@@ -555,6 +561,51 @@
                     placeholder="Misal: ini harga terendah saya..." style="font-weight:500;font-size:13px;">
             </div>
             <button class="offer-submit-btn" onclick="submitCounter()">Kirim Tawar Balik</button>
+        </div>
+    </div>
+</div>
+
+{{-- ── MODAL EDIT OFFER (Buyer) ── --}}
+<div class="counter-modal-bg" id="editOfferModalBg" onclick="closeEditOfferModal(event)">
+    <div class="offer-modal">
+        <div class="offer-modal-head">
+            <h3>✏️ Edit Penawaran</h3>
+            <button class="offer-modal-close" onclick="closeEditOfferModal()">✕</button>
+        </div>
+        <div class="offer-modal-body">
+            <input type="hidden" id="editOfferId">
+            <div class="offer-product-info">
+                <div class="offer-product-emoji">🌾</div>
+                <div>
+                    <div class="offer-product-name">{{ $activeRoom->harvest->product->name ?? 'Produk' }}</div>
+                    <div class="offer-product-orig">Harga asli: <strong>Rp {{ number_format($activeRoom->harvest->price_per_unit, 0, ',', '.') }}</strong> / {{ $activeRoom->harvest->product->unit ?? 'kg' }}</div>
+                </div>
+            </div>
+            <div class="offer-form-group">
+                <label class="offer-form-label">Harga Tawar Baru (per {{ $activeRoom->harvest->product->unit ?? 'kg' }})</label>
+                <input type="number" class="offer-form-input" id="editOfferPriceInput"
+                    min="1" max="{{ $activeRoom->harvest->price_per_unit }}"
+                    oninput="updateEditSavings(this.value)"
+                    placeholder="Masukkan harga baru...">
+            </div>
+            <div class="offer-form-group">
+                <label class="offer-form-label">Jumlah ({{ $activeRoom->harvest->product->unit ?? 'kg' }})</label>
+                <input type="number" class="offer-form-input" id="editOfferQtyInput"
+                    min="1" max="{{ $activeRoom->harvest->remaining_stock }}"
+                    placeholder="Jumlah...">
+            </div>
+            <div class="offer-form-group">
+                <label class="offer-form-label">Catatan (opsional)</label>
+                <input type="text" class="offer-form-input" id="editOfferNoteInput"
+                    placeholder="Misal: saya beli rutin tiap minggu..." style="font-weight:500;font-size:13px;">
+            </div>
+            <div class="offer-savings" id="editOfferSavingsBox">
+                <span class="offer-savings-label">Hemat per unit</span>
+                <span class="offer-savings-val" id="editOfferSavingsVal">Rp 0</span>
+            </div>
+            <button class="offer-submit-btn" id="editOfferSubmitBtn" onclick="submitEditOffer()">
+                Simpan Perubahan
+            </button>
         </div>
     </div>
 </div>
@@ -815,6 +866,76 @@ async function cancelOffer(offerId) {
         const data = await res.json();
         if (data.success) { showChatToast('🚫 Tawaran dibatalkan.'); setTimeout(() => location.reload(), 800); }
     } catch(e) {}
+}
+
+// ── Edit Offer (Buyer) ──────────────────────────────────────────────
+const ORIG_PRICE_EDIT = {{ $activeRoom->harvest->price_per_unit ?? 0 }};
+
+function openEditOfferModal(offerId, currentPrice, currentQty, currentNote) {
+    document.getElementById('editOfferId').value           = offerId;
+    document.getElementById('editOfferPriceInput').value   = Math.round(currentPrice);
+    document.getElementById('editOfferQtyInput').value     = currentQty;
+    document.getElementById('editOfferNoteInput').value    = currentNote;
+    updateEditSavings(currentPrice);
+    document.getElementById('editOfferModalBg').classList.add('open');
+    document.getElementById('editOfferPriceInput').focus();
+}
+
+function closeEditOfferModal(e) {
+    if (!e || e.target === document.getElementById('editOfferModalBg'))
+        document.getElementById('editOfferModalBg').classList.remove('open');
+}
+
+function updateEditSavings(price) {
+    const orig = ORIG_PRICE_EDIT;
+    const saving = Math.max(0, orig - parseFloat(price || 0));
+    document.getElementById('editOfferSavingsVal').textContent =
+        'Rp ' + Math.round(saving).toLocaleString('id-ID');
+}
+
+async function submitEditOffer() {
+    const id    = document.getElementById('editOfferId').value;
+    const price = parseFloat(document.getElementById('editOfferPriceInput').value);
+    const qty   = parseInt(document.getElementById('editOfferQtyInput').value);
+    const note  = document.getElementById('editOfferNoteInput').value.trim();
+
+    if (!price || price <= 0) { alert('Masukkan harga yang valid.'); return; }
+    if (!qty   || qty   <= 0) { alert('Masukkan jumlah yang valid.'); return; }
+
+    const btn = document.getElementById('editOfferSubmitBtn');
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+    try {
+        // Batalkan offer lama lalu buat offer baru
+        await fetch(`/offers/${id}/cancel`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
+        });
+
+        const res  = await fetch('/offers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+            body: JSON.stringify({
+                harvest_id:   {{ $activeRoom->harvest->id ?? 0 }},
+                offer_price:  price,
+                quantity:     qty,
+                buyer_note:   note,
+                chat_room_id: ROOM_ID,
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            closeEditOfferModal();
+            showChatToast('✏️ Penawaran berhasil diperbarui!');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            alert(data.message || 'Gagal memperbarui penawaran.');
+        }
+    } catch(e) {
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Simpan Perubahan';
+    }
 }
 
 function openCounterModal(offerId, offerPrice) {

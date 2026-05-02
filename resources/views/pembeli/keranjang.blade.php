@@ -340,7 +340,7 @@
             <div class="select-all-row">
                 <input type="checkbox" class="custom-cb" id="selectAll" checked>
                 <label for="selectAll" style="cursor:pointer;user-select:none">Pilih Semua</label>
-                <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">
+                <span id="selectedItemCount" style="margin-left:auto;font-size:12px;color:var(--text-muted)">
                     {{ $items->sum('quantity') }} item dipilih
                 </span>
             </div>
@@ -381,7 +381,7 @@
                 @endphp
                 <div class="cart-item" id="cart-item-{{ $item->id }}">
                     {{-- Checkbox --}}
-                    <input type="checkbox" class="custom-cb item-cb" checked style="margin-top:34px;flex-shrink:0">
+                    <input type="checkbox" class="custom-cb item-cb" data-id="{{ $item->id }}" checked style="margin-top:34px;flex-shrink:0">
 
                     {{-- Gambar produk --}}
                     <div class="item-img" style="cursor:pointer"
@@ -474,7 +474,7 @@
 
                     {{-- Baris total --}}
                     <div class="summary-row">
-                        <span>Total Harga ({{ $items->sum('quantity') }} item)</span>
+                        <span>Total Harga (<span id="summaryItemCount">{{ $items->sum('quantity') }}</span> item)</span>
                         <strong id="summary-subtotal">Rp {{ number_format($subtotal, 0, ',', '.') }}</strong>
                     </div>
                     <div class="summary-row">
@@ -592,15 +592,17 @@ function showToast(msg, isError = false) {
 // ── Update ringkasan --------------------------------------------------
 function refreshSummary() {
     // Hitung ulang dari semua item yang di-check
-    let newSub = 0;
-    document.querySelectorAll('.item-cb').forEach((cb, idx) => {
+    let newSub  = 0;
+    let itemQty = 0;
+    document.querySelectorAll('.item-cb').forEach((cb) => {
         if (!cb.checked) return;
         const row = cb.closest('.cart-item');
         if (!row) return;
         const id  = row.id.replace('cart-item-', '');
         const qty = parseInt(document.getElementById('qty-'+id)?.value ?? 0);
         const sub = parseFloat(row.dataset.price ?? 0) * qty;
-        newSub += sub;
+        newSub  += sub;
+        itemQty += qty;
     });
     subtotalBase = newSub;
     ongkir       = subtotalBase >= 50000 ? 0 : 15000;
@@ -608,6 +610,18 @@ function refreshSummary() {
 
     document.getElementById('summary-subtotal').textContent = fmtRp(subtotalBase);
     document.getElementById('summary-total').textContent    = fmtRp(Math.max(0, total));
+
+    // Sinkron label jumlah item dipilih
+    const selCount = document.getElementById('selectedItemCount');
+    if (selCount) selCount.textContent = itemQty + ' item dipilih';
+    const sumCount = document.getElementById('summaryItemCount');
+    if (sumCount) sumCount.textContent = itemQty;
+
+    // Update ongkir label
+    if (ongkir === 0) {
+        const ongkirEl = document.querySelector('.free-ongkir-badge') || document.querySelector('[id="summary-ongkir"]');
+        // handled by static template; no dynamic update needed for badge
+    }
 }
 
 // ── Ubah qty ---------------------------------------------------------
@@ -699,8 +713,38 @@ document.getElementById('selectAll')?.addEventListener('change', function() {
     document.querySelectorAll('.item-cb, .seller-cb').forEach(cb => cb.checked = this.checked);
     refreshSummary();
 });
+
+// Seller checkbox: toggle semua item dalam grup penjual ini
+document.querySelectorAll('.seller-cb').forEach(sellerCb => {
+    sellerCb.addEventListener('change', function() {
+        const group = this.closest('.seller-group');
+        if (group) {
+            group.querySelectorAll('.item-cb').forEach(cb => cb.checked = this.checked);
+        }
+        // Update selectAll
+        const allItems = document.querySelectorAll('.item-cb');
+        const allChecked = [...allItems].every(cb => cb.checked);
+        const selectAllCb = document.getElementById('selectAll');
+        if (selectAllCb) selectAllCb.checked = allChecked;
+        refreshSummary();
+    });
+});
+
 document.querySelectorAll('.item-cb').forEach(cb => {
-    cb.addEventListener('change', refreshSummary);
+    cb.addEventListener('change', function() {
+        // Update seller-cb indeterminate state
+        const group = this.closest('.seller-group');
+        if (group) {
+            const groupItems = group.querySelectorAll('.item-cb');
+            const sellerCb   = group.querySelector('.seller-cb');
+            if (sellerCb) sellerCb.checked = [...groupItems].every(c => c.checked);
+        }
+        // Update selectAll
+        const allItems = document.querySelectorAll('.item-cb');
+        const selectAllCb = document.getElementById('selectAll');
+        if (selectAllCb) selectAllCb.checked = [...allItems].every(c => c.checked);
+        refreshSummary();
+    });
 });
 
 // ── Checkout ─────────────────────────────────────────────────────────
