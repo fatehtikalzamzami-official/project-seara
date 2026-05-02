@@ -454,22 +454,30 @@
                 </div>
             </div>
 
-            {{-- CTA --}}
-            <div>
-                <div class="cta-grid">
-                    <button class="btn-cart" onclick="showToast('🛒 Ditambahkan ke keranjang!')">
-                        🛒 Keranjang
-                    </button>
-                    <button class="btn-buy" onclick="showToast('✅ Memproses pembelian...')">
-                        ⚡ Beli Sekarang
-                    </button>
-                </div>
-                <div class="btn-secondary-row">
-                    <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()">
-                        🤍 Wishlist
-                    </button>
-                    <form method="POST" action="{{ route('chat.open') }}" style="flex:1;">
-    @csrf
+{{-- CTA --}}
+<div>
+    <div class="cta-grid">
+        {{-- Tombol Keranjang --}}
+        <form method="POST" action="{{ route('cart.store') }}" id="cartForm">
+            @csrf
+            <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
+            <input type="hidden" name="quantity" id="cartQty" value="1">
+            <button type="submit" class="btn-cart" onclick="syncQty()">
+                🛒 Keranjang
+            </button>
+        </form>
+
+        {{-- Tombol Beli Sekarang --}}
+        <button class="btn-buy" onclick="showToast('✅ Memproses pembelian...')">
+            ⚡ Beli Sekarang
+        </button>
+    </div>
+    <div class="btn-secondary-row">
+        <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()">
+            🤍 Wishlist
+        </button>
+        <form method="POST" action="{{ route('chat.open') }}" style="flex:1;">
+        @csrf
     <input type="hidden" name="seller_user_id" value="{{ $harvest->seller->user_id }}">
     <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
     <button type="submit" class="btn-chat">💬 Chat Penjual</button>
@@ -989,6 +997,14 @@ function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function syncQty() {
+    // Ambil nilai qty dari stepper yang sudah ada di halaman
+    const qtyInput = document.getElementById('qty'); // sesuaikan id-nya
+    if (qtyInput) {
+        document.getElementById('cartQty').value = qtyInput.value;
+    }
 }
 </script>
 @endpush
