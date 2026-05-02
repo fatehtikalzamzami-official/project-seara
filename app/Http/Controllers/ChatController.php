@@ -43,19 +43,25 @@ class ChatController extends Controller
             'harvest_id'     => 'nullable|exists:harvests,id',
         ]);
 
-        $buyerId  = Auth::id();
-        $sellerId = (int) $request->seller_user_id;
-        $harvestId = $request->harvest_id;
+        $buyerId   = Auth::id();
+        $sellerId  = (int) $request->seller_user_id;
 
         // Jangan chat dengan diri sendiri
         abort_if($buyerId === $sellerId, 403, 'Tidak bisa chat dengan diri sendiri.');
 
+        // Satu room per pasangan buyer–seller, harvest_id diabaikan untuk lookup
         $room = ChatRoom::firstOrCreate(
-            ['buyer_id'   => $buyerId,
-             'seller_id'  => $sellerId,
-             'harvest_id' => $harvestId],
+            [
+                'buyer_id'  => $buyerId,
+                'seller_id' => $sellerId,
+            ],
             ['last_message_at' => now()]
         );
+
+        // Kalau AJAX (dari offer form), return JSON room id
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json(['room_id' => $room->id]);
+        }
 
         return redirect()->route('chat.show', $room->id);
     }

@@ -931,7 +931,7 @@ async function submitOffer() {
     const qty      = document.getElementById('offerQty').value;
     const note     = document.querySelector('[name="buyer_note"]').value;
     const harvestId= document.querySelector('[name="harvest_id"]').value;
-    const chatRoomId= document.getElementById('offerChatRoomId').value;
+    const sellerUserId = document.querySelector('[name="seller_user_id"]').value;
 
     errEl.style.display = 'none';
 
@@ -950,6 +950,28 @@ async function submitOffer() {
     btn.innerHTML = '⏳ Mengirim...';
 
     try {
+        // Step 1: auto-buat/ambil chat room dulu
+        let chatRoomId = document.getElementById('offerChatRoomId').value;
+        if (!chatRoomId) {
+            const roomRes = await fetch('{{ route("chat.open") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    seller_user_id: sellerUserId,
+                    harvest_id: harvestId,
+                }),
+            });
+            const roomData = await roomRes.json();
+            if (!roomData.room_id) throw new Error('Gagal membuat chat room.');
+            chatRoomId = roomData.room_id;
+            document.getElementById('offerChatRoomId').value = chatRoomId;
+        }
+
+        // Step 2: kirim offer dengan chat_room_id
         const res = await fetch(offerUrl, {
             method: 'POST',
             headers: {
@@ -962,7 +984,7 @@ async function submitOffer() {
                 offer_price:  price,
                 quantity:     qty,
                 buyer_note:   note,
-                chat_room_id: chatRoomId || null,
+                chat_room_id: chatRoomId,
             }),
         });
 
@@ -976,6 +998,11 @@ async function submitOffer() {
             statusWrap.style.display  = 'block';
             statusBadge.textContent   = `${data.offer.status_label} — Rp ${parseFloat(data.offer.offer_price).toLocaleString('id-ID')} × ${data.offer.quantity} unit`;
             document.getElementById('offerForm').querySelectorAll('input,textarea').forEach(el => el.disabled = true);
+
+            // Jika offer langsung accepted (jarang, tapi handle)
+            if (data.offer.status === 'accepted') {
+                showCheckoutOfferBtn(data.offer.id);
+            }
         } else {
             const msg = data.message || (data.errors ? Object.values(data.errors).flat().join(' ') : 'Terjadi kesalahan.');
             errEl.textContent = msg;
@@ -990,6 +1017,52 @@ async function submitOffer() {
         btn.innerHTML = '💰 Kirim Penawaran';
     }
 }
+
+// ── Tampilkan tombol checkout dari offer ──────────────────────────────
+function showCheckoutOfferBtn(offerId) {
+    const wrap = document.getElementById('offerStatusWrap');
+    // Hapus tombol lama kalau ada
+    const existing = document.getElementById('offerCheckoutBtn');
+    if (existing) existing.remove();
+
+    const btn = document.createElement('a');
+    btn.id   = 'offerCheckoutBtn';
+    btn.href = `/orders/checkout/offer/${offerId}`;
+    btn.innerHTML = '🛍️ Checkout dengan Harga Ini →';
+    btn.style.cssText = 'display:block;width:100%;margin-top:10px;padding:13px;text-align:center;background:linear-gradient(135deg,#16a34a,#166534);color:white;border-radius:12px;font-weight:900;font-size:14px;text-decoration:none;box-shadow:0 4px 14px rgba(22,163,74,.3);transition:transform .15s;';
+    btn.onmouseover = () => btn.style.transform = 'translateY(-1px)';
+    btn.onmouseout  = () => btn.style.transform = '';
+
+    wrap.appendChild(btn);
+}
+
+// ── Cek status offer aktif saat halaman dimuat ────────────────────────
+const harvestIdForOffer = {{ $harvest->id }};
+@auth
+(async () => {
+    try {
+        const r = await fetch(`/offers/status?harvest_id=${harvestIdForOffer}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const d = await r.json();
+        if (d.offer) {
+            const statusWrap  = document.getElementById('offerStatusWrap');
+            const statusBadge = document.getElementById('offerStatusBadge');
+            const finalPrice  = d.offer.counter_price || d.offer.offer_price;
+            statusWrap.style.display = 'block';
+            statusBadge.textContent  = `${d.offer.status_label} — Rp ${parseFloat(finalPrice).toLocaleString('id-ID')} × ${d.offer.quantity} unit`;
+
+            if (d.offer.status === 'accepted') {
+                showCheckoutOfferBtn(d.offer.id);
+                // disable form
+                document.getElementById('offerForm')?.querySelectorAll('input,textarea').forEach(el => el.disabled = true);
+                const sb = document.getElementById('offerSubmitBtn');
+                if (sb) { sb.disabled = true; sb.innerHTML = '✅ Tawaran Diterima'; }
+            }
+        }
+    } catch(e) {}
+})();
+@endauth
 
 // ── Toast notification
 function showToast(msg) {

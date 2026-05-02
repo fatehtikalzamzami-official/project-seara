@@ -28,6 +28,7 @@ class PriceOffer extends Model
     public function isPending(): bool    { return $this->status === 'pending'; }
     public function isAccepted(): bool   { return $this->status === 'accepted'; }
     public function isCountered(): bool  { return $this->status === 'countered'; }
+    public function isCompleted(): bool  { return $this->status === 'completed'; }
     public function isExpired(): bool    { return $this->expires_at && $this->expires_at->isPast(); }
 
     public function discountPct(): float
@@ -38,13 +39,14 @@ class PriceOffer extends Model
     // Label badge status
     public function statusLabel(): string
     {
-        return match($this->status) {
+        return match($this->status ?? '') {
             'pending'   => '⏳ Menunggu',
             'accepted'  => '✅ Diterima',
             'rejected'  => '❌ Ditolak',
             'countered' => '🔄 Ditawar Balik',
             'cancelled' => '🚫 Dibatalkan',
-            default     => $this->status,
+            'completed' => '🛍️ Sudah Dibeli',
+            default     => '📋 ' . ($this->status ?? 'Unknown'),
         };
     }
 }

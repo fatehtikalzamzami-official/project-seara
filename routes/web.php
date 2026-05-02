@@ -9,6 +9,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BuyerDashboardController;
 use App\Http\Controllers\PriceOfferController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -65,6 +66,20 @@ Route::middleware(['auth'])->prefix('keranjang')->name('cart.')->group(function 
     Route::delete('/{cartItem}', [CartController::class, 'destroy'])->name('destroy');
     Route::delete('/',           [CartController::class, 'clear'])->name('clear');
     Route::get('/count',         [CartController::class, 'count'])->name('count');
+});
+
+// ─────────────────────────────────────────────────────────────
+//  ORDERS / CHECKOUT
+// ─────────────────────────────────────────────────────────────
+
+Route::middleware(['auth'])->prefix('orders')->name('orders.')->group(function () {
+    Route::get('/',                              [OrderController::class, 'index'])->name('index');
+    Route::get('/checkout/cart',                 [OrderController::class, 'checkoutFromCart'])->name('checkout.cart');
+    Route::get('/checkout/offer/{priceOffer}',   [OrderController::class, 'checkoutFromOffer'])->name('checkout.offer');
+    Route::post('/',                             [OrderController::class, 'store'])->name('store');
+    Route::get('/{order}',                       [OrderController::class, 'show'])->name('show');
+    Route::post('/{order}/payment-proof',        [OrderController::class, 'uploadPaymentProof'])->name('payment-proof');
+    Route::post('/{order}/cancel',               [OrderController::class, 'cancel'])->name('cancel');
 });
 
 // ─────────────────────────────────────────────────────────────

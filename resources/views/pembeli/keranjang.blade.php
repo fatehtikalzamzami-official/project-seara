@@ -705,7 +705,14 @@ document.querySelectorAll('.item-cb').forEach(cb => {
 
 // ── Checkout ─────────────────────────────────────────────────────────
 function handleCheckout() {
-    showToast('Fitur checkout segera hadir! 🚀');
+    // Kumpulkan ID cart item yang dicentang
+    const checked = [...document.querySelectorAll('.item-cb:checked')].map(cb => cb.dataset.id);
+    if (checked.length === 0) {
+        showToast('Pilih minimal satu produk untuk checkout.', 'warning');
+        return;
+    }
+    const params = checked.map(id => `items[]=${id}`).join('&');
+    window.location.href = `{{ route('orders.checkout.cart') }}?${params}`;
 }
 
 // ── Simpan data-price di setiap baris untuk perhitungan lokal ─────────
