@@ -229,7 +229,7 @@
 </a>
 
             {{-- Pesanan --}}
-            <a href="#" class="topbar-icon-btn">
+            <a href="{{ route('orders.index') }}" class="topbar-icon-btn">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
@@ -280,17 +280,17 @@
                     <div class="udrop-divider"></div>
 
                     {{-- Menu --}}
-                    <a href="#" class="udrop-item">
-                        <span class="udrop-icon">👤</span> My Profile
+                    <a href="{{ route('buyer.dashboard') }}" class="udrop-item">
+                        <span class="udrop-icon">🏠</span> Dashboard
                     </a>
-                    <a href="#" class="udrop-item">
-                        <span class="udrop-icon">⚙️</span> Setting
+                    <a href="{{ route('orders.index') }}" class="udrop-item">
+                        <span class="udrop-icon">📋</span> Pesanan Saya
                     </a>
-                    <a href="#" class="udrop-item">
-                        <span class="udrop-icon">📠</span> Fax Simile
+                    <a href="{{ route('cart.index') }}" class="udrop-item">
+                        <span class="udrop-icon">🛒</span> Keranjang Belanja
                     </a>
-                    <a href="#" class="udrop-item">
-                        <span class="udrop-icon">🎧</span> Contact Service
+                    <a href="{{ route('chat.index') }}" class="udrop-item">
+                        <span class="udrop-icon">💬</span> Chat Petani
                     </a>
 
                     <div class="udrop-divider"></div>

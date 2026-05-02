@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CartItem;
-use App\Models\Harvest;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\CartItem;
+use App\Models\Harvest;
 use App\Models\PriceOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,193 +13,163 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    // ── Halaman checkout dari keranjang ───────────────────────────────────
+    // ── Daftar pesanan buyer ───────────────────────────────────────────────
+    public function index(Request $request)
+    {
+        $status = $request->query('status');
+
+        $query = Order::where('buyer_id', Auth::id())
+            ->with('items')
+            ->latest();
+
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->paginate(10);
+
+        $countByStatus = Order::where('buyer_id', Auth::id())
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $allCount = array_sum($countByStatus);
+
+        return view('pembeli.orders', compact('orders', 'countByStatus', 'allCount'));
+    }
+
+    // ── Checkout dari keranjang ────────────────────────────────────────────
     public function checkoutFromCart(Request $request)
     {
-        // Ambil item yang dipilih (bisa semua atau selected)
-        $selectedIds = $request->query('items'); // array harvest_id atau null = semua
-
-        $query = CartItem::with(['harvest.product.category', 'harvest.seller.user'])
-            ->where('user_id', Auth::id());
-
-        if ($selectedIds) {
-            $query->whereIn('id', (array) $selectedIds);
-        }
-
-        $items = $query->latest()->get();
+        $items = CartItem::where('user_id', Auth::id())
+            ->with(['harvest.product', 'harvest.seller'])
+            ->get();
 
         if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Keranjang kosong atau item tidak ditemukan.');
+            return redirect()->route('cart.index')->with('error', 'Keranjang kamu kosong.');
         }
 
-        $subtotal     = $items->sum('subtotal');
-        $shippingCost = $subtotal >= 50000 ? 0 : 15000;
+        $subtotal     = $items->sum(fn($i) => $i->quantity * $i->harvest->price_per_unit);
+        $shippingCost = 15000;
         $total        = $subtotal + $shippingCost;
+        $source       = 'cart';
+        $offer        = null;
+        $harvest      = null;
+        $cartItemIds  = $items->pluck('id')->toArray();
 
-        return view('pembeli.checkout', [
-            'source'       => 'cart',
-            'items'        => $items,
-            'cartItemIds'  => $items->pluck('id')->toArray(),
-            'subtotal'     => $subtotal,
-            'shippingCost' => $shippingCost,
-            'total'        => $total,
-            'offer'        => null,
-        ]);
+        return view('pembeli.checkout', compact('items', 'subtotal', 'source', 'offer', 'harvest', 'cartItemIds', 'shippingCost', 'total'));
     }
 
-    // ── Halaman checkout dari price offer yang diterima ───────────────────
-    public function checkoutFromOffer(PriceOffer $priceOffer)
+    // ── Checkout dari penawaran harga ──────────────────────────────────────
+    public function checkoutFromOffer(Request $request, PriceOffer $priceOffer)
     {
-        // Hanya buyer yang bersangkutan
-        abort_unless($priceOffer->buyer_id === Auth::id(), 403);
-        abort_unless($priceOffer->isAccepted(), 422, 'Tawaran belum/tidak diterima.');
+        if ($priceOffer->buyer_id !== Auth::id()) {
+            abort(403);
+        }
 
-        $harvest = $priceOffer->harvest()->with(['product.category', 'seller.user'])->first();
+        if (! $priceOffer->isAccepted()) {
+            return redirect()->back()->with('error', 'Penawaran ini belum diterima penjual.');
+        }
 
-        // Harga final: counter_price jika ada, else offer_price
+        $harvest      = $priceOffer->harvest()->with('product', 'seller')->firstOrFail();
         $finalPrice   = $priceOffer->counter_price ?? $priceOffer->offer_price;
         $subtotal     = $finalPrice * $priceOffer->quantity;
-        $shippingCost = $subtotal >= 50000 ? 0 : 15000;
+        $shippingCost = 15000;
         $total        = $subtotal + $shippingCost;
+        $items        = collect();
+        $source       = 'offer';
+        $offer        = $priceOffer;
+        $cartItemIds  = [];
 
-        return view('pembeli.checkout', [
-            'source'       => 'offer',
-            'items'        => collect([]),  // kosong, gunakan offer
-            'cartItemIds'  => [],
-            'subtotal'     => $subtotal,
-            'shippingCost' => $shippingCost,
-            'total'        => $total,
-            'offer'        => $priceOffer,
-            'harvest'      => $harvest,
-            'finalPrice'   => $finalPrice,
-        ]);
+        return view('pembeli.checkout', compact('items', 'subtotal', 'source', 'offer', 'harvest', 'finalPrice', 'shippingCost', 'total', 'cartItemIds'));
     }
 
-    // ── Proses order (submit dari form checkout) ──────────────────────────
+    // ── Simpan pesanan baru ────────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
-            'source'           => 'required|in:cart,offer',
             'recipient_name'   => 'required|string|max:100',
             'recipient_phone'  => 'required|string|max:20',
             'shipping_address' => 'required|string|max:500',
-            'province'         => 'nullable|string|max:100',
-            'city'             => 'nullable|string|max:100',
-            'postal_code'      => 'nullable|string|max:10',
-            'payment_method'   => 'required|in:transfer,cod,e-wallet',
-            'buyer_notes'      => 'nullable|string|max:500',
+            'province'         => 'required|string|max:100',
+            'city'             => 'required|string|max:100',
+            'postal_code'      => 'required|string|max:10',
+            'payment_method'   => 'required|in:transfer,e-wallet,cod',
+            'source'           => 'required|in:cart,offer',
         ]);
 
-        if ($request->source === 'cart') {
-            return $this->processCartOrder($request);
-        }
+        DB::beginTransaction();
 
-        return $this->processOfferOrder($request);
-    }
+        try {
+            $subtotal       = 0;
+            $shippingCost   = 15000;
+            $discountAmount = 0;
+            $orderItems     = [];
 
-    // ── Proses order dari keranjang ───────────────────────────────────────
-    private function processCartOrder(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        $request->validate([
-            'cart_item_ids'   => 'required|array|min:1',
-            'cart_item_ids.*' => 'exists:cart_items,id',
-        ]);
+            if ($request->source === 'cart') {
+                $cartItems = CartItem::where('user_id', Auth::id())
+                    ->with(['harvest.product', 'harvest.seller.user'])
+                    ->get();
 
-        $cartItems = CartItem::with(['harvest.product', 'harvest.seller.user'])
-            ->whereIn('id', $request->cart_item_ids)
-            ->where('user_id', Auth::id())
-            ->get();
+                if ($cartItems->isEmpty()) {
+                    return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+                }
 
-        if ($cartItems->isEmpty()) {
-            return back()->with('error', 'Item keranjang tidak ditemukan.');
-        }
+                foreach ($cartItems as $ci) {
+                    $h        = $ci->harvest;
+                    $itemSub  = $ci->quantity * $h->price_per_unit;
+                    $subtotal += $itemSub;
 
-        // Validasi stok
-        foreach ($cartItems as $item) {
-            if ($item->quantity > $item->harvest->remaining_stock) {
-                return back()->with('error', "Stok {$item->harvest->product->name} tidak mencukupi.");
-            }
-        }
+                    $orderItems[] = [
+                        'harvest_id'     => $h->id,
+                        'product_name'   => $h->product->name,
+                        'product_unit'   => $h->product->unit,
+                        'seller_name'    => $h->seller->farm_name ?? ($h->seller->user->name ?? 'Petani'),
+                        'seller_user_id' => $h->seller->user_id,
+                        'quantity'       => $ci->quantity,
+                        'price_per_unit' => $h->price_per_unit,
+                        'subtotal'       => $itemSub,
+                        'is_offer_price' => false,
+                    ];
 
-        $subtotal     = $cartItems->sum('subtotal');
-        $shippingCost = $subtotal >= 50000 ? 0 : 15000;
-        $total        = $subtotal + $shippingCost;
+                    $h->decrement('remaining_stock', $ci->quantity);
+                }
 
-        $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $total) {
-            $order = Order::create([
-                'order_number'     => Order::generateOrderNumber(),
-                'buyer_id'         => Auth::id(),
-                'recipient_name'   => $request->recipient_name,
-                'recipient_phone'  => $request->recipient_phone,
-                'shipping_address' => $request->shipping_address,
-                'province'         => $request->province,
-                'city'             => $request->city,
-                'postal_code'      => $request->postal_code,
-                'subtotal'         => $subtotal,
-                'shipping_cost'    => $shippingCost,
-                'discount_amount'  => 0,
-                'total_amount'     => $total,
-                'payment_method'   => $request->payment_method,
-                'buyer_notes'      => $request->buyer_notes,
-                'status'           => 'pending_payment',
-            ]);
+                CartItem::where('user_id', Auth::id())->delete();
 
-            foreach ($cartItems as $item) {
-                $harvest  = $item->harvest;
-                $seller   = $harvest->seller;
+            } else {
+                $priceOffer = PriceOffer::findOrFail($request->price_offer_id);
 
-                OrderItem::create([
-                    'order_id'       => $order->id,
-                    'harvest_id'     => $harvest->id,
-                    'product_name'   => $harvest->product->name,
-                    'product_unit'   => $harvest->product->unit,
-                    'seller_name'    => $seller->farm_name ?? $seller->user->name,
-                    'seller_user_id' => $seller->user_id,
-                    'quantity'       => $item->quantity,
-                    'price_per_unit' => $harvest->price_per_unit,
-                    'subtotal'       => $item->subtotal,
-                    'is_offer_price' => false,
-                ]);
+                if ($priceOffer->buyer_id !== Auth::id() || ! $priceOffer->isAccepted()) {
+                    abort(403);
+                }
 
-                // Kurangi stok
-                $harvest->decrement('remaining_stock', $item->quantity);
+                $h          = $priceOffer->harvest()->with('product', 'seller.user')->firstOrFail();
+                $finalPrice = $priceOffer->counter_price ?? $priceOffer->offer_price;
+                $itemSub    = $finalPrice * $priceOffer->quantity;
+                $subtotal   = $itemSub;
+
+                $discountAmount = max(0, ($h->price_per_unit - $finalPrice) * $priceOffer->quantity);
+
+                $orderItems[] = [
+                    'harvest_id'     => $h->id,
+                    'product_name'   => $h->product->name,
+                    'product_unit'   => $h->product->unit,
+                    'seller_name'    => $h->seller->farm_name ?? ($h->seller->user->name ?? 'Petani'),
+                    'seller_user_id' => $h->seller->user_id,
+                    'quantity'       => $priceOffer->quantity,
+                    'price_per_unit' => $finalPrice,
+                    'subtotal'       => $itemSub,
+                    'price_offer_id' => $priceOffer->id,
+                    'is_offer_price' => true,
+                ];
+
+                $h->decrement('remaining_stock', $priceOffer->quantity);
+                $priceOffer->update(['status' => 'completed']);
             }
 
-            // Hapus dari keranjang
-            CartItem::whereIn('id', $cartItems->pluck('id'))->delete();
-
-            return $order;
-        });
-
-        return redirect()->route('orders.show', $order)
-            ->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
-    }
-
-    // ── Proses order dari offer ───────────────────────────────────────────
-    private function processOfferOrder(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        $request->validate([
-            'price_offer_id' => 'required|exists:price_offers,id',
-        ]);
-
-        $offer = PriceOffer::with(['harvest.product', 'harvest.seller.user'])->findOrFail($request->price_offer_id);
-
-        abort_unless($offer->buyer_id === Auth::id(), 403);
-        abort_unless($offer->isAccepted(), 422, 'Tawaran sudah tidak valid.');
-
-        $harvest    = $offer->harvest;
-        $finalPrice = $offer->counter_price ?? $offer->offer_price;
-
-        if ($offer->quantity > $harvest->remaining_stock) {
-            return back()->with('error', "Stok {$harvest->product->name} tidak mencukupi.");
-        }
-
-        $subtotal     = $finalPrice * $offer->quantity;
-        $shippingCost = $subtotal >= 50000 ? 0 : 15000;
-        $total        = $subtotal + $shippingCost;
-
-        $order = DB::transaction(function () use ($request, $offer, $harvest, $finalPrice, $subtotal, $shippingCost, $total) {
-            $seller = $harvest->seller;
+            $totalAmount = $subtotal + $shippingCost - $discountAmount;
 
             $order = Order::create([
                 'order_number'     => Order::generateOrderNumber(),
@@ -212,69 +182,49 @@ class OrderController extends Controller
                 'postal_code'      => $request->postal_code,
                 'subtotal'         => $subtotal,
                 'shipping_cost'    => $shippingCost,
-                'discount_amount'  => ($offer->original_price - $finalPrice) * $offer->quantity,
-                'total_amount'     => $total,
+                'discount_amount'  => $discountAmount,
+                'total_amount'     => $totalAmount,
+                'status'           => 'pending_payment',
                 'payment_method'   => $request->payment_method,
                 'buyer_notes'      => $request->buyer_notes,
-                'status'           => 'pending_payment',
             ]);
 
-            OrderItem::create([
-                'order_id'        => $order->id,
-                'harvest_id'      => $harvest->id,
-                'product_name'    => $harvest->product->name,
-                'product_unit'    => $harvest->product->unit,
-                'seller_name'     => $seller->farm_name ?? $seller->user->name,
-                'seller_user_id'  => $seller->user_id,
-                'quantity'        => $offer->quantity,
-                'price_per_unit'  => $finalPrice,
-                'subtotal'        => $subtotal,
-                'price_offer_id'  => $offer->id,
-                'is_offer_price'  => true,
-            ]);
+            foreach ($orderItems as $item) {
+                $order->items()->create($item);
+            }
 
-            // Kurangi stok
-            $harvest->decrement('remaining_stock', $offer->quantity);
+            DB::commit();
 
-            // Update status offer → selesai dipakai
-            $offer->update(['status' => 'completed']);
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
 
-            return $order;
-        });
-
-        return redirect()->route('orders.show', $order)
-            ->with('success', 'Pesanan berhasil dibuat dari penawaran harga!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal membuat pesanan: ' . $e->getMessage());
+        }
     }
 
-    // ── Detail pesanan ─────────────────────────────────────────────────────
+    // ── Detail pesanan ────────────────────────────────────────────────────
     public function show(Order $order)
     {
-        abort_unless($order->buyer_id === Auth::id(), 403);
+        if ($order->buyer_id !== Auth::id()) {
+            abort(403);
+        }
 
-        $order->load(['items.harvest.product', 'items.harvest.seller']);
+        $order->load('items');
 
         return view('pembeli.order-detail', compact('order'));
     }
 
-    // ── Daftar pesanan buyer ───────────────────────────────────────────────
-    public function index()
-    {
-        $orders = Order::where('buyer_id', Auth::id())
-            ->with('items')
-            ->latest()
-            ->paginate(10);
-
-        return view('pembeli.orders', compact('orders'));
-    }
-
-    // ── Upload bukti bayar ─────────────────────────────────────────────────
+    // ── Upload bukti pembayaran ────────────────────────────────────────────
     public function uploadPaymentProof(Request $request, Order $order)
     {
-        abort_unless($order->buyer_id === Auth::id(), 403);
-        abort_unless($order->isPendingPayment(), 422, 'Status order tidak valid.');
+        if ($order->buyer_id !== Auth::id()) {
+            abort(403);
+        }
 
         $request->validate([
-            'payment_proof' => 'required|image|max:5120', // 5MB
+            'payment_proof' => 'required|image|max:4096',
         ]);
 
         $path = $request->file('payment_proof')->store('payment-proofs', 'public');
@@ -285,29 +235,34 @@ class OrderController extends Controller
             'paid_at'       => now(),
         ]);
 
-        return back()->with('success', 'Bukti pembayaran berhasil diunggah. Pesanan sedang diproses.');
+        return redirect()->route('orders.show', $order)
+            ->with('success', 'Bukti pembayaran berhasil diupload.');
     }
 
-    // ── Batalkan order ─────────────────────────────────────────────────────
+    // ── Batalkan pesanan ──────────────────────────────────────────────────
     public function cancel(Request $request, Order $order)
     {
-        abort_unless($order->buyer_id === Auth::id(), 403);
-        abort_unless(in_array($order->status, ['pending_payment', 'paid']), 422, 'Order tidak bisa dibatalkan.');
+        if ($order->buyer_id !== Auth::id()) {
+            abort(403);
+        }
 
-        $request->validate(['cancel_reason' => 'nullable|string|max:300']);
+        if (! in_array($order->status, ['pending_payment', 'paid'])) {
+            return redirect()->back()->with('error', 'Pesanan ini tidak dapat dibatalkan.');
+        }
 
-        DB::transaction(function () use ($request, $order) {
-            // Kembalikan stok
-            foreach ($order->items as $item) {
-                $item->harvest->increment('remaining_stock', $item->quantity);
+        foreach ($order->items as $item) {
+            if ($item->harvest_id) {
+                Harvest::where('id', $item->harvest_id)
+                    ->increment('remaining_stock', $item->quantity);
             }
+        }
 
-            $order->update([
-                'status'        => 'cancelled',
-                'cancel_reason' => $request->cancel_reason,
-            ]);
-        });
+        $order->update([
+            'status'        => 'cancelled',
+            'cancel_reason' => $request->cancel_reason ?? 'Dibatalkan oleh pembeli',
+        ]);
 
-        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+        return redirect()->route('orders.index')
+            ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }
