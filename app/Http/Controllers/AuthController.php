@@ -33,14 +33,16 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['required', 'string', 'max:50', 'unique:users,name', 'alpha_dash'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:1000'],
             'no_whatsapp' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ], [
-            'email.unique' => 'Email ini sudah terdaftar. Silakan masuk atau gunakan email lain.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'username.unique' => 'Username sudah dipakai, coba yang lain.',
+            'username.alpha_dash' => 'Username hanya boleh huruf, angka, strip, dan underscore.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'password.min' => 'Kata sandi minimal 8 karakter.',
         ]);
 
         if ($validator->fails()) {
@@ -50,26 +52,22 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Buat username dari email (bagian sebelum @)
-        $username = explode('@', $request->email)[0];
-
         $user = User::create([
-            'name' => $username,
+            'name' => $request->username,      // ← dari input user
             'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'no_whatsapp' => $request->no_whatsapp,
             'alamat' => $request->alamat,
-            'role' => 'buyer', // default role saat daftar
+            'role' => 'buyer',
             'is_active' => true,
         ]);
 
-        // Auto login setelah daftar
         Auth::login($user, true);
 
         return response()->json([
             'success' => true,
-            'message' => 'Akun berhasil dibuat! Selamat datang di SEARA, ' . $user->nama_lengkap . '.',
+            'message' => 'Akun berhasil dibuat! Selamat datang, ' . $user->name . '.',
             'redirect' => route('buyer.dashboard'),
         ]);
     }
