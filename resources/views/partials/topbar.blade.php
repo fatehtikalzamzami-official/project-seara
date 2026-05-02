@@ -208,6 +208,17 @@
                 <span>Wishlist</span>
             </a>
 
+            {{-- Chat --}}
+            @auth
+            <a href="{{ route('chat.index') }}" class="topbar-icon-btn" id="chatTopbarBtn">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <span>Pesan</span>
+                <div class="cart-badge" id="chatBadge" style="display:none;">0</div>
+            </a>
+            @endauth
+
             {{-- Keranjang --}}
             <a href="#" class="topbar-icon-btn">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -325,4 +336,29 @@ function confirmLogout() {
         document.getElementById('logoutForm').submit();
     }
 }
+
+// ── Update badge chat unread
+@auth
+(function pollChatBadge() {
+    async function fetchUnread() {
+        try {
+            const res  = await fetch('{{ route("chat.unread") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '' }
+            });
+            const data = await res.json();
+            const badge = document.getElementById('chatBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 99 ? '99+' : data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        } catch(e) { /* silent */ }
+    }
+    fetchUnread();
+    setInterval(fetchUnread, 10000); // update tiap 10 detik
+})();
+@endauth
 </script>

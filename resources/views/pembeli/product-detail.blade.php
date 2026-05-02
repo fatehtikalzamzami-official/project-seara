@@ -126,8 +126,9 @@
     transition: all .2s;
 }
 .btn-buy:hover { background: var(--green-dark); border-color: var(--green-dark); }
+.btn-secondary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .btn-wishlist {
-    width: 100%; margin-top: 8px; padding: 12px;
+    padding: 12px;
     border-radius: 12px; border: 1.5px solid var(--border);
     background: transparent; color: var(--text-mid);
     font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 700;
@@ -136,6 +137,67 @@
 }
 .btn-wishlist:hover { border-color: #f43f5e; color: #f43f5e; background: #fff1f2; }
 .btn-wishlist.active { border-color: #f43f5e; color: #f43f5e; background: #fff1f2; }
+.btn-chat {
+    padding: 12px;
+    border-radius: 12px; border: 1.5px solid var(--border);
+    background: transparent; color: var(--text-mid);
+    font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all .2s;
+}
+.btn-chat:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+.btn-chat.active { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+
+/* ── Chat Panel ── */
+.chat-panel {
+    display: none; position: fixed; bottom: 24px; right: 24px;
+    width: 340px; background: white; border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18); z-index: 8000;
+    flex-direction: column; overflow: hidden;
+    border: 1.5px solid var(--border);
+}
+.chat-panel.open { display: flex; animation: slideUp .3s cubic-bezier(.22,1,.36,1); }
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.chat-head {
+    background: linear-gradient(135deg, var(--green-dark), var(--green-main));
+    padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+}
+.chat-head-ava { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.chat-head-info { flex: 1; }
+.chat-head-name { font-size: 14px; font-weight: 800; color: white; }
+.chat-head-status { font-size: 11px; color: rgba(255,255,255,.75); display: flex; align-items: center; gap: 4px; }
+.chat-head-status::before { content:''; width:7px; height:7px; border-radius:50%; background:#4ade80; display:inline-block; }
+.chat-close-btn { background: rgba(255,255,255,.15); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+.chat-close-btn:hover { background: rgba(255,255,255,.3); }
+.chat-messages { height: 240px; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #f9fafb; }
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+.msg-bubble { max-width: 80%; padding: 9px 13px; border-radius: 14px; font-size: 13px; line-height: 1.5; word-break: break-word; }
+.msg-bubble.seller { background: white; color: var(--text-dark); border: 1px solid var(--border); border-bottom-left-radius: 4px; align-self: flex-start; }
+.msg-bubble.buyer  { background: var(--green-main); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+.msg-time { font-size: 10px; opacity: .6; margin-top: 3px; }
+.chat-typing { display: flex; align-items: center; gap: 4px; padding: 2px 0; align-self: flex-start; }
+.chat-typing span { width: 7px; height: 7px; background: #bbb; border-radius: 50%; animation: tbounce .9s infinite; }
+.chat-typing span:nth-child(2) { animation-delay: .15s; }
+.chat-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes tbounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+.chat-input-wrap { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; background: white; }
+.chat-input {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 20px;
+    padding: 8px 14px; font-family: 'Nunito',sans-serif; font-size: 13px;
+    outline: none; transition: border-color .2s;
+}
+.chat-input:focus { border-color: var(--green-main); }
+.chat-send-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green-main); border: none; color: white;
+    font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background .2s; flex-shrink: 0;
+}
+.chat-send-btn:hover { background: var(--green-dark); }
+.chat-quick-wrap { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; background: white; }
+.chat-quick { font-size: 11px; font-weight: 700; color: var(--green-main); background: var(--green-pale); border: none; padding: 4px 10px; border-radius: 20px; cursor: pointer; transition: background .2s; white-space: nowrap; }
+.chat-quick:hover { background: #c8e6c9; }
 
 /* ── Petani ── */
 .farmer-card { display: flex; align-items: center; gap: 14px; }
@@ -402,9 +464,17 @@
                         ⚡ Beli Sekarang
                     </button>
                 </div>
-                <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()">
-                    🤍 Tambahkan ke Wishlist
-                </button>
+                <div class="btn-secondary-row">
+                    <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()">
+                        🤍 Wishlist
+                    </button>
+                    <form method="POST" action="{{ route('chat.open') }}" style="flex:1;">
+    @csrf
+    <input type="hidden" name="seller_user_id" value="{{ $harvest->seller->user_id }}">
+    <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
+    <button type="submit" class="btn-chat">💬 Chat Penjual</button>
+</form>
+                </div>
             </div>
 
             {{-- Petani --}}
@@ -581,6 +651,34 @@
 {{-- Toast --}}
 <div class="toast" id="toast"></div>
 
+{{-- Chat Panel --}}
+<div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+        <div class="chat-head-ava">👨‍🌾</div>
+        <div class="chat-head-info">
+            <div class="chat-head-name" id="chatSellerName">{{ $harvest->seller->user->name ?? 'Petani' }}</div>
+            <div class="chat-head-status">Online sekarang</div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="msg-bubble seller">
+            Halo! Ada yang bisa saya bantu mengenai <strong>{{ $harvest->product->name ?? 'produk' }}</strong> ini? 😊
+            <div class="msg-time">Baru saja</div>
+        </div>
+    </div>
+    <div class="chat-quick-wrap" id="chatQuickWrap">
+        <button class="chat-quick" onclick="sendQuick('Apakah stok masih tersedia?')">Stok tersedia?</button>
+        <button class="chat-quick" onclick="sendQuick('Bisa kirim ke luar kota?')">Kirim luar kota?</button>
+        <button class="chat-quick" onclick="sendQuick('Apakah bisa nego harga?')">Nego harga?</button>
+        <button class="chat-quick" onclick="sendQuick('Kapan jadwal panen berikutnya?')">Jadwal panen?</button>
+    </div>
+    <div class="chat-input-wrap">
+        <input class="chat-input" id="chatInput" type="text" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter') sendChat()">
+        <button class="chat-send-btn" onclick="sendChat()">➤</button>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -627,8 +725,77 @@ function toggleWishlist() {
     wishlisted = !wishlisted;
     const btn = document.getElementById('wishlistBtn');
     btn.classList.toggle('active', wishlisted);
-    btn.innerHTML = wishlisted ? '❤️ Tersimpan di Wishlist' : '🤍 Tambahkan ke Wishlist';
+    btn.innerHTML = wishlisted ? '❤️ Wishlist' : '🤍 Wishlist';
     showToast(wishlisted ? '❤️ Ditambahkan ke wishlist!' : '🤍 Dihapus dari wishlist');
+}
+
+// ── Chat
+let chatOpen = false;
+const autoReplies = [
+    'Tentu, stok masih tersedia! Silakan segera pesan ya 😊',
+    'Bisa, kami kirim ke seluruh Indonesia. Ongkos kirim menyesuaikan jarak.',
+    'Untuk harga sudah cukup kompetitif, tapi bisa dibicarakan untuk pembelian dalam jumlah besar.',
+    'Panen berikutnya dijadwalkan minggu depan. Mau saya kabari kalau sudah siap?',
+    'Terima kasih sudah menghubungi kami! Ada pertanyaan lain? 🙏',
+];
+let replyIdx = 0;
+
+function toggleChat() {
+    chatOpen = !chatOpen;
+    const panel = document.getElementById('chatPanel');
+    const btn = document.getElementById('chatBtn');
+    panel.classList.toggle('open', chatOpen);
+    btn.classList.toggle('active', chatOpen);
+    btn.innerHTML = chatOpen ? '✕ Tutup Chat' : '💬 Chat Penjual';
+    if (chatOpen) {
+        setTimeout(() => document.getElementById('chatInput').focus(), 300);
+        scrollChat();
+    }
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    appendMsg(msg, 'buyer');
+    document.getElementById('chatQuickWrap').style.display = 'none';
+
+    // Typing indicator
+    const typingEl = document.createElement('div');
+    typingEl.className = 'chat-typing';
+    typingEl.innerHTML = '<span></span><span></span><span></span>';
+    typingEl.id = 'typingIndicator';
+    document.getElementById('chatMessages').appendChild(typingEl);
+    scrollChat();
+
+    setTimeout(() => {
+        const t = document.getElementById('typingIndicator');
+        if (t) t.remove();
+        const reply = autoReplies[replyIdx % autoReplies.length];
+        replyIdx++;
+        appendMsg(reply, 'seller');
+    }, 1400);
+}
+
+function sendQuick(text) {
+    document.getElementById('chatInput').value = text;
+    sendChat();
+}
+
+function appendMsg(text, who) {
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const div = document.createElement('div');
+    div.className = 'msg-bubble ' + who;
+    div.innerHTML = text + '<div class="msg-time">' + time + '</div>';
+    document.getElementById('chatMessages').appendChild(div);
+    scrollChat();
+}
+
+function scrollChat() {
+    const el = document.getElementById('chatMessages');
+    el.scrollTop = el.scrollHeight;
 }
 
 // ── Toast notification

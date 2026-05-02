@@ -5,6 +5,7 @@ use App\Http\Controllers\SellerApplicationController;
 use App\Http\Controllers\SellerProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ChatController;
 
 
 use App\Http\Controllers\BuyerDashboardController;
@@ -19,6 +20,15 @@ Route::middleware(['auth', 'role:buyer,seller,admin'])
         Route::get('/produk/{id}', [ProductController::class, 'show'])
             ->name('product.show');
     });
+
+Route::middleware(['auth'])->prefix('chat')->name('chat.')->group(function () {
+    Route::get('/',                     [ChatController::class, 'index'])->name('index');
+    Route::post('/open',                [ChatController::class, 'openOrCreate'])->name('open');
+    Route::get('/{chatRoom}',           [ChatController::class, 'show'])->name('show');
+    Route::post('/{chatRoom}/send',     [ChatController::class, 'send'])->name('send');
+    Route::get('/{chatRoom}/poll',      [ChatController::class, 'poll'])->name('poll');
+    Route::get('/unread/count',         [ChatController::class, 'unreadCount'])->name('unread');
+});
 
 Route::get('/logout', function () {
     \Illuminate\Support\Facades\Auth::logout();
