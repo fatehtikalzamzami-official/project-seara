@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerApplicationController;
 use App\Http\Controllers\SellerProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 
 use App\Http\Controllers\BuyerDashboardController;
@@ -14,6 +15,9 @@ Route::middleware(['auth', 'role:buyer,seller,admin'])
     ->group(function () {
         Route::get('/dashboard', [BuyerDashboardController::class, 'index'])
             ->name('dashboard');
+
+        Route::get('/produk/{id}', [ProductController::class, 'show'])
+            ->name('product.show');
     });
 
 Route::get('/logout', function () {
@@ -27,6 +31,8 @@ Route::get('/logout', function () {
 // ─────────────────────────────────────────────────────────────
 
 Route::get('/', [AuthController::class, 'index'])->name('home');
+
+
 
 // Eksplorasi toko publik
 Route::get('/explore', [SellerProfileController::class, 'explore'])->name('explore');

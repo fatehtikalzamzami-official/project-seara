@@ -266,7 +266,8 @@
     <div class="prod-grid"> {{-- INI YANG KURANG --}}
         
         @foreach($harvests as $h)
-        <div class="prod-card">
+            <a href="{{ route('buyer.product.show', $h->id) }}" class="prod-card" style="text-decoration:none;">
+                        <div class="prod-card">
             <div class="prod-img">
                 🌾
 
@@ -323,6 +324,7 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
                 </button>
             </div>
         </div>
+            </a>
         @endforeach
 
     </div>
@@ -422,51 +424,7 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
         </div>
     </div>
 
-    {{-- Terpopuler --}}
-    <div class="anim-5" style="margin-bottom:24px">
-        <div class="section-hd">
-            <h2>Produk Terpopuler</h2>
-            <a href="#" class="see-all">Lihat Semua →</a>
-        </div>
-        <div class="tab-bar">
-            <button class="tab active">Terlaris</button>
-            <button class="tab">Terbaru</button>
-            <button class="tab">Sayuran</button>
-            <button class="tab">Buah-buahan</button>
-            <button class="tab">Rempah</button>
-        </div>
-        <div class="prod-grid">
-            @foreach([
-                ['🌽','Jagung Manis Super','Pak Agus · Malang','Rp 6.500','/kg','4.8','3.204','Malang',''],
-                ['🥔','Kentang Granola','Ibu Susi · Dieng','Rp 11.000','/kg','4.9','1.870','Dieng','organic'],
-                ['🍆','Terong Ungu Lokal','Pak Budi · Jember','Rp 7.000','/kg','4.6','942','Jember',''],
-                ['🥬','Sawi Putih Segar','Pak Dedi · Bandung','Rp 5.500','/ikat','4.7','520','Bandung','new'],
-                ['🧄','Bawang Putih Lokal','Pak Slamet · Brebes','Rp 32.000','/kg','4.9','2.110','Brebes',''],
-            ] as $p)
-            <div class="prod-card">
-                <div class="prod-img">{{ $p[0] }}
-                    @if($p[8] === 'organic')<span class="prod-badge organic">Organik</span>@endif
-                    @if($p[8] === 'new')<span class="prod-badge new-badge">Baru</span>@endif
-                    <button class="prod-wishlist">🤍</button>
-                </div>
-                <div class="prod-body">
-                    <div class="prod-name">{{ $p[1] }}</div>
-                    <div class="prod-farmer">👨‍🌾 {{ $p[2] }}</div>
-                    <div class="prod-price-row">
-                        <div class="prod-price">{{ $p[3] }}</div>
-                        <div class="prod-unit">{{ $p[4] }}</div>
-                    </div>
-                    <div class="prod-meta">
-                        <div class="prod-stars"><span>★</span> {{ $p[5] }}</div>
-                        <div class="prod-sold">{{ $p[6] }} terjual</div>
-                    </div>
-                    <div class="prod-location">📍 {{ $p[7] }}</div>
-                    <button class="add-to-cart-btn">+ Keranjang</button>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
+
 
 </div>
 @endsection
