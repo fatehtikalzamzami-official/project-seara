@@ -33,6 +33,12 @@ Route::middleware(['auth'])->prefix('chat')->name('chat.')->group(function () {
 });
 
 // ─────────────────────────────────────────────────────────────
+//  SELLER PROFILE (buyer view)
+// ─────────────────────────────────────────────────────────────
+
+Route::get('/petani/{seller}', [SellerProfileController::class, 'show'])->name('seller.profile');
+
+// ─────────────────────────────────────────────────────────────
 //  PRICE OFFER ROUTES
 // ─────────────────────────────────────────────────────────────
 

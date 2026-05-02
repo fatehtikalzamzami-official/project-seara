@@ -561,22 +561,29 @@
             </div>
 
             {{-- Petani --}}
+            @php $sp = $harvest->seller->user->sellerProfile ?? null; @endphp
             <div class="det-card">
                 <div class="det-card-title">Tentang Petani</div>
                 <div class="farmer-card">
                     <div class="farmer-ava-det">👨‍🌾</div>
                     <div class="farmer-info">
-                        <div class="farmer-det-name">{{ $harvest->seller->user->name ?? 'Petani Terverifikasi' }}</div>
-                        <div class="farmer-det-loc">📍 {{ $harvest->seller->user->alamat ?? 'Indonesia' }}</div>
+                        <div class="farmer-det-name">{{ $sp->nama_toko ?? $harvest->seller->user->name ?? 'Petani Terverifikasi' }}</div>
+                        <div class="farmer-det-loc">📍 {{ $sp ? ($sp->kota_kabupaten . ', ' . $sp->provinsi) : ($harvest->seller->user->alamat ?? 'Indonesia') }}</div>
                         <div class="farmer-verified">✓ Petani Terverifikasi SEARA</div>
                     </div>
                 </div>
                 <div class="farmer-stats-row">
-                    <div class="fstat"><span class="fstat-val">124</span><span class="fstat-lbl">Produk</span></div>
-                    <div class="fstat"><span class="fstat-val">4.9★</span><span class="fstat-lbl">Rating</span></div>
-                    <div class="fstat"><span class="fstat-val">2,3rb</span><span class="fstat-lbl">Terjual</span></div>
-                    <div class="fstat"><span class="fstat-val">98%</span><span class="fstat-lbl">Respons</span></div>
+                    <div class="fstat"><span class="fstat-val">{{ $sp->total_produk ?: '—' }}</span><span class="fstat-lbl">Produk</span></div>
+                    <div class="fstat"><span class="fstat-val">{{ $sp && $sp->rating > 0 ? number_format($sp->rating,1).'★' : '—' }}</span><span class="fstat-lbl">Rating</span></div>
+                    <div class="fstat"><span class="fstat-val">{{ $sp && $sp->total_transaksi >= 1000 ? number_format($sp->total_transaksi/1000,1).'rb' : ($sp->total_transaksi ?? '—') }}</span><span class="fstat-lbl">Terjual</span></div>
+                    <div class="fstat"><span class="fstat-val">{{ $sp && $sp->is_open ? 'Buka' : 'Tutup' }}</span><span class="fstat-lbl">Status</span></div>
                 </div>
+                <a href="{{ route('seller.profile', $harvest->seller->id) }}"
+                   style="display:block;margin-top:14px;text-align:center;padding:10px;border-radius:10px;border:1.5px solid var(--green-main);color:var(--green-main);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-decoration:none;transition:all .2s;"
+                   onmouseover="this.style.background='var(--green-pale)'"
+                   onmouseout="this.style.background='transparent'">
+                    👨‍🌾 Lihat Profil Lengkap Petani →
+                </a>
             </div>
 
             {{-- Garansi --}}
