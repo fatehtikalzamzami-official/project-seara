@@ -5,6 +5,27 @@
 @push('styles')
 <style>
 .trust-bar { background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+/* ── Seller CTA Banner */
+.seller-cta-banner {
+    background: linear-gradient(135deg, #1a3c1a, var(--green-dark));
+    border-radius: var(--r); padding: 16px 24px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    box-shadow: var(--shadow-md);
+}
+.seller-cta-processing { background: linear-gradient(135deg, #1e3a5f, #1e40af); }
+.scta-left { display: flex; align-items: center; gap: 14px; }
+.scta-emoji { font-size: 32px; flex-shrink: 0; }
+.scta-title { font-size: 15px; font-weight: 900; color: white; }
+.scta-sub   { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.scta-btn {
+    flex-shrink: 0; padding: 10px 22px; background: white; color: var(--green-dark);
+    border-radius: 8px; font-weight: 900; font-size: 13px; text-decoration: none;
+    transition: transform .2s, box-shadow .2s; box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.scta-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+.scta-btn-outline { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5); }
+.scta-btn-outline:hover { background: rgba(255,255,255,0.1); }
 .trust-inner { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
 .trust-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--text-mid); }
 .trust-item span { font-size: 20px; }
@@ -178,6 +199,34 @@
 
 <div class="page">
 
+    {{-- Seller CTA Banner (hanya untuk buyer) --}}
+    @if(Auth::check() && Auth::user()->role === 'buyer')
+    @php $sellerApp = Auth::user()->sellerApplication; @endphp
+    @if(!$sellerApp || $sellerApp->status === 'rejected')
+    <div class="seller-cta-banner anim-0">
+        <div class="scta-left">
+            <span class="scta-emoji">🌾</span>
+            <div>
+                <div class="scta-title">Punya hasil panen? Jual langsung di SEARA!</div>
+                <div class="scta-sub">Daftar jadi petani seller — tanpa perantara, harga lebih adil</div>
+            </div>
+        </div>
+        <a href="{{ route('buyer.apply.create') }}" class="scta-btn">Daftar Sekarang →</a>
+    </div>
+    @elseif(in_array($sellerApp->status, ['pending', 'reviewing']))
+    <div class="seller-cta-banner seller-cta-processing anim-0">
+        <div class="scta-left">
+            <span class="scta-emoji">⏳</span>
+            <div>
+                <div class="scta-title">Pengajuan seller kamu sedang diproses</div>
+                <div class="scta-sub">Tim SEARA akan meninjau dalam 1–3 hari kerja</div>
+            </div>
+        </div>
+        <a href="{{ route('buyer.application.status') }}" class="scta-btn scta-btn-outline">Lihat Status →</a>
+    </div>
+    @endif
+    @endif
+
     {{-- Hero --}}
     <div class="hero-section anim-1">
         <div class="hero-main">
@@ -212,18 +261,25 @@
     <div class="anim-2" style="margin-bottom:20px">
         <div class="section-hd">
             <h2>Berdasarkan Kategori</h2>
-            <a href="#" class="see-all">Lihat Semua →</a>
+            <a href="{{ route('explore') }}" class="see-all">Lihat Semua →</a>
         </div>
         <div class="cats-grid">
-            @foreach([
-                ['🌿','Semua'], ['🌾','Pertanian'], ['🌳','Perkebunan'],
-                ['🥗','Sayuran'], ['🍎','Buah-buahan'], ['🌿','Rempah'],
-                ['🐄','Peternakan'], ['🐟','Perikanan'], ['🌱','Bibit'], ['🧴','Pupuk']
-            ] as $i => $cat)
-            <div class="cat-item {{ $i === 0 ? 'active' : '' }}">
-                <div class="cat-icon">{{ $cat[0] }}</div>
-                <div class="cat-name">{{ $cat[1] }}</div>
-            </div>
+            @php
+                $catIcons = ['Pertanian'=>'🌾','Perkebunan'=>'🌳','Sayuran'=>'🥗','Buah-buahan'=>'🍎','Rempah'=>'🫚','Peternakan'=>'🐄','Perikanan'=>'🐟','Bibit'=>'🌱','Pupuk'=>'🧴'];
+            @endphp
+            <a href="{{ route('buyer.dashboard') }}" style="text-decoration:none">
+                <div class="cat-item {{ !$activeCategoryId ? 'active' : '' }}">
+                    <div class="cat-icon">🌿</div>
+                    <div class="cat-name">Semua</div>
+                </div>
+            </a>
+            @foreach($categories as $cat)
+            <a href="{{ route('buyer.dashboard', ['category' => $cat->id]) }}" style="text-decoration:none">
+                <div class="cat-item {{ $activeCategoryId == $cat->id ? 'active' : '' }}">
+                    <div class="cat-icon">{{ $catIcons[$cat->name] ?? '🛒' }}</div>
+                    <div class="cat-name">{{ $cat->name }}</div>
+                </div>
+            </a>
             @endforeach
         </div>
     </div>
@@ -259,170 +315,151 @@
  {{-- Panen Hari ini --}}
 <div class="anim-3" style="margin-bottom:24px">
     <div class="section-hd">
-        <h2>Panen Hari ini</h2>
-        <a href="#" class="see-all">Lihat Semua →</a>
+        <h2>Panen Hari Ini</h2>
+        <a href="{{ route('buyer.dashboard') }}" class="see-all">Lihat Semua →</a>
     </div>
 
-    <div class="prod-grid"> {{-- INI YANG KURANG --}}
-        
-        @foreach($harvests as $h)
-            <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
-            <div class="prod-img">
-                🌾
-
-                @if($h->is_organic)
-                    <span class="prod-badge organic">Organik</span>
-                @endif
-
-                @php
-$harvestDate = \Carbon\Carbon::parse($h->harvest_date)->format('Y-m-d');
-$harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
-@endphp
-
-                <span class="prod-badge time"
-                    data-deadline="{{ $harvestDateTime->format('Y-m-d H:i:s') }}">
-                    ⏱ --:--:--
-                </span>
-
-                @auth
-                <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
-                @endauth
-            </div>
-
-            <div class="prod-body">
-                <div class="prod-name">
-                    {{ $h->product->name ?? 'Produk Tidak Diketahui' }}
-                </div>
-
-                <div class="prod-farmer">
-                    👨‍🌾 {{ $h->seller->user->name ?? 'Petani' }}
-                </div>
-
-                <div class="prod-price-row">
-                    <div class="prod-price">
-                        Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}
-                    </div>
-                    <div class="prod-unit">
-                        /{{ $h->product->unit ?? 'kg' }}
-                    </div>
-                </div>
-
-                <div class="prod-meta">
-                    <div class="prod-stars">
-                        📦 {{ $h->remaining_stock }} stok
-                    </div>
-                    <div class="prod-sold">
-                        Panen hari ini
-                    </div>
-                </div>
-
-                <div class="prod-location">
-                    📍 {{ $h->seller->user->alamat ?? 'Indonesia' }}
-                </div>
-
-                <button class="add-to-cart-btn">
-                    + Keranjang
-                </button>
-            </div>
+    @if($todayHarvests->isEmpty())
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--r);padding:40px;text-align:center;color:var(--text-muted);">
+            <div style="font-size:40px;margin-bottom:10px">🌾</div>
+            <div style="font-weight:700">Belum ada panen hari ini</div>
+            <div style="font-size:13px;margin-top:4px">Cek kembali besok atau jelajahi semua produk</div>
         </div>
+    @else
+    <div class="prod-grid">
+        @foreach($todayHarvests as $h)
+            @php
+                $harvestTime = $h->harvest_time ?? '06:00:00';
+                $deadlineStr = \Carbon\Carbon::parse($h->harvest_date)->format('Y-m-d') . ' ' . $harvestTime;
+            @endphp
+            <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
+                <div class="prod-img">
+                    🌾
+                    @if($h->is_organic)
+                        <span class="prod-badge organic">Organik</span>
+                    @endif
+                    <span class="prod-badge time" data-deadline="{{ $deadlineStr }}">⏱ --:--:--</span>
+                    @auth
+                    <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
+                    @endauth
+                </div>
+                <div class="prod-body">
+                    <div class="prod-name">{{ $h->product->name ?? 'Produk' }}</div>
+                    <div class="prod-farmer">👨‍🌾 {{ $h->seller->user->name ?? 'Petani' }}</div>
+                    <div class="prod-price-row">
+                        <div class="prod-price">Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}</div>
+                        <div class="prod-unit">/{{ $h->product->unit ?? 'kg' }}</div>
+                    </div>
+                    <div class="prod-meta">
+                        <div class="prod-stars">📦 {{ $h->remaining_stock }} stok</div>
+                        <div class="prod-sold">Panen hari ini</div>
+                    </div>
+                    <div class="prod-location">📍 {{ $h->seller->kota_kabupaten ?? $h->seller->user->alamat ?? 'Indonesia' }}</div>
+                    @auth
+                    <button class="add-to-cart-btn"
+                        onclick="event.stopPropagation(); addToCart({{ $h->id }}, this)">
+                        🛒 + Keranjang
+                    </button>
+                    @else
+                    <a href="/" class="add-to-cart-btn" onclick="event.stopPropagation()">Login untuk Beli</a>
+                    @endauth
+                </div>
+            </div>
         @endforeach
-
     </div>
+    @endif
 </div>
 
-    {{-- Flash Sale --}}
+    {{-- Semua Produk (dengan filter kategori) --}}
     <div class="flash-section anim-3" id="produk">
         <div class="flash-header">
             <div class="flash-title">
                 <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Flash Sale
+                {{ $activeCategoryId ? 'Produk Kategori' : 'Semua Produk' }}
             </div>
             <div class="flash-countdown">
-                Berakhir dalam:
-                <div class="countdown-box" id="h">03</div> :
-                <div class="countdown-box" id="m">24</div> :
-                <div class="countdown-box" id="s">17</div>
-                <a href="#" class="see-all" style="margin-left:12px">Lihat Semua →</a>
+                <a href="{{ route('explore') }}" class="see-all">Jelajahi Toko →</a>
             </div>
         </div>
+        @if($harvests->isEmpty())
+            <div style="padding:40px;text-align:center;color:var(--text-muted);">
+                <div style="font-size:40px;margin-bottom:10px">🔍</div>
+                <div style="font-weight:700">Tidak ada produk di kategori ini</div>
+                <div style="font-size:13px;margin-top:4px">Coba kategori lain</div>
+            </div>
+        @else
         <div class="prod-grid prod-grid-6">
             @foreach($harvests as $h)
-<div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
-    <div class="prod-img">
-        🌾
-        @if($h->is_organic)
-            <span class="prod-badge organic">Organik</span>
+            <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
+                <div class="prod-img">
+                    🌾
+                    @if($h->is_organic)
+                        <span class="prod-badge organic">Organik</span>
+                    @endif
+                    @auth
+                    <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
+                    @endauth
+                </div>
+                <div class="prod-body">
+                    <div class="prod-name">{{ $h->product->name ?? 'Produk' }}</div>
+                    <div class="prod-farmer">👨‍🌾 {{ $h->seller->user->name ?? 'Petani' }}</div>
+                    <div class="prod-price-row">
+                        <div class="prod-price">Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}</div>
+                        <div class="prod-unit">/{{ $h->product->unit ?? 'kg' }}</div>
+                    </div>
+                    <div class="prod-meta">
+                        <div class="prod-stars">📦 {{ $h->remaining_stock }} stok</div>
+                        <div class="prod-sold">{{ $h->product->category->name ?? '' }}</div>
+                    </div>
+                    <div class="prod-location">📍 {{ $h->seller->kota_kabupaten ?? $h->seller->user->alamat ?? 'Indonesia' }}</div>
+                    @auth
+                    <button class="add-to-cart-btn"
+                        onclick="event.stopPropagation(); addToCart({{ $h->id }}, this)">
+                        🛒 + Keranjang
+                    </button>
+                    @else
+                    <a href="/" class="add-to-cart-btn" onclick="event.stopPropagation()">Login untuk Beli</a>
+                    @endauth
+                </div>
+            </div>
+            @endforeach
+        </div>
         @endif
-        @auth
-        <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
-        @endauth
-    </div>
-
-    <div class="prod-body">
-        <div class="prod-name">
-            {{ $h->product->name }}
-        </div>
-
-        <div class="prod-farmer">
-            👨‍🌾 {{ $h->seller->user->name }}
-        </div>
-
-        <div class="prod-price-row">
-            <div class="prod-price">
-                Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}
-            </div>
-            <div class="prod-unit">
-                /{{ $h->product->unit ?? 'kg' }}
-            </div>
-        </div>
-
-        <div class="prod-meta">
-            <div class="prod-stars">
-                📦 {{ $h->remaining_stock }} stok
-            </div>
-            <div class="prod-sold">
-                Panen hari ini
-            </div>
-        </div>
-
-        <div class="prod-location">
-            📍 {{ $h->seller->user->alamat ?? 'Indonesia' }}
-        </div>
-
-        <button class="add-to-cart-btn">
-            + Keranjang
-        </button>
-    </div>
-</div>
-@endforeach
-        </div>
     </div>
 
     {{-- Farmers --}}
     <div class="anim-4" style="margin-bottom:24px">
         <div class="section-hd">
             <h2>Petani Terpopuler</h2>
-            <a href="#" class="see-all">Semua Petani →</a>
+            <a href="{{ route('explore') }}" class="see-all">Semua Petani →</a>
         </div>
         <div class="farmer-grid">
-            @foreach([
-                ['👨‍🌾','Pak Slamet Santoso','Brebes, Jawa Tengah','124','4.9'],
-                ['👩‍🌾','Ibu Ratna Wulandari','Lembang, Jabar','86','5.0'],
-                ['🧑‍🌾','Pak Hendra Kusuma','Cianjur, Jabar','52','4.8'],
-                ['👨‍🌾','Pak Agus Purnomo','Malang, Jatim','97','4.7'],
-                ['👩‍🌾','Ibu Sari Dewi','Dieng, Jateng','43','4.9'],
-            ] as $f)
+            @forelse($topSellers as $sp)
+            <a href="{{ route('store.show', $sp->slug_toko) }}" style="text-decoration:none">
             <div class="farmer-card">
-                <div class="farmer-ava">{{ $f[0] }}</div>
+                <div class="farmer-ava">
+                    @if($sp->foto_toko)
+                        <img src="{{ asset('storage/'.$sp->foto_toko) }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="{{ $sp->nama_toko }}">
+                    @else
+                        👨‍🌾
+                    @endif
+                </div>
+                @if($sp->is_verified)
                 <div class="verified-badge">✓ Terverifikasi</div>
-                <div class="farmer-name">{{ $f[1] }}</div>
-                <div class="farmer-loc">📍 {{ $f[2] }}</div>
+                @endif
+                <div class="farmer-name">{{ $sp->nama_toko }}</div>
+                <div class="farmer-loc">📍 {{ $sp->kota_kabupaten ?? $sp->provinsi ?? 'Indonesia' }}</div>
                 <div class="farmer-stats">
-                    <div class="farmer-stat"><strong>{{ $f[3] }}</strong> Produk</div>
-                    <div class="farmer-stat"><strong>{{ $f[4] }} ★</strong> Rating</div>
+                    <div class="farmer-stat"><strong>{{ $sp->total_produk ?? 0 }}</strong> Produk</div>
+                    <div class="farmer-stat"><strong>{{ number_format($sp->rating ?? 5, 1) }} ★</strong> Rating</div>
                 </div>
             </div>
-            @endforeach
+            </a>
+            @empty
+            <div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:14px;">
+                Belum ada petani terverifikasi
+            </div>
+            @endforelse
         </div>
     </div>
 
@@ -433,33 +470,76 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
 
 @push('scripts')
 <script>
-let total = 3 * 3600 + 24 * 60 + 17;
-function tick() {
-    total--;
-    if (total < 0) total = 86400;
-    const h = String(Math.floor(total / 3600)).padStart(2, '0');
-    const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
-    const s = String(total % 60).padStart(2, '0');
-    document.getElementById('h').textContent = h;
-    document.getElementById('m').textContent = m;
-    document.getElementById('s').textContent = s;
-}
-setInterval(tick, 1000);
 
-document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-        t.classList.add('active');
-    });
-});
-document.querySelectorAll('.cat-item').forEach(c => {
-    c.addEventListener('click', () => {
-        document.querySelectorAll('.cat-item').forEach(x => x.classList.remove('active'));
-        c.classList.add('active');
-    });
-});
 const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
 
+// ── Toast notification ────────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+    let toast = document.getElementById('globalToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2e1a;color:white;padding:12px 22px;border-radius:12px;font-size:14px;font-weight:700;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.25);';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.background = type === 'error' ? '#991b1b' : '#1a2e1a';
+    toast.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2800);
+}
+
+// ── Tambah ke keranjang ───────────────────────────────────────────────────
+async function addToCart(harvestId, btn) {
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Menambahkan...';
+
+    try {
+        const res = await fetch('{{ route("cart.store") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ harvest_id: harvestId, quantity: 1 })
+        });
+
+        if (res.status === 401) {
+            window.location.href = '/';
+            return;
+        }
+
+        const data = await res.json();
+        if (data.success) {
+            btn.innerHTML = '✅ Ditambahkan!';
+            showToast('🛒 Produk ditambahkan ke keranjang!');
+
+            // Update badge keranjang di topbar
+            const badge = document.getElementById('cartBadge');
+            if (badge && data.cart_count !== undefined) {
+                badge.textContent = data.cart_count;
+                badge.style.display = data.cart_count > 0 ? 'flex' : 'none';
+            }
+
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            showToast(data.message || 'Gagal menambahkan ke keranjang.', 'error');
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }
+    } catch(err) {
+        showToast('Gagal terhubung ke server.', 'error');
+        btn.innerHTML = original;
+        btn.disabled = false;
+    }
+}
+
+// ── Wishlist toggle ───────────────────────────────────────────────────────
 document.querySelectorAll('.prod-wishlist').forEach(btn => {
     btn.addEventListener('click', async function(e) {
         e.stopPropagation();
@@ -488,7 +568,6 @@ document.querySelectorAll('.prod-wishlist').forEach(btn => {
             const data = await res.json();
             if (data.success) {
                 this.textContent = data.wishlisted ? '❤️' : '🤍';
-                // Update badge wishlist di topbar
                 const badge = document.getElementById('wishlistBadge');
                 if (badge) {
                     badge.textContent = data.count;
@@ -503,19 +582,15 @@ document.querySelectorAll('.prod-wishlist').forEach(btn => {
     });
 });
 
+// ── Timer Panen (badge waktu berlalu sejak panen) ─────────────────────────
 function updateTimeBadges() {
     const now = new Date();
-
     document.querySelectorAll('.prod-badge.time').forEach(badge => {
         const deadline = badge.dataset.deadline;
-
-        if (!deadline) {
-            badge.textContent = '⏱ --:--:--';
-            return;
-        }
+        if (!deadline) { badge.textContent = '⏱ --:--:--'; return; }
 
         const panenDate = new Date(deadline);
-        let diffMs = now - panenDate;
+        const diffMs = now - panenDate;
 
         if (diffMs < 0) {
             badge.textContent = '⏱ Belum Panen';
@@ -528,19 +603,13 @@ function updateTimeBadges() {
         const mins = Math.floor((totalSec % 3600) / 60);
         const secs = totalSec % 60;
 
-        badge.textContent = '⏱ '
-            + String(hrs).padStart(2,'0') + ':'
-            + String(mins).padStart(2,'0') + ':'
-            + String(secs).padStart(2,'0');
-
+        badge.textContent = '⏱ ' + String(hrs).padStart(2,'0') + ':' + String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
         badge.classList.remove('badge-yellow', 'badge-red');
-
         const jamBerlalu = diffMs / 3600000;
         if (jamBerlalu >= 4) badge.classList.add('badge-red');
         else if (jamBerlalu >= 2) badge.classList.add('badge-yellow');
     });
 }
-
 setInterval(updateTimeBadges, 1000);
 updateTimeBadges();
 </script>

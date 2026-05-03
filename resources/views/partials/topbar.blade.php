@@ -171,6 +171,9 @@
     width: auto;
     object-fit: contain;
 }
+
+.udrop-item-seller { color: var(--green-dark) !important; font-weight: 800 !important; }
+.udrop-item-seller:hover { background: var(--green-pale) !important; color: var(--green-main) !important; }
 </style>
 
 <header class="topbar">
@@ -284,6 +287,9 @@
                     <a href="{{ route('buyer.dashboard') }}" class="udrop-item">
                         <span class="udrop-icon">🏠</span> Dashboard
                     </a>
+                    <a href="{{ route('buyer.profile') }}" class="udrop-item">
+                        <span class="udrop-icon">👤</span> Profil Saya
+                    </a>
                     <a href="{{ route('orders.index') }}" class="udrop-item">
                         <span class="udrop-icon">📋</span> Pesanan Saya
                     </a>
@@ -293,6 +299,25 @@
                     <a href="{{ route('chat.index') }}" class="udrop-item">
                         <span class="udrop-icon">💬</span> Chat Petani
                     </a>
+
+                    @if(Auth::user()->role === 'buyer')
+                    @php $application = Auth::user()->sellerApplication; @endphp
+                    <div class="udrop-divider"></div>
+                    @if(!$application || $application->status === 'rejected')
+                    <a href="{{ route('buyer.apply.create') }}" class="udrop-item udrop-item-seller">
+                        <span class="udrop-icon">🌾</span> Jadi Seller
+                    </a>
+                    @elseif(in_array($application->status, ['pending', 'reviewing']))
+                    <a href="{{ route('buyer.application.status') }}" class="udrop-item" style="opacity:0.75">
+                        <span class="udrop-icon">⏳</span> Pengajuan Diproses...
+                    </a>
+                    @endif
+                    @elseif(Auth::user()->role === 'seller')
+                    <div class="udrop-divider"></div>
+                    <a href="{{ route('seller.dashboard') }}" class="udrop-item udrop-item-seller">
+                        <span class="udrop-icon">🌾</span> Dashboard Seller
+                    </a>
+                    @endif
 
                     <div class="udrop-divider"></div>
 

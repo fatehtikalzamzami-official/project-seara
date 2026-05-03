@@ -3,17 +3,30 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'last_seen_at'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'nama_lengkap',
+        'email',
+        'password',
+        'no_whatsapp',
+        'alamat',
+        'role',
+        'is_active',
+        'last_login_at',
+        'last_seen_at',
+        'google_id',
+        'avatar',
+    ];
+
+    protected $hidden = ['password', 'remember_token'];
 
     protected function casts(): array
     {
@@ -21,6 +34,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
             'last_seen_at'      => 'datetime',
+            'last_login_at'     => 'datetime',
         ];
     }
 
@@ -30,7 +44,6 @@ class User extends Authenticatable
     public function seller()            { return $this->hasOne(Seller::class); }
 
     // ── Online status
-    // Dianggap online jika last_seen_at dalam 3 menit terakhir
     public function isOnline(): bool
     {
         return $this->last_seen_at && $this->last_seen_at->gt(now()->subMinutes(3));
