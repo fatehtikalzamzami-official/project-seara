@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Harvest;
+use App\Models\Wishlist;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -21,6 +23,13 @@ class ProductController extends Controller
             ->take(5)
             ->get();
 
-        return view('pembeli.product-detail', compact('harvest', 'relatedHarvests'));
+        // Cek apakah user sudah wishlist produk ini
+        $wishlisted = Auth::check()
+            ? Wishlist::where('user_id', Auth::id())
+                      ->where('harvest_id', $id)
+                      ->exists()
+            : false;
+
+        return view('pembeli.product-detail', compact('harvest', 'relatedHarvests', 'wishlisted'));
     }
 }

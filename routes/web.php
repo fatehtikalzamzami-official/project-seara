@@ -10,6 +10,7 @@ use App\Http\Controllers\BuyerDashboardController;
 use App\Http\Controllers\PriceOfferController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WishlistController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
