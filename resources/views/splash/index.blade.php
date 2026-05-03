@@ -616,6 +616,89 @@
             margin-bottom: 1.6rem;
         }
 
+        /* ── SUCCESS POPUP ── */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(4px);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2.4rem 2rem 2rem;
+            width: min(360px, 90vw);
+            text-align: center;
+            transform: scale(.88) translateY(20px);
+            transition: transform .35s cubic-bezier(.2, .9, .4, 1.05);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
+        }
+
+        .popup-overlay.show .popup-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-icon {
+            width: 64px;
+            height: 64px;
+            background: #f0fdf4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            font-size: 1.8rem;
+        }
+
+        .popup-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2118;
+            margin-bottom: .5rem;
+        }
+
+        .popup-msg {
+            font-size: .82rem;
+            color: #6f8f7c;
+            line-height: 1.7;
+            margin-bottom: 1.6rem;
+        }
+
+        .popup-btn {
+            background: linear-gradient(105deg, #3dba7e 0%, #2a9d6e 100%);
+            color: #fff;
+            border: none;
+            padding: .8rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: .82rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s;
+            box-shadow: 0 4px 12px rgba(61, 186, 126, .3);
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(61, 186, 126, .4);
+        }
+
         .btn-google:hover {
             border-color: var(--leaf);
             background: #fafefa;
@@ -1618,8 +1701,17 @@
 
                     const data = await res.json();
                     if (data.success) {
-                        alert(data.message);
-                        window.location.href = data.redirect;
+                        // Tampilkan popup
+                        const overlay = $('successPopup');
+                        $('popupTitle').textContent = 'Akun Berhasil Dibuat! 🎉';
+                        $('popupMsg').textContent = data.message;
+                        overlay.classList.add('show');
+
+                        // Klik tombol → redirect
+                        $('popupBtn').onclick = () => window.location.href = data.redirect;
+
+                        // Auto redirect 3 detik
+                        setTimeout(() => window.location.href = data.redirect, 3000);
                     } else {
                         const errs = data.errors
                             ? Object.values(data.errors).flat().join('\n')
@@ -1658,6 +1750,15 @@
             }
         })();
     </script>
+
+    <div class="popup-overlay" id="successPopup">
+        <div class="popup-box">
+            <div class="popup-icon">🌿</div>
+            <div class="popup-title" id="popupTitle">Akun Berhasil Dibuat!</div>
+            <p class="popup-msg" id="popupMsg">Selamat datang di SEARA. Anda akan diarahkan ke dashboard...</p>
+            <button class="popup-btn" id="popupBtn">Mulai Sekarang →</button>
+        </div>
+    </div>
 </body>
 
 </html>
