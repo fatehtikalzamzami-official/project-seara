@@ -690,7 +690,8 @@
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 14px;
-            padding: 0.82rem 1rem 0.82rem 2.6rem;
+            padding: 0.88rem 1rem 0.82rem 3.2rem;
+            /* sebelumnya 2.6rem */
             font-size: 0.88rem;
             color: #1a2e24;
             font-family: 'DM Sans', sans-serif;
