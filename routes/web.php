@@ -68,6 +68,13 @@ Route::middleware(['auth'])->prefix('keranjang')->name('cart.')->group(function 
     Route::get('/count',         [CartController::class, 'count'])->name('count');
 });
 
+Route::middleware(['auth'])->prefix('wishlist')->name('wishlist.')->group(function () {
+    Route::get('/',              [WishlistController::class, 'index'])->name('index');
+    Route::post('/toggle',       [WishlistController::class, 'toggle'])->name('toggle');
+    Route::delete('/{wishlist}', [WishlistController::class, 'destroy'])->name('destroy');
+    Route::get('/count',         [WishlistController::class, 'count'])->name('count');
+});
+
 // ─────────────────────────────────────────────────────────────
 //  ORDERS / CHECKOUT
 // ─────────────────────────────────────────────────────────────

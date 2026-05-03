@@ -266,8 +266,7 @@
     <div class="prod-grid"> {{-- INI YANG KURANG --}}
         
         @foreach($harvests as $h)
-            <a href="{{ route('buyer.product.show', $h->id) }}" class="prod-card" style="text-decoration:none;">
-                        <div class="prod-card">
+            <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
             <div class="prod-img">
                 🌾
 
@@ -285,7 +284,9 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
                     ⏱ --:--:--
                 </span>
 
-                <button class="prod-wishlist">🤍</button>
+                @auth
+                <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
+                @endauth
             </div>
 
             <div class="prod-body">
@@ -324,7 +325,6 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
                 </button>
             </div>
         </div>
-            </a>
         @endforeach
 
     </div>
@@ -347,13 +347,15 @@ $harvestDateTime = \Carbon\Carbon::parse($harvestDate . ' ' . $h->harvest_time);
         </div>
         <div class="prod-grid prod-grid-6">
             @foreach($harvests as $h)
-<div class="prod-card">
+<div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
     <div class="prod-img">
         🌾
         @if($h->is_organic)
             <span class="prod-badge organic">Organik</span>
         @endif
-        <button class="prod-wishlist">🤍</button>
+        @auth
+        <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
+        @endauth
     </div>
 
     <div class="prod-body">
@@ -456,10 +458,48 @@ document.querySelectorAll('.cat-item').forEach(c => {
         c.classList.add('active');
     });
 });
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
+
 document.querySelectorAll('.prod-wishlist').forEach(btn => {
-    btn.addEventListener('click', e => {
+    btn.addEventListener('click', async function(e) {
         e.stopPropagation();
-        btn.textContent = btn.textContent === '🤍' ? '❤️' : '🤍';
+        e.preventDefault();
+
+        const harvestId = this.dataset.harvestId;
+        if (!harvestId) return;
+
+        this.disabled = true;
+        try {
+            const res = await fetch('/wishlist/toggle', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ harvest_id: harvestId })
+            });
+
+            if (res.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+
+            const data = await res.json();
+            if (data.success) {
+                this.textContent = data.wishlisted ? '❤️' : '🤍';
+                // Update badge wishlist di topbar
+                const badge = document.getElementById('wishlistBadge');
+                if (badge) {
+                    badge.textContent = data.count;
+                    badge.style.display = data.count > 0 ? 'flex' : 'none';
+                }
+            }
+        } catch(err) {
+            console.error('Wishlist error:', err);
+        } finally {
+            this.disabled = false;
+        }
     });
 });
 
