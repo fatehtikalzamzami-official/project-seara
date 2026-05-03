@@ -202,7 +202,7 @@
             position: absolute;
             inset: 0;
             opacity: 0;
-            transition: opacity .85s ease;
+            transition: opacity 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             pointer-events: none;
         }
 
@@ -211,44 +211,216 @@
             pointer-events: auto;
         }
 
+        /* ========== PHASE 1 - ELEGANT REDESIGN ========== */
         #ph1 {
-            background: var(--bg);
+            background: radial-gradient(ellipse at 30% 40%, #0a281d, #03120e);
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 1;
+
+            overflow: hidden;
+
         }
 
-        .wordmark {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            font-size: clamp(2.6rem, 6vw, 4.8rem);
-            letter-spacing: .42em;
-            text-transform: uppercase;
-            color: var(--cream);
-            animation: wm-in 1.2s ease both;
+        /* Latar belakang dinamis dengan gradien gerak */
+        #ph1::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 30% 20%, rgba(61, 186, 126, 0.08), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(232, 201, 126, 0.06), transparent 70%);
+            animation: slowRotate 24s infinite linear;
+            pointer-events: none;
         }
 
-        @keyframes wm-in {
+        @keyframes slowRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Elemen dekoratif floating */
+        .splash-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 40vw;
+            height: 40vw;
+            background: #3dba7e;
+            top: -15vw;
+            left: -10vw;
+            animation: floatGlow 14s ease-in-out infinite alternate;
+        }
+
+        .orb-2 {
+            width: 35vw;
+            height: 35vw;
+            background: #e8c97e;
+            bottom: -20vw;
+            right: -15vw;
+            animation: floatGlow 18s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatGlow {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: translate(30px, -20px) scale(1.2);
+                opacity: 0.4;
+            }
+        }
+
+        .splash-container {
+            text-align: center;
+            z-index: 10;
+            animation: fadeUp 1.4s cubic-bezier(0.15, 0.9, 0.25, 1) forwards;
+        }
+
+        @keyframes fadeUp {
             from {
                 opacity: 0;
-                letter-spacing: .65em;
-                filter: blur(8px);
+                transform: translateY(40px) scale(0.96);
             }
 
             to {
                 opacity: 1;
-                letter-spacing: .42em;
-                filter: blur(0);
+                transform: translateY(0) scale(1);
             }
         }
 
+        /* Logo dengan efek glow dan floating */
+        .splash-logo {
+            margin-bottom: 1.5rem;
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        .splash-logo img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(61, 186, 126, 0.5));
+            transition: filter 0.3s;
+        }
+
+        @keyframes gentleFloat {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Teks utama dengan tipografi mewah */
+        .wordmark-elegant {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: clamp(2.8rem, 8vw, 5.5rem);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--cream);
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .wordmark-elegant span {
+            color: var(--leaf);
+            font-weight: 400;
+            text-shadow: 0 0 12px rgba(61, 186, 126, 0.6);
+        }
+
+        /* Garis dekoratif */
+        .splash-divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--leaf), transparent);
+            margin: 1.2rem auto 1rem;
+            animation: lineScale 1.2s ease-out;
+        }
+
+        @keyframes lineScale {
+            from {
+                width: 0;
+                opacity: 0;
+            }
+
+            to {
+                width: 80px;
+                opacity: 1;
+            }
+        }
+
+        /* Subtitle */
+        .splash-sub {
+            font-size: 0.75rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 300;
+            animation: fadeInUp 1s 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Efak partikel kecil (opsional) dengan pseudo-element */
+        #ph1::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 255, 240, 0.03) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+            animation: subtleShift 20s linear infinite;
+        }
+
+        @keyframes subtleShift {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 40px 40px;
+            }
+        }
+
+        /* -- Lanjutan style untuk phase 3 dan lainnya (tidak diubah dari aslinya, hanya untuk konsistensi) -- */
         #ph3 {
             display: flex;
             flex-direction: row;
             background: var(--bg);
             overflow: hidden;
-            position: relative;
             height: 100vh;
         }
 
@@ -430,7 +602,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
             background: linear-gradient(150deg, #1a3d2b, #0d2418);
         }
 
@@ -452,7 +623,20 @@
             color: var(--leaf);
         }
 
-        /* ─── LOGIN PANEL ─── */
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .card {
+            width: 220px;
+            height: 340px;
+            overflow: hidden;
+        }
+
+        /* LOGIN PANEL (sama seperti sebelumnya) */
         .login-panel {
             width: 0;
             flex-shrink: 0;
@@ -528,7 +712,7 @@
             display: block;
             width: 24px;
             height: 2px;
-            background: #3dba7e;
+            background: var(--leaf);
             margin-bottom: .8rem;
             border-radius: 2px;
         }
@@ -544,9 +728,8 @@
         }
 
         .login-header h2 span {
-            color: #3dba7e;
-            font-style: italic;
-            font-weight: 300;
+            color: #018f4a;
+            font-weight: 500;
         }
 
         .login-header p {
@@ -566,7 +749,6 @@
             object-fit: contain;
         }
 
-        /* Auth Tabs */
         .auth-tabs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -597,7 +779,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* Google Button */
         .btn-google {
             width: 100%;
             background: white;
@@ -616,99 +797,11 @@
             margin-bottom: 1.6rem;
         }
 
-        /* ── SUCCESS POPUP ── */
-        .popup-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .45);
-            backdrop-filter: blur(4px);
-            z-index: 9000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .3s ease;
-        }
-
-        .popup-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .popup-box {
-            background: #fff;
-            border-radius: 24px;
-            padding: 2.4rem 2rem 2rem;
-            width: min(360px, 90vw);
-            text-align: center;
-            transform: scale(.88) translateY(20px);
-            transition: transform .35s cubic-bezier(.2, .9, .4, 1.05);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
-        }
-
-        .popup-overlay.show .popup-box {
-            transform: scale(1) translateY(0);
-        }
-
-        .popup-icon {
-            width: 64px;
-            height: 64px;
-            background: #f0fdf4;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.2rem;
-            font-size: 1.8rem;
-        }
-
-        .popup-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #0a2118;
-            margin-bottom: .5rem;
-        }
-
-        .popup-msg {
-            font-size: .82rem;
-            color: #6f8f7c;
-            line-height: 1.7;
-            margin-bottom: 1.6rem;
-        }
-
-        .popup-btn {
-            background: linear-gradient(105deg, #3dba7e 0%, #2a9d6e 100%);
-            color: #fff;
-            border: none;
-            padding: .8rem 2rem;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: .82rem;
-            letter-spacing: .06em;
-            text-transform: uppercase;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all .2s;
-            box-shadow: 0 4px 12px rgba(61, 186, 126, .3);
-        }
-
-        .popup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(61, 186, 126, .4);
-        }
-
         .btn-google:hover {
             border-color: var(--leaf);
             background: #fafefa;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(61, 186, 126, 0.1);
-        }
-
-        .btn-google svg {
-            width: 18px;
-            height: 18px;
         }
 
         .form-divider {
@@ -733,12 +826,6 @@
             text-transform: uppercase;
         }
 
-        /* Divider text dinamis */
-        #dividerText {
-            /* updated by JS */
-        }
-
-        /* Input Fields */
         .field {
             margin-bottom: 1rem;
         }
@@ -774,13 +861,11 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 14px;
             padding: 0.88rem 1rem 0.82rem 3.2rem;
-            /* sebelumnya 2.6rem */
             font-size: 0.88rem;
             color: #1a2e24;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.2s;
             resize: none;
-            left: 10rem;
         }
 
         .field textarea {
@@ -794,14 +879,6 @@
             outline: none;
             border-color: var(--leaf);
             box-shadow: 0 0 0 3px rgba(61, 186, 126, 0.12);
-        }
-
-        .field input::placeholder {
-            color: #cbd5e1;
-        }
-
-        .field textarea::placeholder {
-            color: #cbd5e1;
         }
 
         .pwd-row input {
@@ -822,7 +899,6 @@
             font-family: 'DM Sans', sans-serif;
             padding: 0.2rem 0.4rem;
             border-radius: 8px;
-            transition: color 0.2s;
         }
 
         .toggle-pwd:hover {
@@ -849,10 +925,8 @@
             color: #8ba396;
             margin-top: 0.3rem;
             height: 14px;
-            transition: color 0.3s;
         }
 
-        /* Remember + Lupa — hanya muncul saat tab Masuk */
         .options-row {
             display: flex;
             justify-content: space-between;
@@ -887,8 +961,6 @@
             text-decoration: underline;
         }
 
-
-        /* Submit Button */
         .btn-login {
             width: 100%;
             background: linear-gradient(105deg, #3dba7e 0%, #2a9d6e 100%);
@@ -950,7 +1022,6 @@
             letter-spacing: 0.03em;
         }
 
-        /* STAT TICKER */
         .stat-ticker {
             position: fixed;
             bottom: 0;
@@ -995,20 +1066,24 @@
             font-weight: 700;
         }
 
-        .card-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
+        .corner-logo {
+            position: absolute;
+            top: 40px;
+            left: 54px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .card {
-            width: 220px;
-            height: 340px;
-            overflow: hidden;
+        .corner-logo img {
+            height: 66px;
+            width: 66px;
+            object-fit: contain;
+            filter: brightness(1.1);
         }
 
-        /* RESPONSIVE */
+        /* Responsive kecil */
         @media (max-width: 900px) {
             #ph3 {
                 flex-direction: column;
@@ -1066,43 +1141,142 @@
             }
         }
 
-        .corner-logo {
-            position: absolute;
-            top: 40px;
-            left: 54px;
-            z-index: 10;
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(4px);
+            z-index: 9000;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
         }
 
-        .corner-logo img {
-            height: 66px;
-            width: 66px;
-            object-fit: contain;
-            filter: brightness(1.1);
+        .popup-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            transform: scale(.88) translateY(20px);
+            transition: transform .35s cubic-bezier(.2, .9, .4, 1.05);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
+        }
+
+        .popup-overlay.show .popup-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-icon {
+            width: 64px;
+            height: 64px;
+            background: #f0fdf4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            font-size: 1.8rem;
+        }
+
+        .popup-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2118;
+            margin-bottom: .5rem;
+        }
+
+        .popup-msg {
+            font-size: .82rem;
+            color: #6f8f7c;
+            line-height: 1.7;
+            margin-bottom: 1.6rem;
+        }
+
+        .popup-btn {
+            background: linear-gradient(105deg, #3dba7e 0%, #2a9d6e 100%);
+            color: #fff;
+            border: none;
+            padding: .8rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: .82rem;
+            cursor: pointer;
+        }
+
+        .field-error {
+            font-size: 0.7rem;
+            color: #e05c5c;
+            margin-top: 0.35rem;
+            display: none;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .field-error.show {
+            display: flex;
+        }
+
+        .field input.error,
+        .field textarea.error {
+            border-color: #e05c5c;
+            box-shadow: 0 0 0 3px rgba(224, 92, 92, 0.12);
+        }
+
+        .form-error-banner {
+            background: #fff5f5;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            font-size: 0.78rem;
+            color: #c0392b;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .form-error-banner.show {
+            display: flex;
         }
     </style>
 </head>
 
 <body>
     <div id="pbar"></div>
-
     <div id="splash">
-        <!-- Phase 1: wordmark -->
-        <div class="phase" id="ph1">
-            <div class="wordmark">SEARA</div>
+        <!-- PHASE 1 - DIPERINDAH & ELEGAN -->
+        <div class="phase visible" id="ph1">
+            <div class="splash-orb orb-1"></div>
+            <div class="splash-orb orb-2"></div>
+            <div class="splash-container">
+                <div class="splash-logo">
+                    <img src="{{ asset('assets/LOGO_FIKS_LIGHT.png') }}" alt="SEARA Logo" />
+                </div>
+                <div class="wordmark-elegant">
+                    NUSA<span>TANI</span>
+                </div>
+                <div class="splash-divider"></div>
+                <div class="splash-sub">Pasar Tani Digital Indonesia</div>
+            </div>
         </div>
 
-        <!-- Phase 3: main UI -->
+        <!-- PHASE 3: MAIN UI (sama) -->
         <div class="phase" id="ph3">
-            <!-- Corner Logo -->
             <div class="corner-logo">
-                <img src="{{ asset('assets/logo-gold.png') }}" alt="SEARA Logo" />
+                <img src="{{ asset('assets/LOGO_FIKS_LIGHT.png') }}" alt="SEARA Logo" />
             </div>
             <canvas id="bg-canvas" aria-hidden="true"
                 style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
-
             <div id="bg-deco" aria-hidden="true"
                 style="position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;">
                 <div class="deco-ring deco-ring-1 drift-a"></div>
@@ -1112,125 +1286,90 @@
                 <div class="deco-stripe"></div>
             </div>
 
-            <!-- Main content -->
             <div class="main-content" id="mainContent">
                 <div class="left-col">
                     <div class="brand-row">
-                        <span class="brand-name">SEARA</span>
+                        <span class="brand-name">NUSA<span>TANI</span></span>
                         <span class="brand-dot">·</span>
                     </div>
                     <div class="brand-sub">Pasar Tani Digital Indonesia</div>
-
                     <h1 class="hero-headline">
                         <span class="static">Jual &amp; beli hasil tani</span>
                         <span class="rotating-wrap">
                             <span class="rotating-text" id="rotText">langsung dari sumbernya.</span>
                         </span>
                     </h1>
-
                     <p class="hero-body">
                         Platform digital yang mempertemukan petani lokal dengan pembeli —
                         tanpa perantara, harga lebih adil, kualitas terjamin dari ladang ke meja makan Anda.
                     </p>
-
                     <div class="cta-row">
                         <button class="btn-primary" onclick="openLogin()">Masuk / Daftar</button>
                     </div>
                 </div>
-
-                <!-- Card stack -->
                 <div class="right-col">
                     <div class="cards-stack" id="cardsStack">
-
                         <div class="card" data-idx="0">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card1.jpeg') }}" alt="Explore">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card1.jpeg') }}" alt="Explore"></div>
                             <div class="card-info">
                                 <div class="card-name">Temukan Produk Segar</div>
                                 <div class="card-price">Langsung dari petani lokal</div>
                             </div>
                         </div>
-
                         <div class="card" data-idx="1">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card2.jpeg') }}" alt="Shop">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card2.jpeg') }}" alt="Shop"></div>
                             <div class="card-info">
                                 <div class="card-name">Belanja Lebih Mudah</div>
                                 <div class="card-price">Tanpa ribet, tinggal klik</div>
                             </div>
                         </div>
-
                         <div class="card" data-idx="2">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card3.jpeg') }}" alt="Quality">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card3.jpeg') }}" alt="Quality"></div>
                             <div class="card-info">
                                 <div class="card-name">Kualitas Terjamin</div>
                                 <div class="card-price">Segar & terpercaya</div>
                             </div>
                         </div>
-
                         <div class="card" data-idx="3">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card4.jpeg') }}" alt="Support">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card4.jpeg') }}" alt="Support"></div>
                             <div class="card-info">
                                 <div class="card-name">Dukung Petani Lokal</div>
                                 <div class="card-price">Setiap pembelian berarti</div>
                             </div>
                         </div>
-
                         <div class="card" data-idx="4">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card5.jpeg') }}" alt="Delivery">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card5.jpeg') }}" alt="Delivery"></div>
                             <div class="card-info">
                                 <div class="card-name">Pengiriman Cepat</div>
                                 <div class="card-price">Langsung ke rumahmu</div>
                             </div>
                         </div>
-
                         <div class="card" data-idx="5">
-                            <div class="card-thumb">
-                                <img src="{{ asset('assets/card7.jpeg') }}" alt="Start">
-                            </div>
+                            <div class="card-thumb"><img src="{{ asset('assets/card7.jpeg') }}" alt="Start"></div>
                             <div class="card-info">
                                 <div class="card-name">Mulai Sekarang</div>
                                 <div class="card-price">Gabung & rasakan bedanyak</div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <!-- ═══════════════════════════════════════
-                 LOGIN PANEL – Masuk / Daftar
-            ════════════════════════════════════════ -->
             <div class="login-panel" id="loginPanel">
                 <div class="login-inner">
                     <button class="login-close-x" id="closeLoginBtn" title="Tutup">✕</button>
-
-                    <!-- Header -->
                     <div class="login-header">
                         <div class="login-header-text">
-                            <h2 id="panelTitle">Selamat datang<br>di <span>SEARA</span></h2>
+                            <h2 id="panelTitle">Selamat datang<br>di NUSA<span>TANI</span></h2>
                             <p id="panelSubtitle">Masuk untuk mulai bertransaksi.</p>
                         </div>
-                        <img src="{{ asset('assets/logo-dark.png') }}" alt="SEARA Logo" class="login-header-logo">
+                        <img src="{{ asset('assets/LOGO_FIKS_DARK.png') }}" alt="SEARA Logo" class="login-header-logo">
                     </div>
-
-                    <!-- Auth Tabs -->
                     <div class="auth-tabs">
                         <button class="auth-tab active" id="tabMasuk" onclick="switchTab('masuk')">Masuk</button>
                         <button class="auth-tab" id="tabDaftar" onclick="switchTab('daftar')">Daftar</button>
                     </div>
-
-                    <!-- Google -->
-                    <button class="btn-google" id="googleBtn">
-                        <svg viewBox="0 0 24 24" fill="none">
+                    <button class="btn-google" id="googleBtn"><svg viewBox="0 0 24 24" fill="none" width="18">
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                                 fill="#4285F4" />
@@ -1243,60 +1382,62 @@
                             <path
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                 fill="#EA4335" />
-                        </svg>
-                        <span id="googleBtnText">Lanjutkan dengan Google</span>
-                    </button>
-
-                    <!-- Divider -->
-                    <div class="form-divider">
-                        <span id="dividerText">atau masuk dengan email</span>
-                    </div>
-
-                    <!-- ══ FORM MASUK ══ -->
+                        </svg><span id="googleBtnText">Lanjutkan dengan Google</span></button>
+                    <div class="form-divider"><span id="dividerText">atau masuk dengan email</span></div>
                     <div id="formMasuk">
+                        <!-- Banner error umum -->
+                        <div class="form-error-banner" id="loginErrorBanner">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span id="loginErrorMsg"></span>
+                        </div>
+
                         <div class="field">
                             <label>Email / Nomor Ponsel</label>
                             <div class="field-inner">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </span>
-                                <input type="email" id="loginEmail" placeholder="contoh@seara.id"
+                                <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" id="loginEmail" placeholder="contoh@email.id"
                                     autocomplete="email" />
+                            </div>
+                            <div class="field-error" id="err-loginEmail">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
                             </div>
                         </div>
 
                         <div class="field">
                             <label>Kata Sandi</label>
                             <div class="field-inner pwd-row">
-                                <span class="field-icon">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+                                <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
                                 <input type="password" id="loginPassword" placeholder="Kata sandi Anda"
                                     autocomplete="current-password" />
                                 <button class="toggle-pwd" type="button"
                                     onclick="togglePwd('loginPassword', this)">Lihat</button>
                             </div>
+                            <div class="field-error" id="err-loginPassword">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                            </div>
                         </div>
 
                         <div class="options-row">
-                            <label class="check-label">
-                                <input type="checkbox" id="rememberCheck" /> Ingat saya
-                            </label>
+                            <label class="check-label"><input type="checkbox" id="rememberCheck" /> Ingat saya</label>
                             <a href="#" class="forgot" id="forgotLink">Lupa kata sandi?</a>
                         </div>
-
                         <button class="btn-login" id="doLoginBtn">Masuk ke Dashboard</button>
-
                     </div>
-
-                    <!-- ══ FORM DAFTAR ══ -->
                     <div id="formDaftar" style="display:none;">
+                        <!-- Banner error umum -->
+                        <div class="form-error-banner" id="regErrorBanner">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span id="regErrorMsg"></span>
+                        </div>
 
                         <div class="field">
                             <label>Email</label>
                             <div class="field-inner">
                                 <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
-                                <input type="email" id="regEmail" placeholder="contoh@seara.id" autocomplete="email" />
+                                <input type="email" id="regEmail" placeholder="contoh@email.id" autocomplete="email" />
+                            </div>
+                            <div class="field-error" id="err-regEmail">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
                             </div>
                         </div>
 
@@ -1307,6 +1448,9 @@
                                 <input type="text" id="regUsername" placeholder="Nama pengguna unik (tanpa spasi)"
                                     autocomplete="username" oninput="this.value = this.value.replace(/\s/g, '')" />
                             </div>
+                            <div class="field-error" id="err-regUsername">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                            </div>
                         </div>
 
                         <div class="field">
@@ -1316,13 +1460,19 @@
                                 <input type="text" id="regNama" placeholder="Masukkan Nama Lengkap"
                                     autocomplete="name" />
                             </div>
+                            <div class="field-error" id="err-regNama">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                            </div>
                         </div>
 
                         <div class="field">
                             <label>Alamat Rumah</label>
-                            <div class="field-inner textarea">
+                            <div class="field-inner">
                                 <span class="field-icon"><i class="fa-solid fa-house"></i></span>
                                 <textarea id="regAlamat" rows="3" placeholder="Masukkan Alamat Rumah"></textarea>
+                            </div>
+                            <div class="field-error" id="err-regAlamat">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
                             </div>
                         </div>
 
@@ -1331,6 +1481,9 @@
                             <div class="field-inner">
                                 <span class="field-icon"><i class="fa-solid fa-phone"></i></span>
                                 <input type="tel" id="regWa" placeholder="Contoh: 08123456789" autocomplete="tel" />
+                            </div>
+                            <div class="field-error" id="err-regWa">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
                             </div>
                         </div>
 
@@ -1347,6 +1500,9 @@
                                 <div class="strength-fill" id="strengthFill"></div>
                             </div>
                             <div class="strength-label" id="strengthLabel"></div>
+                            <div class="field-error" id="err-regPassword">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                            </div>
                         </div>
 
                         <div class="field">
@@ -1358,134 +1514,33 @@
                                 <button class="toggle-pwd" type="button"
                                     onclick="togglePwd('regPasswordConfirm', this)">Lihat</button>
                             </div>
+                            <div class="field-error" id="err-regPasswordConfirm">
+                                <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                            </div>
                         </div>
 
-                        <button class="btn-login" id="doRegisterBtn" style="margin-top:0.6rem;">
-                            Buat Akun Sekarang →
-                        </button>
+                        <button class="btn-login" id="doRegisterBtn" style="margin-top:0.6rem;">Buat Akun Sekarang
+                            →</button>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
     <div class="stat-ticker">
         <div class="ticker-track" id="tickerTrack"></div>
     </div>
-
-    <script>
-        /* ── BACKGROUND CANVAS ── */
-        (function () {
-            const canvas = document.getElementById('bg-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-
-            function draw() {
-                const W = canvas.offsetWidth || window.innerWidth;
-                const H = canvas.offsetHeight || window.innerHeight;
-                canvas.width = W; canvas.height = H;
-                ctx.clearRect(0, 0, W, H);
-
-                const green = 'rgba(61,186,126,';
-                const gold = 'rgba(232,201,126,';
-                const hexR = 26;
-                const hexW = hexR * Math.sqrt(3);
-                const hexH = hexR * 2;
-
-                function hexPath(cx, cy, r) {
-                    ctx.beginPath();
-                    for (let i = 0; i < 6; i++) {
-                        const a = Math.PI / 180 * (60 * i - 30);
-                        i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
-                    }
-                    ctx.closePath();
-                }
-
-                const clusters = [
-                    { cx: W * 0.82, cy: H * 0.22, r: 180, oMax: 0.18 },
-                    { cx: W * 0.10, cy: H * 0.72, r: 150, oMax: 0.14 },
-                    { cx: W * 0.55, cy: H * 0.88, r: 120, oMax: 0.10 },
-                ];
-
-                clusters.forEach(cl => {
-                    const pad = hexR * 2;
-                    const startX = cl.cx - cl.r - pad, startY = cl.cy - cl.r - pad;
-                    const endX = cl.cx + cl.r + pad, endY = cl.cy + cl.r + pad;
-                    const rows = Math.ceil((endY - startY) / (hexH * 0.75)) + 2;
-                    const cols = Math.ceil((endX - startX) / hexW) + 2;
-
-                    for (let row = 0; row < rows; row++) {
-                        for (let col = 0; col < cols; col++) {
-                            const hx = startX + col * hexW + (row % 2 === 0 ? 0 : hexW / 2);
-                            const hy = startY + row * (hexH * 0.75);
-                            const dist = Math.sqrt((hx - cl.cx) ** 2 + (hy - cl.cy) ** 2);
-                            if (dist > cl.r) continue;
-                            const fade = Math.pow(1 - dist / cl.r, 1.4);
-                            const alpha = fade * cl.oMax;
-                            ctx.save(); ctx.globalAlpha = alpha;
-                            ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.9;
-                            hexPath(hx, hy, hexR - 1); ctx.stroke();
-                            ctx.fillStyle = '#3dba7e'; ctx.globalAlpha = alpha * 1.8;
-                            ctx.beginPath(); ctx.arc(hx, hy, 1.2, 0, Math.PI * 2); ctx.fill();
-                            ctx.restore();
-                        }
-                    }
-                });
-
-                function bracket(x, y, dx, dy, opacity) {
-                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 1.2;
-                    ctx.beginPath(); ctx.moveTo(x + dx * 36, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 36);
-                    ctx.stroke(); ctx.restore();
-                }
-                bracket(30, 24, 1, 1, 0.32); bracket(W - 30, 24, -1, 1, 0.32);
-                bracket(30, H - 24, 1, -1, 0.24); bracket(W - 30, H - 24, -1, -1, 0.24);
-
-                function cross(x, y, size, opacity) {
-                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.8;
-                    ctx.beginPath(); ctx.moveTo(x - size, y); ctx.lineTo(x + size, y);
-                    ctx.moveTo(x, y - size); ctx.lineTo(x, y + size); ctx.stroke(); ctx.restore();
-                }
-                cross(W * .38, H * .18, 10, .35); cross(W * .22, H * .68, 10, .28);
-                cross(W * .62, H * .42, 10, .32); cross(W * .72, H * .78, 10, .24);
-
-                const dots = [
-                    { x: W * .30, y: H * .24, r: 3, o: .30, c: green }, { x: W * .48, y: H * .55, r: 2, o: .25, c: green },
-                    { x: W * .78, y: H * .34, r: 4, o: .18, c: gold }, { x: W * .90, y: H * .60, r: 3, o: .15, c: gold },
-                ];
-                dots.forEach(d => {
-                    ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-                    ctx.fillStyle = d.c + '1)'; ctx.globalAlpha = d.o; ctx.fill();
-                });
-
-                function dashedLine(x1, y1, x2, y2, opacity) {
-                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e';
-                    ctx.lineWidth = 0.7; ctx.setLineDash([4, 10]);
-                    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-                    ctx.setLineDash([]); ctx.restore();
-                }
-                dashedLine(0, H * .33, W * .28, H * .33, 0.14);
-                dashedLine(W * .72, H * .67, W, H * .67, 0.14);
-
-                function arc(cx, cy, r, startA, endA, opacity, color) {
-                    ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = color; ctx.lineWidth = 0.8;
-                    ctx.beginPath(); ctx.arc(cx, cy, r, startA, endA); ctx.stroke(); ctx.restore();
-                }
-                arc(W + 60, -60, 420, Math.PI * .55, Math.PI * 1.05, 0.12, '#3dba7e');
-                arc(-60, H + 60, 280, -Math.PI * .3, Math.PI * .2, 0.10, '#3dba7e');
-            }
-
-            draw();
-            window.addEventListener('resize', draw);
-        })();
-    </script>
+    <div class="popup-overlay" id="successPopup">
+        <div class="popup-box">
+            <div class="popup-icon">🌿</div>
+            <div class="popup-title" id="popupTitle">Akun Berhasil Dibuat!</div>
+            <p class="popup-msg" id="popupMsg">Selamat datang di SEARA. Anda akan diarahkan ke dashboard...</p><button
+                class="popup-btn" id="popupBtn">Mulai Sekarang →</button>
+        </div>
+    </div>
 
     <script>
         (function () {
-            'use strict';
             const $ = id => document.getElementById(id);
-
-            /* ── PROGRESS BAR ── */
             const pbar = $('pbar');
             function prog(v) { if (pbar) pbar.style.width = v + '%'; }
             prog(10);
@@ -1497,49 +1552,28 @@
                 $('ph3').classList.add('visible');
                 setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
                 setTimeout(() => { if (pbar) pbar.style.opacity = '0'; }, 700);
-            }, 1700);
+            }, 2400);
 
-            /* ── ROTATING TEXT ── */
+            // Rotating text
             const phrases = ['langsung dari sumbernya.', 'tanpa perantara, lebih adil.', 'dari petani, untuk Anda.', 'segar, terpercaya, terdekat.', 'harga terbaik tiap hari.'];
             let phraseIdx = 0;
             const rotEl = $('rotText');
-
             function rotatePhrases() {
                 phraseIdx = (phraseIdx + 1) % phrases.length;
-                rotEl.classList.remove('enter');
-                rotEl.classList.add('exit');
-                setTimeout(() => {
-                    rotEl.textContent = phrases[phraseIdx];
-                    rotEl.classList.remove('exit');
-                    rotEl.classList.add('enter');
-                }, 420);
+                rotEl.classList.remove('enter'); rotEl.classList.add('exit');
+                setTimeout(() => { rotEl.textContent = phrases[phraseIdx]; rotEl.classList.remove('exit'); rotEl.classList.add('enter'); }, 420);
             }
             setTimeout(() => { rotEl.classList.add('enter'); setInterval(rotatePhrases, 3000); }, 2200);
 
-            /* ── CARD CAROUSEL ── */
+            // Card carousel
             (function () {
                 const cards = Array.from(document.querySelectorAll('.card'));
                 const N = cards.length;
-                const pos = [
-                    { x: '-30%', y: '0px', s: 1, z: 100, o: 1, r: 0 },
-                    { x: '-2%', y: '26px', s: .89, z: 80, o: .88, r: 5 },
-                    { x: '24%', y: '50px', s: .79, z: 60, o: .72, r: 10 },
-                    { x: '48%', y: '72px', s: .70, z: 40, o: .52, r: 15 },
-                    { x: '68%', y: '90px', s: .62, z: 20, o: .34, r: 20 },
-                    { x: '86%', y: '104px', s: .55, z: 5, o: .18, r: 25 },
-                ];
+                const pos = [{ x: '-30%', y: '0px', s: 1, z: 100, o: 1, r: 0 }, { x: '-2%', y: '26px', s: .89, z: 80, o: .88, r: 5 }, { x: '24%', y: '50px', s: .79, z: 60, o: .72, r: 10 }, { x: '48%', y: '72px', s: .70, z: 40, o: .52, r: 15 }, { x: '68%', y: '90px', s: .62, z: 20, o: .34, r: 20 }, { x: '86%', y: '104px', s: .55, z: 5, o: .18, r: 25 }];
                 let order = cards.map((_, i) => i);
-
-                function applyAll() {
-                    order.forEach((ci, pi) => {
-                        const c = cards[ci], p = pos[pi];
-                        c.style.zIndex = p.z; c.style.opacity = p.o;
-                        c.style.transform = `translateX(${p.x}) translateY(${p.y}) scale(${p.s}) rotate(${p.r}deg)`;
-                        c.style.boxShadow = pi === 0 ? '0 28px 60px rgba(0,0,0,.6), 0 0 0 1.5px rgba(61,186,126,.4)' : '0 16px 40px rgba(0,0,0,.35)';
-                    });
-                }
-
-                function rotate() {
+                function applyAll() { order.forEach((ci, pi) => { const c = cards[ci], p = pos[pi]; c.style.zIndex = p.z; c.style.opacity = p.o; c.style.transform = `translateX(${p.x}) translateY(${p.y}) scale(${p.s}) rotate(${p.r}deg)`; c.style.boxShadow = pi === 0 ? '0 28px 60px rgba(0,0,0,.6), 0 0 0 1.5px rgba(61,186,126,.4)' : '0 16px 40px rgba(0,0,0,.35)'; }); }
+                applyAll();
+                setInterval(() => {
                     const front = cards[order[0]];
                     front.style.transition = 'transform .5s cubic-bezier(.5,0,1,.8), opacity .45s ease';
                     front.style.transform = `translateX(-140%) translateY(80px) scale(.42) rotate(-18deg)`;
@@ -1554,111 +1588,128 @@
                         cards.forEach(c => { c.style.transition = 'transform .9s cubic-bezier(.25,.9,.35,1.05), opacity .9s ease, box-shadow .4s ease'; });
                         applyAll();
                     }, 520);
-                }
-
-                applyAll();
-                setInterval(rotate, 2800);
+                }, 2800);
             })();
 
-            /* ── PANEL OPEN / CLOSE ── */
             window.openLogin = function () { $('ph3').classList.add('login-active'); };
             $('closeLoginBtn').addEventListener('click', () => $('ph3').classList.remove('login-active'));
-
-            /* ── TAB SWITCH ── */
             window.switchTab = function (tab) {
                 const isMasuk = tab === 'masuk';
-
                 $('tabMasuk').classList.toggle('active', isMasuk);
                 $('tabDaftar').classList.toggle('active', !isMasuk);
-
                 $('formMasuk').style.display = isMasuk ? 'block' : 'none';
                 $('formDaftar').style.display = isMasuk ? 'none' : 'block';
-
-                // Header dinamis
-                $('panelTitle').innerHTML = isMasuk
-                    ? 'Selamat datang<br>di <span>SEARA</span>'
-                    : 'Buat akun<br><span>SEARA</span> Anda';
-                $('panelSubtitle').textContent = isMasuk
-                    ? 'Masuk untuk mulai bertransaksi.'
-                    : 'Daftar gratis, mulai berjualan & berbelanja.';
-
-                // Teks pendukung
+                $('panelTitle').innerHTML = isMasuk ? 'Selamat datang<br>di <span>SEARA</span>' : 'Buat akun<br><span>SEARA</span> Anda';
+                $('panelSubtitle').textContent = isMasuk ? 'Masuk untuk mulai bertransaksi.' : 'Daftar gratis, mulai berjualan & berbelanja.';
                 $('googleBtnText').textContent = isMasuk ? 'Lanjutkan dengan Google' : 'Daftar dengan Google';
                 $('dividerText').textContent = isMasuk ? 'atau masuk dengan email' : 'atau daftar dengan email';
             };
+            window.togglePwd = function (inputId, btn) { const inp = $(inputId); if (!inp) return; (inp.type === 'password') ? (inp.type = 'text', btn.textContent = 'Sembunyikan') : (inp.type = 'password', btn.textContent = 'Lihat'); };
 
-            /* ── TOGGLE PASSWORD ── */
-            window.togglePwd = function (inputId, btn) {
-                const inp = $(inputId);
-                if (!inp) return;
-                if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Sembunyikan'; }
-                else { inp.type = 'password'; btn.textContent = 'Lihat'; }
-            };
+            const pwdInp = $('regPassword'), fill = $('strengthFill'), label = $('strengthLabel');
+            if (pwdInp && fill) pwdInp.addEventListener('input', () => {
+                const v = pwdInp.value; let s = 0;
+                if (v.length >= 6) s += 25; if (v.length >= 10) s += 20; if (/[A-Z]/.test(v)) s += 20; if (/[0-9]/.test(v)) s += 20; if (/[^A-Za-z0-9]/.test(v)) s += 15;
+                const score = Math.min(s, 100); fill.style.width = score + '%';
+                if (score < 35) { fill.style.background = '#e05c5c'; if (label) { label.textContent = 'Kata sandi terlalu lemah'; label.style.color = '#e05c5c'; } }
+                else if (score < 65) { fill.style.background = '#e8c97e'; if (label) { label.textContent = 'Kata sandi cukup'; label.style.color = '#c49d3e'; } }
+                else { fill.style.background = '#3dba7e'; if (label) { label.textContent = 'Kata sandi kuat'; label.style.color = '#3dba7e'; } }
+            });
 
-            /* ── PASSWORD STRENGTH ── */
-            const pwdInp = $('regPassword');
-            const fill = $('strengthFill');
-            const label = $('strengthLabel');
-            if (pwdInp && fill) {
-                pwdInp.addEventListener('input', () => {
-                    const v = pwdInp.value;
-                    let s = 0;
-                    if (v.length >= 6) s += 25;
-                    if (v.length >= 10) s += 20;
-                    if (/[A-Z]/.test(v)) s += 20;
-                    if (/[0-9]/.test(v)) s += 20;
-                    if (/[^A-Za-z0-9]/.test(v)) s += 15;
-                    const score = Math.min(s, 100);
-                    fill.style.width = score + '%';
-                    if (score < 35) { fill.style.background = '#e05c5c'; if (label) { label.textContent = 'Kata sandi terlalu lemah'; label.style.color = '#e05c5c'; } }
-                    else if (score < 65) { fill.style.background = '#e8c97e'; if (label) { label.textContent = 'Kata sandi cukup'; label.style.color = '#c49d3e'; } }
-                    else { fill.style.background = '#3dba7e'; if (label) { label.textContent = 'Kata sandi kuat'; label.style.color = '#3dba7e'; } }
-                });
+            // ── Helper error ──────────────────────────────────────────
+            function showFieldError(inputId, msg) {
+                const input = $(inputId);
+                const errEl = $('err-' + inputId);
+                if (input) input.classList.add('error');
+                if (errEl) {
+                    errEl.querySelector('span').textContent = msg;
+                    errEl.classList.add('show');
+                }
             }
 
-            /* ── LOGIN SUBMIT ── */
+            function clearFieldError(inputId) {
+                const input = $(inputId);
+                const errEl = $('err-' + inputId);
+                if (input) input.classList.remove('error');
+                if (errEl) errEl.classList.remove('show');
+            }
+
+            function showBanner(bannerId, msgId, msg) {
+                const banner = $(bannerId);
+                const msgEl = $(msgId);
+                if (msgEl) msgEl.textContent = msg;
+                if (banner) banner.classList.add('show');
+            }
+
+            function clearBanner(bannerId) {
+                const banner = $(bannerId);
+                if (banner) banner.classList.remove('show');
+            }
+
+            function clearAllLoginErrors() {
+                ['loginEmail', 'loginPassword'].forEach(clearFieldError);
+                clearBanner('loginErrorBanner');
+            }
+
+            function clearAllRegErrors() {
+                ['regEmail', 'regUsername', 'regNama', 'regAlamat', 'regWa', 'regPassword', 'regPasswordConfirm'].forEach(clearFieldError);
+                clearBanner('regErrorBanner');
+            }
+
+            // Bersihkan error saat user mulai mengetik
+            ['loginEmail', 'loginPassword'].forEach(id => {
+                $(id)?.addEventListener('input', () => { clearFieldError(id); clearBanner('loginErrorBanner'); });
+            });
+            ['regEmail', 'regUsername', 'regNama', 'regAlamat', 'regWa', 'regPassword', 'regPasswordConfirm'].forEach(id => {
+                $(id)?.addEventListener('input', () => { clearFieldError(id); clearBanner('regErrorBanner'); });
+            });
+
+            // ── Login ─────────────────────────────────────────────────
             $('doLoginBtn').addEventListener('click', async e => {
                 e.preventDefault();
+                clearAllLoginErrors();
+
                 const email = $('loginEmail')?.value.trim();
                 const pass = $('loginPassword')?.value;
                 const remember = $('rememberCheck')?.checked;
 
-                if (!email || !pass) { alert('Harap isi email dan kata sandi.'); return; }
+                let valid = true;
+                if (!email) { showFieldError('loginEmail', 'Email tidak boleh kosong.'); valid = false; }
+                else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('loginEmail', 'Format email tidak valid.'); valid = false; }
+                if (!pass) { showFieldError('loginPassword', 'Kata sandi tidak boleh kosong.'); valid = false; }
+                if (!valid) return;
 
                 const btn = $('doLoginBtn');
-                btn.textContent = 'Memproses…';
-                btn.disabled = true;
+                btn.textContent = 'Memproses…'; btn.disabled = true;
 
                 try {
                     const res = await fetch('/login', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
-                                ?? '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ email, password: pass, remember }),
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content, 'Accept': 'application/json' },
+                        body: JSON.stringify({ email, password: pass, remember })
                     });
-
                     const data = await res.json();
 
                     if (data.success) {
                         window.location.href = data.redirect;
                     } else {
-                        alert(data.message ?? 'Login gagal. Periksa email dan kata sandi.');
+                        // Cek jenis error dari server
+                        if (data.errors?.email) showFieldError('loginEmail', data.errors.email[0]);
+                        if (data.errors?.password) showFieldError('loginPassword', data.errors.password[0]);
+                        showBanner('loginErrorBanner', 'loginErrorMsg', data.message ?? 'Email atau kata sandi salah.');
                     }
                 } catch (err) {
-                    alert('Terjadi kesalahan jaringan. Coba lagi.');
+                    showBanner('loginErrorBanner', 'loginErrorMsg', 'Terjadi kesalahan jaringan. Coba lagi.');
                 } finally {
-                    btn.textContent = 'Masuk ke Dashboard';
-                    btn.disabled = false;
+                    btn.textContent = 'Masuk ke Dashboard'; btn.disabled = false;
                 }
             });
 
-            /* ── REGISTER SUBMIT ── */
+            // ── Register ──────────────────────────────────────────────
             $('doRegisterBtn').addEventListener('click', async e => {
                 e.preventDefault();
+                clearAllRegErrors();
+
                 const email = $('regEmail')?.value.trim();
                 const username = $('regUsername')?.value.trim();
                 const nama = $('regNama')?.value.trim();
@@ -1667,98 +1718,76 @@
                 const pass = $('regPassword')?.value;
                 const confirm = $('regPasswordConfirm')?.value;
 
-                if (!email || !username || !nama || !alamat || !wa || !pass || !confirm) {
-                    alert('Harap lengkapi semua field pendaftaran.'); return;
-                }
-                if (/\s/.test(username)) {
-                    alert('Username tidak boleh mengandung spasi.'); return;
-                }
-                if (pass !== confirm) { alert('Kata sandi dan konfirmasi tidak cocok.'); return; }
-                if (pass.length < 8) { alert('Kata sandi minimal 8 karakter.'); return; }
+                let valid = true;
+
+                if (!email) { showFieldError('regEmail', 'Email tidak boleh kosong.'); valid = false; }
+                else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('regEmail', 'Format email tidak valid.'); valid = false; }
+
+                if (!username) { showFieldError('regUsername', 'Username tidak boleh kosong.'); valid = false; }
+                else if (/\s/.test(username)) { showFieldError('regUsername', 'Username tidak boleh mengandung spasi.'); valid = false; }
+                else if (username.length < 3) { showFieldError('regUsername', 'Username minimal 3 karakter.'); valid = false; }
+
+                if (!nama) { showFieldError('regNama', 'Nama lengkap tidak boleh kosong.'); valid = false; }
+
+                if (!alamat) { showFieldError('regAlamat', 'Alamat tidak boleh kosong.'); valid = false; }
+
+                if (!wa) { showFieldError('regWa', 'Nomor WhatsApp tidak boleh kosong.'); valid = false; }
+                else if (!/^08[0-9]{8,12}$/.test(wa)) { showFieldError('regWa', 'Format nomor WA tidak valid. Contoh: 08123456789'); valid = false; }
+
+                if (!pass) { showFieldError('regPassword', 'Kata sandi tidak boleh kosong.'); valid = false; }
+                else if (pass.length < 8) { showFieldError('regPassword', 'Kata sandi minimal 8 karakter.'); valid = false; }
+
+                if (!confirm) { showFieldError('regPasswordConfirm', 'Konfirmasi kata sandi tidak boleh kosong.'); valid = false; }
+                else if (pass && pass !== confirm) { showFieldError('regPasswordConfirm', 'Kata sandi tidak cocok.'); valid = false; }
+
+                if (!valid) return;
 
                 const btn = $('doRegisterBtn');
-                btn.textContent = 'Membuat akun…';
-                btn.disabled = true;
+                btn.textContent = 'Membuat akun…'; btn.disabled = true;
 
                 try {
                     const res = await fetch('/register', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email,
-                            username,               // ← tambah ini
-                            nama_lengkap: nama,
-                            alamat,
-                            no_whatsapp: wa,
-                            password: pass,
-                            password_confirmation: confirm,
-                        }),
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content, 'Accept': 'application/json' },
+                        body: JSON.stringify({ email, username, nama_lengkap: nama, alamat, no_whatsapp: wa, password: pass, password_confirmation: confirm })
                     });
-
                     const data = await res.json();
+
                     if (data.success) {
-                        // Tampilkan popup
                         const overlay = $('successPopup');
                         $('popupTitle').textContent = 'Akun Berhasil Dibuat! 🎉';
                         $('popupMsg').textContent = data.message;
                         overlay.classList.add('show');
-
-                        // Klik tombol → redirect
                         $('popupBtn').onclick = () => window.location.href = data.redirect;
-
-                        // Auto redirect 3 detik
                         setTimeout(() => window.location.href = data.redirect, 3000);
                     } else {
-                        const errs = data.errors
-                            ? Object.values(data.errors).flat().join('\n')
-                            : data.message ?? 'Pendaftaran gagal.';
-                        alert(errs);
+                        // Error dari server (validasi Laravel)
+                        if (data.errors) {
+                            const map = { email: 'regEmail', username: 'regUsername', nama_lengkap: 'regNama', alamat: 'regAlamat', no_whatsapp: 'regWa', password: 'regPassword' };
+                            Object.entries(map).forEach(([key, id]) => {
+                                if (data.errors[key]) showFieldError(id, data.errors[key][0]);
+                            });
+                        }
+                        showBanner('regErrorBanner', 'regErrorMsg', data.message ?? 'Pendaftaran gagal. Periksa kembali data Anda.');
                     }
                 } catch (err) {
-                    alert('Terjadi kesalahan jaringan. Coba lagi.');
+                    showBanner('regErrorBanner', 'regErrorMsg', 'Terjadi kesalahan jaringan. Coba lagi.');
                 } finally {
-                    btn.textContent = 'Buat Akun Sekarang →';
-                    btn.disabled = false;
+                    btn.textContent = 'Buat Akun Sekarang →'; btn.disabled = false;
                 }
             });
 
-            /* ── GOOGLE ── */
             $('googleBtn').addEventListener('click', () => alert('Login Google segera hadir.'));
-
-            /* ── FORGOT ── */
             $('forgotLink').addEventListener('click', e => { e.preventDefault(); alert('Link reset password akan dikirim ke email Anda.'); });
 
-            /* ── TICKER ── */
-            const stats = [
-                { l: 'TIM DEVELOPER', v: 'POLITEKNIK MANUFAKTUR NEGERI BANGKA BELITUNG' }, { l: 'Eksplor Produk Segar', v: 'Dapatkan hasil tani langsung dari petani' },
-                { l: 'Mulai Jual Hasil Panen', v: 'Pasarkan produk pertanianmu lebih luas' }, { l: 'Provinsi Terjangkau', v: '27' },
-                { l: 'Gabung Sekarang', v: 'Bangun ekosistem pertanian digital bersama' }, { l: 'Dijamin Kepuasan Berbelanja', v: '⭐ Bintang 5' },
-            ];
+            const stats = [{ l: 'TIM DEVELOPER', v: 'POLITEKNIK MANUFAKTUR NEGERI BANGKA BELITUNG' }, { l: 'Eksplor Produk Segar', v: 'Dapatkan hasil tani langsung dari petani' }, { l: 'Mulai Jual Hasil Panen', v: 'Pasarkan produk pertanianmu lebih luas' }, { l: 'Provinsi Terjangkau', v: '27' }, { l: 'Gabung Sekarang', v: 'Bangun ekosistem pertanian digital bersama' }, { l: 'Dijamin Kepuasan Berbelanja', v: '⭐ Bintang 5' }];
             const doubled = [...stats, ...stats];
-            const track = $('tickerTrack');
-            if (track) {
-                doubled.forEach(s => {
-                    const el = document.createElement('span');
-                    el.className = 'ticker-item';
-                    el.innerHTML = `${s.l} <strong>${s.v}</strong>`;
-                    track.appendChild(el);
-                });
-            }
+            const track = $('tickerTrack'); if (track) { doubled.forEach(s => { const el = document.createElement('span'); el.className = 'ticker-item'; el.innerHTML = `${s.l} <strong>${s.v}</strong>`; track.appendChild(el); }); }
+
+            // Background canvas
+            const canvas = document.getElementById('bg-canvas'); if (canvas) { const ctx = canvas.getContext('2d'); function draw() { const W = canvas.offsetWidth || window.innerWidth, H = canvas.offsetHeight || window.innerHeight; canvas.width = W; canvas.height = H; ctx.clearRect(0, 0, W, H); const green = 'rgba(61,186,126,'; const gold = 'rgba(232,201,126,'; const hexR = 26; const hexW = hexR * Math.sqrt(3); const hexH = hexR * 2; function hexPath(cx, cy, r) { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = Math.PI / 180 * (60 * i - 30); i === 0 ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a)) : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); } ctx.closePath(); } const clusters = [{ cx: W * 0.82, cy: H * 0.22, r: 180, oMax: 0.18 }, { cx: W * 0.10, cy: H * 0.72, r: 150, oMax: 0.14 }, { cx: W * 0.55, cy: H * 0.88, r: 120, oMax: 0.10 }]; clusters.forEach(cl => { const pad = hexR * 2; const startX = cl.cx - cl.r - pad, startY = cl.cy - cl.r - pad; const endX = cl.cx + cl.r + pad, endY = cl.cy + cl.r + pad; const rows = Math.ceil((endY - startY) / (hexH * 0.75)) + 2; const cols = Math.ceil((endX - startX) / hexW) + 2; for (let row = 0; row < rows; row++) { for (let col = 0; col < cols; col++) { const hx = startX + col * hexW + (row % 2 === 0 ? 0 : hexW / 2); const hy = startY + row * (hexH * 0.75); const dist = Math.sqrt((hx - cl.cx) ** 2 + (hy - cl.cy) ** 2); if (dist > cl.r) continue; const fade = Math.pow(1 - dist / cl.r, 1.4); const alpha = fade * cl.oMax; ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.9; hexPath(hx, hy, hexR - 1); ctx.stroke(); ctx.fillStyle = '#3dba7e'; ctx.globalAlpha = alpha * 1.8; ctx.beginPath(); ctx.arc(hx, hy, 1.2, 0, Math.PI * 2); ctx.fill(); ctx.restore(); } } }); function bracket(x, y, dx, dy, opacity) { ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x + dx * 36, y); ctx.lineTo(x, y); ctx.lineTo(x, y + dy * 36); ctx.stroke(); ctx.restore(); } bracket(30, 24, 1, 1, 0.32); bracket(W - 30, 24, -1, 1, 0.32); bracket(30, H - 24, 1, -1, 0.24); bracket(W - 30, H - 24, -1, -1, 0.24); function cross(x, y, size, opacity) { ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(x - size, y); ctx.lineTo(x + size, y); ctx.moveTo(x, y - size); ctx.lineTo(x, y + size); ctx.stroke(); ctx.restore(); } cross(W * .38, H * .18, 10, .35); cross(W * .22, H * .68, 10, .28); cross(W * .62, H * .42, 10, .32); cross(W * .72, H * .78, 10, .24); const dots = [{ x: W * .30, y: H * .24, r: 3, o: .30, c: green }, { x: W * .48, y: H * .55, r: 2, o: .25, c: green }, { x: W * .78, y: H * .34, r: 4, o: .18, c: gold }, { x: W * .90, y: H * .60, r: 3, o: .15, c: gold }]; dots.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fillStyle = d.c + '1)'; ctx.globalAlpha = d.o; ctx.fill(); }); function dashedLine(x1, y1, x2, y2, opacity) { ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = '#3dba7e'; ctx.lineWidth = 0.7; ctx.setLineDash([4, 10]); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); } dashedLine(0, H * .33, W * .28, H * .33, 0.14); dashedLine(W * .72, H * .67, W, H * .67, 0.14); function arc(cx, cy, r, startA, endA, opacity, color) { ctx.save(); ctx.globalAlpha = opacity; ctx.strokeStyle = color; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.arc(cx, cy, r, startA, endA); ctx.stroke(); ctx.restore(); } arc(W + 60, -60, 420, Math.PI * .55, Math.PI * 1.05, 0.12, '#3dba7e'); arc(-60, H + 60, 280, -Math.PI * .3, Math.PI * .2, 0.10, '#3dba7e'); } draw(); window.addEventListener('resize', draw); }
         })();
     </script>
-
-    <div class="popup-overlay" id="successPopup">
-        <div class="popup-box">
-            <div class="popup-icon">🌿</div>
-            <div class="popup-title" id="popupTitle">Akun Berhasil Dibuat!</div>
-            <p class="popup-msg" id="popupMsg">Selamat datang di SEARA. Anda akan diarahkan ke dashboard...</p>
-            <button class="popup-btn" id="popupBtn">Mulai Sekarang →</button>
-        </div>
-    </div>
 </body>
 
 </html>
