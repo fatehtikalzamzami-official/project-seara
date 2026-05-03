@@ -171,6 +171,9 @@
     width: auto;
     object-fit: contain;
 }
+
+.udrop-item-seller { color: var(--green-dark) !important; font-weight: 800 !important; }
+.udrop-item-seller:hover { background: var(--green-pale) !important; color: var(--green-main) !important; }
 </style>
 
 <header class="topbar">
@@ -201,11 +204,12 @@
         <div class="topbar-actions">
 
             {{-- Wishlist --}}
-            <a href="#" class="topbar-icon-btn">
+            <a href="{{ auth()->check() ? route('wishlist.index') : route('home') }}" class="topbar-icon-btn">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
                 <span>Wishlist</span>
+                <div class="cart-badge" id="wishlistBadge" style="display:none">0</div>
             </a>
 
             {{-- Chat --}}
@@ -283,6 +287,9 @@
                     <a href="{{ route('buyer.dashboard') }}" class="udrop-item">
                         <span class="udrop-icon">🏠</span> Dashboard
                     </a>
+                    <a href="{{ route('buyer.profile') }}" class="udrop-item">
+                        <span class="udrop-icon">👤</span> Profil Saya
+                    </a>
                     <a href="{{ route('orders.index') }}" class="udrop-item">
                         <span class="udrop-icon">📋</span> Pesanan Saya
                     </a>
@@ -292,6 +299,25 @@
                     <a href="{{ route('chat.index') }}" class="udrop-item">
                         <span class="udrop-icon">💬</span> Chat Petani
                     </a>
+
+                    @if(Auth::user()->role === 'buyer')
+                    @php $application = Auth::user()->sellerApplication; @endphp
+                    <div class="udrop-divider"></div>
+                    @if(!$application || $application->status === 'rejected')
+                    <a href="{{ route('buyer.apply.create') }}" class="udrop-item udrop-item-seller">
+                        <span class="udrop-icon">🌾</span> Jadi Seller
+                    </a>
+                    @elseif(in_array($application->status, ['pending', 'reviewing']))
+                    <a href="{{ route('buyer.application.status') }}" class="udrop-item" style="opacity:0.75">
+                        <span class="udrop-icon">⏳</span> Pengajuan Diproses...
+                    </a>
+                    @endif
+                    @elseif(Auth::user()->role === 'seller')
+                    <div class="udrop-divider"></div>
+                    <a href="{{ route('seller.dashboard') }}" class="udrop-item udrop-item-seller">
+                        <span class="udrop-icon">🌾</span> Dashboard Seller
+                    </a>
+                    @endif
 
                     <div class="udrop-divider"></div>
 
@@ -359,6 +385,29 @@ function confirmLogout() {
     }
     fetchUnread();
     setInterval(fetchUnread, 10000); // update tiap 10 detik
+})();
+
+// ── Update badge wishlist
+(function pollWishlistBadge() {
+    async function fetchWishlistCount() {
+        try {
+            const res  = await fetch('{{ route("wishlist.count") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '' }
+            });
+            const data = await res.json();
+            const badge = document.getElementById('wishlistBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count > 99 ? '99+' : data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        } catch(e) { /* silent */ }
+    }
+    fetchWishlistCount();
+    setInterval(fetchWishlistCount, 15000);
 })();
 @endauth
 </script>

@@ -10,6 +10,8 @@ use App\Http\Controllers\BuyerDashboardController;
 use App\Http\Controllers\PriceOfferController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\BuyerProfileController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -19,7 +21,7 @@ Route::get('/', [AuthController::class, 'index'])->name('home');
 
 Route::get('/explore', [SellerProfileController::class, 'explore'])->name('explore');
 Route::get('/toko/{slug}', [SellerProfileController::class, 'show'])->name('store.show');
-Route::get('/petani/{seller}', [SellerProfileController::class, 'show'])->name('seller.profile');
+Route::get('/petani/{param}', [SellerProfileController::class, 'show'])->name('seller.profile');
 
 // ─────────────────────────────────────────────────────────────
 //  AUTH ROUTES (hanya untuk guest)
@@ -68,6 +70,13 @@ Route::middleware(['auth'])->prefix('keranjang')->name('cart.')->group(function 
     Route::get('/count',         [CartController::class, 'count'])->name('count');
 });
 
+Route::middleware(['auth'])->prefix('wishlist')->name('wishlist.')->group(function () {
+    Route::get('/',              [WishlistController::class, 'index'])->name('index');
+    Route::post('/toggle',       [WishlistController::class, 'toggle'])->name('toggle');
+    Route::delete('/{wishlist}', [WishlistController::class, 'destroy'])->name('destroy');
+    Route::get('/count',         [WishlistController::class, 'count'])->name('count');
+});
+
 // ─────────────────────────────────────────────────────────────
 //  ORDERS / CHECKOUT
 // ─────────────────────────────────────────────────────────────
@@ -102,6 +111,11 @@ Route::middleware(['auth'])->prefix('offers')->name('offers.')->group(function (
 Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('buyer.')->group(function () {
     Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/produk/{id}', [ProductController::class, 'show'])->name('product.show');
+
+    // Profil buyer
+    Route::get('/profile',           [BuyerProfileController::class, 'show'])->name('profile');
+    Route::put('/profile',           [BuyerProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password',  [BuyerProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Pengajuan jadi seller
     Route::get('/daftar-seller',    [SellerApplicationController::class, 'create'])->name('apply.create');

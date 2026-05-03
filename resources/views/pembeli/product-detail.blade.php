@@ -818,13 +818,62 @@ function selectThumb(el, emoji) {
 })();
 
 // ── Wishlist toggle
-let wishlisted = false;
-function toggleWishlist() {
-    wishlisted = !wishlisted;
+let wishlisted = {{ auth()->check() && isset($wishlisted) && $wishlisted ? 'true' : 'false' }};
+const harvestIdForWishlist = {{ $harvest->id }};
+
+// Set initial state
+(function() {
     const btn = document.getElementById('wishlistBtn');
-    btn.classList.toggle('active', wishlisted);
-    btn.innerHTML = wishlisted ? '❤️ Wishlist' : '🤍 Wishlist';
-    showToast(wishlisted ? '❤️ Ditambahkan ke wishlist!' : '🤍 Dihapus dari wishlist');
+    if (btn && wishlisted) {
+        btn.classList.add('active');
+        btn.innerHTML = '❤️ Wishlist';
+    }
+})();
+
+async function toggleWishlist() {
+    @guest
+    showToast('⚠️ Login dulu untuk menambahkan wishlist');
+    setTimeout(() => window.location.href = '/', 1500);
+    return;
+    @endguest
+
+    const btn = document.getElementById('wishlistBtn');
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('{{ route("wishlist.toggle") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({ harvest_id: harvestIdForWishlist }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            wishlisted = data.wishlisted;
+            btn.classList.toggle('active', wishlisted);
+            btn.innerHTML = wishlisted ? '❤️ Wishlist' : '🤍 Wishlist';
+            showToast(wishlisted ? '❤️ Ditambahkan ke wishlist!' : '🤍 Dihapus dari wishlist');
+
+            // Update badge di topbar jika ada
+            const badge = document.getElementById('wishlistBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+    } catch(e) {
+        showToast('❌ Gagal memperbarui wishlist');
+    } finally {
+        btn.disabled = false;
+    }
 }
 
 // ── Chat
