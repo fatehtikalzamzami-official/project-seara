@@ -108,12 +108,10 @@ Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('b
     Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/produk/{id}', [ProductController::class, 'show'])->name('product.show');
 
-    // Profil buyer
     Route::get('/profile', [BuyerProfileController::class, 'show'])->name('profile');
     Route::put('/profile', [BuyerProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [BuyerProfileController::class, 'updatePassword'])->name('profile.password');
 
-    // Pengajuan jadi seller
     Route::get('/daftar-seller', [SellerApplicationController::class, 'create'])->name('apply.create');
     Route::post('/daftar-seller', [SellerApplicationController::class, 'store'])->name('apply.store');
     Route::get('/status-pengajuan', [SellerApplicationController::class, 'status'])->name('application.status');
@@ -132,33 +130,41 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 });
 
 // ─────────────────────────────────────────────────────────────
-//  ADMIN ROUTES
+//  ADMIN ROUTES  ← BAGIAN INI YANG DIUBAH
+//  - Hapus duplikasi route dashboard
+//  - Tambah admin.users, admin.sellers, admin.verifikasi, admin.laporan
+//  - Semua dalam satu group dengan middleware auth + role:admin
 // ─────────────────────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
 
-    Route::get('/seller-applications', [SellerApplicationController::class, 'index'])->name('applications.index');
-    Route::get('/seller-applications/{sellerApplication}', [SellerApplicationController::class, 'show'])->name('applications.show');
-    Route::post('/seller-applications/{sellerApplication}/reviewing', [SellerApplicationController::class, 'setReviewing'])->name('applications.reviewing');
-    Route::post('/seller-applications/{sellerApplication}/approve', [SellerApplicationController::class, 'approve'])->name('applications.approve');
-    Route::post('/seller-applications/{sellerApplication}/reject', [SellerApplicationController::class, 'reject'])->name('applications.reject');
+    // Dashboard — pakai DashboardControllerAdmin (ganti fn() yang lama)
+    Route::get('/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('dashboard');
 
+    // Data Pembeli (Buyer)
+    Route::get('/users', function () {
+        return view('admin.users'); // buat blade-nya nanti
+    })->name('users');
+
+    // Data Seller (Petani Terdaftar)
+    Route::get('/sellers', function () {
+        return view('admin.sellers'); // buat blade-nya nanti
+    })->name('sellers');
+
+    // Pengajuan Menjadi Seller (verifikasi)
+    Route::get('/verifikasi', [SellerApplicationController::class, 'index'])->name('verifikasi');
+    Route::get('/verifikasi/{sellerApplication}', [SellerApplicationController::class, 'show'])->name('verifikasi.show');
+    Route::post('/verifikasi/{sellerApplication}/reviewing', [SellerApplicationController::class, 'setReviewing'])->name('verifikasi.reviewing');
+    Route::post('/verifikasi/{sellerApplication}/approve', [SellerApplicationController::class, 'approve'])->name('verifikasi.approve');
+    Route::post('/verifikasi/{sellerApplication}/reject', [SellerApplicationController::class, 'reject'])->name('verifikasi.reject');
+
+    // Laporan Aktif
+    Route::get('/laporan', function () {
+        return view('admin.laporan'); // buat blade-nya nanti
+    })->name('laporan');
+
+    // Suspend / reinstate toko seller
     Route::post('/toko/{sellerProfile}/suspend', [SellerProfileController::class, 'suspend'])->name('stores.suspend');
     Route::post('/toko/{sellerProfile}/reinstate', [SellerProfileController::class, 'reinstate'])->name('stores.reinstate');
-});
 
-// Route::get('/admin/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('admin.dashboard');
-Route::prefix('admin')->group(function () {
-    // Ubah panggilan class-nya menjadi DashboardControllerAdmin::class
-    Route::get('/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('admin.dashboard');
-
-    // Rute sementara (dummy) agar tombol "Lihat Semua" tidak error
-    Route::get('/laporan', function () { 
-        return 'Halaman Laporan (Segera Hadir)'; 
-    })->name('admin.laporan');
-
-    Route::get('/verifikasi', function () { 
-        return 'Halaman Verifikasi (Segera Hadir)'; 
-    })->name('admin.verifikasi');
 });

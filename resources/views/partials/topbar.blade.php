@@ -606,12 +606,10 @@
                         <div class="udrop-divider"></div>
 
                         {{-- Logout --}}
-                        <form method="POST" action="{{ route('logout') }}" id="logoutForm">
-                            @csrf
-                            <button type="button" class="udrop-item udrop-logout" onclick="confirmLogout()">
-                                <span class="udrop-icon">🚪</span> Logout
-                            </button>
-                        </form>
+                        {{-- Sesudah --}}
+                        <button type="button" class="udrop-item udrop-logout" onclick="openLogoutModal()">
+                            <span class="udrop-icon">🚪</span> Keluar
+                        </button>
 
                     </div>
                 </div>
