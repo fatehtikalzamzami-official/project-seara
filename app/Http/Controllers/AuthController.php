@@ -22,7 +22,7 @@ class AuthController extends Controller
             return $this->redirectByRole(Auth::user()->role);
         }
 
-        return view('splash.index'); // resources/views/welcome.blade.php (landing page SEARA)
+        return view('splash.index');
     }
 
     // ─────────────────────────────────────────────
@@ -53,7 +53,7 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->username,      // ← dari input user
+            'name' => $request->username,
             'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -96,7 +96,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
-        // Cek user aktif
+        // Cek apakah user aktif sebelum attempt
         $user = User::where('email', $request->email)->first();
 
         if ($user && !$user->is_active) {
@@ -115,7 +115,6 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        // Update last_login_at
         Auth::user()->update(['last_login_at' => now()]);
 
         return response()->json([
@@ -146,17 +145,20 @@ class AuthController extends Controller
     private function redirectByRole(string $role, bool $returnUrl = false)
     {
         $routes = [
+            // Admin tetap ke dashboard admin
             'admin' => 'admin.dashboard',
-            'seller' => 'seller.dashboard',
+
+            // Seller & buyer sama-sama landing di buyer.dashboard.
+            // Seller bisa akses dashboard toko mereka lewat tombol di topbar.
+            'seller' => 'buyer.dashboard',
             'buyer' => 'buyer.dashboard',
         ];
 
-        // fallback kalau role aneh / null
         $routeName = $routes[$role] ?? 'buyer.dashboard';
 
-        // Cek apakah route ada
+        // Fallback aman kalau route belum terdaftar
         if (!\Route::has($routeName)) {
-            $routeName = 'home'; // fallback aman
+            $routeName = 'home';
         }
 
         $url = route($routeName);
