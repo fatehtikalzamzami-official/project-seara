@@ -12,6 +12,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BuyerProfileController;
+use App\Http\Controllers\DashboardControllerAdmin;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -145,4 +146,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::post('/toko/{sellerProfile}/suspend', [SellerProfileController::class, 'suspend'])->name('stores.suspend');
     Route::post('/toko/{sellerProfile}/reinstate', [SellerProfileController::class, 'reinstate'])->name('stores.reinstate');
+});
+
+// Route::get('/admin/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('admin.dashboard');
+Route::prefix('admin')->group(function () {
+    // Ubah panggilan class-nya menjadi DashboardControllerAdmin::class
+    Route::get('/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('admin.dashboard');
+
+    // Rute sementara (dummy) agar tombol "Lihat Semua" tidak error
+    Route::get('/laporan', function () { 
+        return 'Halaman Laporan (Segera Hadir)'; 
+    })->name('admin.laporan');
+
+    Route::get('/verifikasi', function () { 
+        return 'Halaman Verifikasi (Segera Hadir)'; 
+    })->name('admin.verifikasi');
 });
