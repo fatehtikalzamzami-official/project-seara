@@ -75,8 +75,10 @@
 .cats-grid { display: flex; gap: 12px; flex-wrap: wrap; }
 .cat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 14px; background: white; border: 2px solid var(--border); border-radius: var(--r); cursor: pointer; transition: all 0.2s; min-width: 88px; flex: 1; max-width: 110px; }
 .cat-item:hover, .cat-item.active { border-color: var(--green-main); background: var(--green-pale); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.cat-icon { width: 48px; height: 48px; background: var(--green-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: background 0.2s; }
+.cat-icon { width: 52px; height: 52px; background: var(--green-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: background 0.2s; overflow: hidden; }
+.cat-icon img { width: 30px; height: 30px; object-fit: contain; transition: filter 0.2s; filter: none; }
 .cat-item:hover .cat-icon, .cat-item.active .cat-icon { background: var(--green-main); }
+.cat-item:hover .cat-icon img, .cat-item.active .cat-icon img { filter: brightness(0) invert(1); }
 .cat-name { font-size: 12px; font-weight: 700; color: var(--text-mid); text-align: center; }
 
 /* Flash Sale */
@@ -107,7 +109,10 @@
     max-width: 220px;
     flex-shrink: 0;}
 .prod-card:hover { border-color: var(--green-main); transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.prod-img { width: 100%; aspect-ratio: 1; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; }
+.prod-img { width: 100%; aspect-ratio: 1; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; overflow: hidden; }
+.prod-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s ease; }
+.prod-card:hover .prod-img img { transform: scale(1.06); }
+.prod-img-fallback { font-size: 56px; }
 .prod-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 4px; z-index: 1; }
 .prod-badge.organic { background: var(--green-main); }
 .prod-badge.new-badge { background: #5696ff; }
@@ -265,18 +270,37 @@
         </div>
         <div class="cats-grid">
             @php
-                $catIcons = ['Pertanian'=>'🌾','Perkebunan'=>'🌳','Sayuran'=>'🥗','Buah-buahan'=>'🍎','Rempah'=>'🫚','Peternakan'=>'🐄','Perikanan'=>'🐟','Bibit'=>'🌱','Pupuk'=>'🧴'];
+                // Mapping nama kategori → file icon di public/assets/icon/
+                $catIcons = [
+                    'Sayuran'     => 'vegetable-icon.png',
+                    'Buah'        => 'fruit-icon.png',
+                    'Rempah'      => 'rempah-icon.png',
+                    'Perkebunan'  => 'garden-icon.png',
+                    'Umbi-umbian' => 'umbi-icon.png',
+                    'Biji-bijian' => 'garden-icon.png',
+                    // fallback untuk kategori lama / tambahan
+                    'Buah-buahan' => 'fruit-icon.png',
+                    'Pertanian'   => 'garden-icon.png',
+                ];
             @endphp
             <a href="{{ route('buyer.dashboard') }}" style="text-decoration:none">
                 <div class="cat-item {{ !$activeCategoryId ? 'active' : '' }}">
-                    <div class="cat-icon">🌿</div>
+                    <div class="cat-icon">
+                        <img src="{{ asset('assets/icon/garden-icon.png') }}" alt="Semua">
+                    </div>
                     <div class="cat-name">Semua</div>
                 </div>
             </a>
             @foreach($categories as $cat)
             <a href="{{ route('buyer.dashboard', ['category' => $cat->id]) }}" style="text-decoration:none">
                 <div class="cat-item {{ $activeCategoryId == $cat->id ? 'active' : '' }}">
-                    <div class="cat-icon">{{ $catIcons[$cat->name] ?? '🛒' }}</div>
+                    <div class="cat-icon">
+                        @if(isset($catIcons[$cat->name]))
+                            <img src="{{ asset('assets/icon/' . $catIcons[$cat->name]) }}" alt="{{ $cat->name }}">
+                        @else
+                            🛒
+                        @endif
+                    </div>
                     <div class="cat-name">{{ $cat->name }}</div>
                 </div>
             </a>
@@ -313,6 +337,92 @@
     </div>
 
  {{-- Panen Hari ini --}}
+{{-- ═══════════════════════════════════════════════════════════
+     HELPER: Mapping nama produk → foto Unsplash (foto real sementara)
+     Format: 'Nama Produk' => 'unsplash-photo-id'
+     Cara kerja: https://images.unsplash.com/photo-{id}?w=400&q=80&auto=format&fit=crop
+     ═══════════════════════════════════════════════════════════ --}}
+@php
+$prodPhotos = [
+    // ── Sayuran ──────────────────────────────────────────────
+    'Brokoli'          => 'photo-1459411621453-7b03977f4bfc',
+    'Cabai Merah'      => 'photo-1588252303782-cb80119abd6d',
+    'Cabai Rawit'      => 'photo-1525059696034-4967a8e1dca2',
+    'Tomat'            => 'photo-1561136594-7f68813130d3',
+    'Bayam'            => 'photo-1576045057995-568f588f82fb',
+    'Kangkung'         => 'photo-1622206151226-18ca2c9ab4a1',
+    'Wortel'           => 'photo-1598170845058-32b9d6a5da37',
+    'Kentang'          => 'photo-1518977676601-b53f82aba655',
+    'Terong Ungu'      => 'photo-1659261200833-ec8761558af7',
+    'Pare'             => 'photo-1617692855027-33b14f061079',
+    'Kacang Panjang'   => 'photo-1471194402529-8e0f5a675de6',
+    'Sawi Hijau'       => 'photo-1540420773420-3366772f4999',
+    'Selada'           => 'photo-1622206151226-18ca2c9ab4a1',
+    'Timun'            => 'photo-1449300079323-02e209d9d3a6',
+    'Labu Siam'        => 'photo-1596591868231-05e808fd4b6d',
+
+    // ── Buah ─────────────────────────────────────────────────
+    'Mangga Harum Manis' => 'photo-1553279768-865429fa0078',
+    'Alpukat Mentega'    => 'photo-1523049673857-eb18f1d7b578',
+    'Pisang Kepok'       => 'photo-1571771894821-ce9b6c11b08e',
+    'Pisang Ambon'       => 'photo-1528825871115-3581a5387919',
+    'Jeruk Baby'         => 'photo-1547514701-42782101795e',
+    'Jeruk Keprok'       => 'photo-1611080626919-7cf5a9dbab12',
+    'Apel Malang'        => 'photo-1560806887-1e4cd0b6cbd6',
+    'Stroberi'           => 'photo-1543528176-61b239494933',
+    'Manggis'            => 'photo-1611080626919-7cf5a9dbab12',
+    'Rambutan'           => 'photo-1596591868231-05e808fd4b6d',
+    'Durian Montong'     => 'photo-1528825871115-3581a5387919',
+    'Pepaya California'  => 'photo-1526318896980-cf78c088247c',
+    'Semangka'           => 'photo-1563114773-84221bd62daa',
+    'Melon'              => 'photo-1571575173700-afb9492e6a50',
+
+    // ── Rempah ───────────────────────────────────────────────
+    'Jahe Emprit'   => 'photo-1615485500704-8e990f9900f7',
+    'Jahe Merah'    => 'photo-1615485500704-8e990f9900f7',
+    'Kunyit'        => 'photo-1615485291234-9d694218aeb3',
+    'Lengkuas'      => 'photo-1599909533731-a0e01f8a2c2e',
+    'Kencur'        => 'photo-1599909533731-a0e01f8a2c2e',
+    'Temulawak'     => 'photo-1615485500704-8e990f9900f7',
+    'Kemiri'        => 'photo-1604187351574-c75ca79f5807',
+    'Ketumbar'      => 'photo-1605616750920-23df2d7b891c',
+    'Lada Hitam'    => 'photo-1606914469633-bd18c6f77c56',
+    'Kayu Manis'    => 'photo-1599909533731-a0e01f8a2c2e',
+
+    // ── Perkebunan ───────────────────────────────────────────
+    'Kopi Robusta'  => 'photo-1447933601403-0c6688de566e',
+    'Kopi Arabika'  => 'photo-1618160702438-9b02ab6515c9',
+    'Cengkeh'       => 'photo-1606914469633-bd18c6f77c56',
+    'Kakao'         => 'photo-1558642452-9d2a7deb7f62',
+    'Kelapa Muda'   => 'photo-1587049352846-4a222e784d38',
+    'Vanili'        => 'photo-1571771894821-ce9b6c11b08e',
+    'Teh Hijau'     => 'photo-1556742049-0cfed4f6a45d',
+
+    // ── Umbi-umbian ──────────────────────────────────────────
+    'Singkong'       => 'photo-1596591868231-05e808fd4b6d',
+    'Ubi Jalar Ungu' => 'photo-1567306301408-9b74779a11af',
+    'Ubi Cilembu'    => 'photo-1567306301408-9b74779a11af',
+    'Talas'          => 'photo-1518977676601-b53f82aba655',
+    'Bawang Merah'   => 'photo-1518977676601-b53f82aba655',
+    'Bawang Putih'   => 'photo-1615485291234-9d694218aeb3',
+
+    // ── Biji-bijian ──────────────────────────────────────────
+    'Jagung Manis'  => 'photo-1551754655-cd27e38d2076',
+    'Kedelai'       => 'photo-1604187351574-c75ca79f5807',
+    'Kacang Tanah'  => 'photo-1604187351574-c75ca79f5807',
+    'Kacang Hijau'  => 'photo-1604187351574-c75ca79f5807',
+    'Beras Merah'   => 'photo-1536304929831-ee1ca9d44906',
+    'Beras Organik' => 'photo-1536304929831-ee1ca9d44906',
+];
+
+// Helper closure: kembalikan URL foto berdasarkan nama produk
+$getProdPhoto = function(string $name) use ($prodPhotos): ?string {
+    if (!isset($prodPhotos[$name])) return null;
+    return 'https://images.unsplash.com/' . $prodPhotos[$name]
+         . '?w=400&h=400&q=80&auto=format&fit=crop';
+};
+@endphp
+
 <div class="anim-3" style="margin-bottom:24px">
     <div class="section-hd">
         <h2>Panen Hari Ini</h2>
@@ -332,9 +442,17 @@
                 $harvestTime = $h->harvest_time ?? '06:00:00';
                 $deadlineStr = \Carbon\Carbon::parse($h->harvest_date)->format('Y-m-d') . ' ' . $harvestTime;
             @endphp
+            @php $photoUrl = $getProdPhoto($h->product->name ?? ''); @endphp
             <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
                 <div class="prod-img">
-                    🌾
+                    @if($photoUrl)
+                        <img src="{{ $photoUrl }}" alt="{{ $h->product->name ?? 'Produk' }}"
+                             loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span class="prod-img-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">🌾</span>
+                    @else
+                        <span class="prod-img-fallback">🌾</span>
+                    @endif
                     @if($h->is_organic)
                         <span class="prod-badge organic">Organik</span>
                     @endif
@@ -390,9 +508,17 @@
         @else
         <div class="prod-grid prod-grid-6">
             @foreach($harvests as $h)
+            @php $photoUrl = $getProdPhoto($h->product->name ?? ''); @endphp
             <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
                 <div class="prod-img">
-                    🌾
+                    @if($photoUrl)
+                        <img src="{{ $photoUrl }}" alt="{{ $h->product->name ?? 'Produk' }}"
+                             loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <span class="prod-img-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">🌾</span>
+                    @else
+                        <span class="prod-img-fallback">🌾</span>
+                    @endif
                     @if($h->is_organic)
                         <span class="prod-badge organic">Organik</span>
                     @endif
