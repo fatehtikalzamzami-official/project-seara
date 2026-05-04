@@ -32,7 +32,7 @@
             --r: 12px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: var(--green-bg); color: var(--text-dark); overflow-x: hidden; }
+        body { font-family: 'Nunito', sans-serif; background: var(--green-bg); color: var(--text-dark); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
         a { text-decoration: none; color: inherit; }
         ::-webkit-scrollbar { width: 5px; height: 4px; }
         ::-webkit-scrollbar-track { background: var(--green-bg); }
@@ -51,7 +51,7 @@
     @endunless
 
     {{-- Main Content --}}
-    <main id="app-content">
+    <main id="app-content" style="flex: 1;">
         @yield('content')
     </main>
 

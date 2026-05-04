@@ -426,7 +426,7 @@ $getProdPhoto = function(string $name) use ($prodPhotos): ?string {
 <div class="anim-3" style="margin-bottom:24px">
     <div class="section-hd">
         <h2>Panen Hari Ini</h2>
-        <a href="{{ route('buyer.dashboard') }}" class="see-all">Lihat Semua →</a>
+        <a href="{{ route('buyer.panen.today') }}" class="see-all">Lihat Semua →</a>
     </div>
 
     @if($todayHarvests->isEmpty())
@@ -493,18 +493,97 @@ $getProdPhoto = function(string $name) use ($prodPhotos): ?string {
         <div class="flash-header">
             <div class="flash-title">
                 <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                {{ $activeCategoryId ? 'Produk Kategori' : 'Semua Produk' }}
+                @if($search ?? null)
+                    Hasil pencarian: "<span style="color:var(--green-light)">{{ $search }}</span>"
+                @elseif($activeCategoryId)
+                    Produk Kategori
+                @else
+                    Semua Produk
+                @endif
             </div>
             <div class="flash-countdown">
-                <a href="{{ route('explore') }}" class="see-all">Jelajahi Toko →</a>
+                @if($search ?? null)
+                    <a href="{{ route('buyer.dashboard') }}" class="see-all" style="color:var(--text-muted);font-size:12px">✕ Hapus pencarian</a>
+                @else
+                    <a href="{{ route('explore') }}" class="see-all">Jelajahi Toko →</a>
+                @endif
             </div>
         </div>
         @if($harvests->isEmpty())
             <div style="padding:40px;text-align:center;color:var(--text-muted);">
                 <div style="font-size:40px;margin-bottom:10px">🔍</div>
-                <div style="font-weight:700">Tidak ada produk di kategori ini</div>
-                <div style="font-size:13px;margin-top:4px">Coba kategori lain</div>
+                <div style="font-weight:700">
+                    @if($search ?? null)
+                        Tidak ada produk untuk "{{ $search }}"
+                    @else
+                        Tidak ada produk di kategori ini
+                    @endif
+                </div>
+                <div style="font-size:13px;margin-top:4px">
+                    @if($search ?? null)
+                        Coba kata kunci lain atau <a href="{{ route('buyer.dashboard') }}" style="color:var(--green-light)">lihat semua produk</a>
+                    @else
+                        Coba kategori lain
+                    @endif
+                </div>
             </div>
+
+            {{-- Rekomendasi saat search tidak ketemu --}}
+            @if(($search ?? null) && isset($recommendations) && $recommendations->isNotEmpty())
+            <div style="margin-top:28px;padding:0 4px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                    <div style="width:4px;height:22px;background:var(--green-dark);border-radius:2px"></div>
+                    <h3 style="font-size:15px;font-weight:900;color:var(--text-dark);margin:0">
+                        Mungkin kamu suka ini 👇
+                    </h3>
+                    <span style="font-size:12px;color:var(--text-muted)">— Produk tersedia saat ini</span>
+                </div>
+                <div class="prod-grid prod-grid-6">
+                    @foreach($recommendations as $h)
+                    @php $photoUrl = $getProdPhoto($h->product->name ?? ''); @endphp
+                    <div class="prod-card" onclick="window.location='{{ route('buyer.product.show', $h->id) }}'" style="cursor:pointer;">
+                        <div class="prod-img">
+                            @if($photoUrl)
+                                <img src="{{ $photoUrl }}" alt="{{ $h->product->name ?? 'Produk' }}"
+                                     loading="lazy"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                <span class="prod-img-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">🌾</span>
+                            @else
+                                <span class="prod-img-fallback">🌾</span>
+                            @endif
+                            @if($h->is_organic)
+                                <span class="prod-badge organic">Organik</span>
+                            @endif
+                            @auth
+                            <button class="prod-wishlist" data-harvest-id="{{ $h->id }}" onclick="event.stopPropagation()">🤍</button>
+                            @endauth
+                        </div>
+                        <div class="prod-body">
+                            <div class="prod-name">{{ $h->product->name ?? 'Produk' }}</div>
+                            <div class="prod-farmer">👨‍🌾 {{ $h->seller->user->name ?? 'Petani' }}</div>
+                            <div class="prod-price-row">
+                                <div class="prod-price">Rp {{ number_format($h->price_per_unit, 0, ',', '.') }}</div>
+                                <div class="prod-unit">/{{ $h->product->unit ?? 'kg' }}</div>
+                            </div>
+                            <div class="prod-meta">
+                                <div class="prod-stars">📦 {{ $h->remaining_stock }} stok</div>
+                                <div class="prod-sold">{{ $h->product->category->name ?? '' }}</div>
+                            </div>
+                            <div class="prod-location">📍 {{ $h->seller->kota_kabupaten ?? $h->seller->user->alamat ?? 'Indonesia' }}</div>
+                            @auth
+                            <button class="add-to-cart-btn"
+                                onclick="event.stopPropagation(); addToCart({{ $h->id }}, this)">
+                                🛒 + Keranjang
+                            </button>
+                            @else
+                            <a href="/" class="add-to-cart-btn" onclick="event.stopPropagation()">Login untuk Beli</a>
+                            @endauth
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         @else
         <div class="prod-grid prod-grid-6">
             @foreach($harvests as $h)

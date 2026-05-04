@@ -13,12 +13,19 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BuyerProfileController;
 use App\Http\Controllers\DashboardControllerAdmin;
+use App\Http\Controllers\SearchController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
 // ─────────────────────────────────────────────────────────────
 
 Route::get('/', [AuthController::class, 'index'])->name('home');
+
+// ─────────────────────────────────────────────────────────────
+//  SEARCH ROUTES
+// ─────────────────────────────────────────────────────────────
+Route::get('/cari', [SearchController::class, 'index'])->name('search.index');
+Route::get('/cari/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
 
 Route::get('/explore', [SellerProfileController::class, 'explore'])->name('explore');
 Route::get('/toko/{slug}', [SellerProfileController::class, 'show'])->name('store.show');
@@ -106,6 +113,7 @@ Route::middleware(['auth'])->prefix('offers')->name('offers.')->group(function (
 
 Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('buyer.')->group(function () {
     Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/panen-hari-ini', [BuyerDashboardController::class, 'panenHariIni'])->name('panen.today');
     Route::get('/produk/{id}', [ProductController::class, 'show'])->name('product.show');
 
     // Profil buyer

@@ -189,16 +189,38 @@
         </a>
 
         {{-- Search --}}
-        <form action="{{ route('home') }}" method="GET" class="search-bar">
-            <input type="text" name="q" placeholder="Cari sayuran, buah, beras, rempah..." value="{{ request('q') }}">
-            <button type="submit" class="search-btn">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path stroke-linecap="round" d="m21 21-4.35-4.35"/>
-                </svg>
-                Cari
-            </button>
-        </form>
+        <div class="search-wrap" style="flex:1;position:relative;">
+            <form action="{{ route('search.index') }}" method="GET" class="search-bar" id="searchForm" autocomplete="off">
+                <input
+                    type="text"
+                    name="q"
+                    id="searchInput"
+                    placeholder="Cari sayuran, buah, beras, rempah..."
+                    value="{{ request('q') }}"
+                    autocomplete="off"
+                >
+                <button type="submit" class="search-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path stroke-linecap="round" d="m21 21-4.35-4.35"/>
+                    </svg>
+                    Cari
+                </button>
+            </form>
+            {{-- Autocomplete dropdown --}}
+            <div id="searchSuggest" style="
+                display:none;
+                position:absolute;
+                top:calc(100% + 6px);
+                left:0; right:0;
+                background:white;
+                border:1px solid #e0e0e0;
+                border-radius:10px;
+                box-shadow:0 8px 28px rgba(0,0,0,0.13);
+                z-index:9999;
+                overflow:hidden;
+            "></div>
+        </div>
 
         {{-- Actions --}}
         <div class="topbar-actions">
@@ -410,4 +432,133 @@ function confirmLogout() {
     setInterval(fetchWishlistCount, 15000);
 })();
 @endauth
+
+// ── Autocomplete / Search Suggestion ──────────────────────
+(function() {
+    const input   = document.getElementById('searchInput');
+    const suggest = document.getElementById('searchSuggest');
+    if (!input || !suggest) return;
+
+    let debounceTimer = null;
+    let activeIndex   = -1;
+    let suggestions   = [];
+
+    function renderSuggestions(items) {
+        suggestions = items;
+        activeIndex = -1;
+        if (!items.length) { hideSuggest(); return; }
+
+        const typeLabel = { produk: 'Produk', petani: 'Petani' };
+        let html = '<div style="padding:6px 0;">';
+        items.forEach((item, i) => {
+            html += `
+            <div class="sg-item" data-index="${i}" style="
+                display:flex; align-items:center; gap:10px;
+                padding:9px 14px; cursor:pointer;
+                font-size:13px; font-weight:700; color:#2d2d2d;
+                transition:background 0.12s;
+            " onmousedown="window._sgSelect(${i})">
+                <span style="font-size:18px;width:26px;text-align:center;">${item.icon}</span>
+                <span style="flex:1;">${escapeHtml(item.label)}</span>
+                <span style="font-size:10px;font-weight:600;color:#888;background:#f4f4f4;padding:2px 7px;border-radius:20px;">${typeLabel[item.type] ?? item.type}</span>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Footer hint
+        html += `<div style="padding:7px 14px;border-top:1px solid #f0f0f0;font-size:11px;color:#aaa;font-weight:600;">
+            Tekan Enter untuk cari semua hasil
+        </div>`;
+
+        suggest.innerHTML = html;
+        suggest.style.display = 'block';
+
+        // Hover style
+        suggest.querySelectorAll('.sg-item').forEach(el => {
+            el.addEventListener('mouseenter', () => { el.style.background = '#f0faf0'; });
+            el.addEventListener('mouseleave', () => { el.style.background = 'transparent'; });
+        });
+    }
+
+    window._sgSelect = function(index) {
+        const item = suggestions[index];
+        if (!item) return;
+        input.value = item.query;
+        hideSuggest();
+        document.getElementById('searchForm').submit();
+    };
+
+    function hideSuggest() {
+        suggest.style.display = 'none';
+        suggest.innerHTML = '';
+        activeIndex = -1;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function highlightItem(idx) {
+        const items = suggest.querySelectorAll('.sg-item');
+        items.forEach((el, i) => {
+            el.style.background = i === idx ? '#f0faf0' : 'transparent';
+        });
+    }
+
+    // Input event
+    input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const q = this.value.trim();
+        if (q.length < 3) { hideSuggest(); return; }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                const url = '{{ route("search.suggest") }}?q=' + encodeURIComponent(q);
+                const res  = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                renderSuggestions(data);
+            } catch(e) { hideSuggest(); }
+        }, 250);
+    });
+
+    // Keyboard navigation
+    input.addEventListener('keydown', function(e) {
+        const items = suggest.querySelectorAll('.sg-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, items.length - 1);
+            highlightItem(activeIndex);
+            if (suggestions[activeIndex]) input.value = suggestions[activeIndex].query;
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, -1);
+            highlightItem(activeIndex);
+            if (activeIndex >= 0 && suggestions[activeIndex]) input.value = suggestions[activeIndex].query;
+        } else if (e.key === 'Escape') {
+            hideSuggest();
+        } else if (e.key === 'Enter') {
+            if (activeIndex >= 0 && suggestions[activeIndex]) {
+                e.preventDefault();
+                window._sgSelect(activeIndex);
+            }
+            // else let form submit normally
+        }
+    });
+
+    // Tutup suggestion jika klik di luar
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !suggest.contains(e.target)) {
+            hideSuggest();
+        }
+    });
+
+    input.addEventListener('focus', function() {
+        if (this.value.trim().length >= 3 && suggestions.length) {
+            suggest.style.display = 'block';
+        }
+    });
+})();
+// ──────────────────────────────────────────────────────────
 </script>
