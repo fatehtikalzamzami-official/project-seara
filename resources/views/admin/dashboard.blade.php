@@ -43,7 +43,7 @@
 
         :root {
             --sidebar-w-open: 260px;
-            --sidebar-w-closed: 76px;
+            --sidebar-w-closed: 72px;
             --bg: #0d1f17;
             --bg2: #132b1e;
             --accent: #3dba7e;
@@ -57,7 +57,7 @@
             --danger: #e05c5c;
             --warn: #f59e0b;
             --radius: 20px;
-            --sidebar-transition: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         html,
@@ -77,8 +77,9 @@
         }
 
         /* ── SIDEBAR ── */
+        /* Desktop: hover to expand, default collapsed */
         .sidebar {
-            width: var(--sidebar-w-open);
+            width: var(--sidebar-w-closed);
             background: var(--bg);
             display: flex;
             flex-direction: column;
@@ -90,8 +91,38 @@
             z-index: 100;
         }
 
-        .sidebar.closed {
-            width: var(--sidebar-w-closed);
+        /* Expand on hover (desktop) */
+        @media (min-width: 769px) {
+            .sidebar:hover {
+                width: var(--sidebar-w-open);
+            }
+
+            /* When sidebar is hovered, show labels */
+            .sidebar:hover .nav-label,
+            .sidebar:hover .nav-badge,
+            .sidebar:hover .brand-text,
+            .sidebar:hover .user-info,
+            .sidebar:hover .nav-section-label {
+                opacity: 1;
+                pointer-events: auto;
+                transform: translateX(0);
+            }
+
+            /* Show tooltip only when NOT hovering sidebar */
+            .sidebar:not(:hover) .nav-item:hover .tooltip {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .sidebar:hover .tooltip {
+                opacity: 0 !important;
+                pointer-events: none;
+            }
+        }
+
+        /* Mobile: closed by default, opened via JS */
+        .sidebar.mobile-open {
+            width: var(--sidebar-w-open);
         }
 
         /* Brand */
@@ -99,7 +130,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 28px 20px 24px;
+            padding: 28px 18px 24px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             overflow: hidden;
             white-space: nowrap;
@@ -125,6 +156,9 @@
 
         .brand-text {
             overflow: hidden;
+            opacity: 0;
+            transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
+            transform: translateX(-4px);
         }
 
         .brand-name {
@@ -144,44 +178,10 @@
             white-space: nowrap;
         }
 
-        /* Toggle button */
-        .sidebar-toggle {
-            position: absolute;
-            top: 26px;
-            right: -14px;
-            width: 28px;
-            height: 28px;
-            background: var(--accent);
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 12px rgba(61, 186, 126, 0.4);
-            transition: background 0.2s, transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
-        }
-
-        .sidebar-toggle:hover {
-            background: var(--accent2);
-        }
-
-        .sidebar-toggle svg {
-            width: 14px;
-            height: 14px;
-            color: #fff;
-            transition: transform var(--sidebar-transition);
-        }
-
-        .sidebar.closed .sidebar-toggle svg {
-            transform: rotate(180deg);
-        }
-
         /* Nav */
         .sidebar-nav {
             flex: 1;
-            padding: 16px 12px;
+            padding: 16px 10px;
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -199,18 +199,15 @@
             padding: 12px 8px 6px;
             white-space: nowrap;
             overflow: hidden;
-            transition: opacity var(--sidebar-transition);
-        }
-
-        .sidebar.closed .nav-section-label {
             opacity: 0;
+            transition: opacity var(--sidebar-transition);
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 12px;
+            padding: 10px 8px;
             border-radius: 12px;
             color: rgba(255, 255, 255, 0.45);
             text-decoration: none;
@@ -272,11 +269,9 @@
 
         .nav-label {
             flex: 1;
-            transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
-        }
-
-        .sidebar.closed .nav-label {
             opacity: 0;
+            transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
+            transform: translateX(-4px);
             pointer-events: none;
         }
 
@@ -290,17 +285,14 @@
             border-radius: 20px;
             line-height: 18px;
             flex-shrink: 0;
+            opacity: 0;
             transition: opacity var(--sidebar-transition);
         }
 
-        .sidebar.closed .nav-badge {
-            opacity: 0;
-        }
-
-        /* Tooltip on closed */
+        /* Tooltip on closed sidebar */
         .nav-item .tooltip {
             position: absolute;
-            left: 72px;
+            left: 58px;
             background: var(--bg2);
             color: #fff;
             font-size: 12px;
@@ -316,14 +308,9 @@
             z-index: 200;
         }
 
-        .sidebar.closed .nav-item:hover .tooltip {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
         /* Sidebar footer */
         .sidebar-footer {
-            padding: 12px;
+            padding: 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
         }
@@ -332,7 +319,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 10px;
+            padding: 10px 8px;
             border-radius: 12px;
             overflow: hidden;
             white-space: nowrap;
@@ -354,11 +341,8 @@
 
         .user-info {
             overflow: hidden;
-            transition: opacity var(--sidebar-transition);
-        }
-
-        .sidebar.closed .user-info {
             opacity: 0;
+            transition: opacity var(--sidebar-transition);
         }
 
         .user-name {
@@ -379,7 +363,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 12px;
+            padding: 10px 8px;
             border-radius: 12px;
             color: rgba(255, 100, 100, 0.6);
             font-size: 13px;
@@ -406,6 +390,16 @@
 
         .logout-btn:hover .nav-icon {
             background: rgba(224, 92, 92, 0.18);
+        }
+
+        .logout-label {
+            opacity: 0;
+            transition: opacity var(--sidebar-transition);
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .logout-label {
+            opacity: 1;
         }
 
         /* ── MAIN ── */
@@ -870,7 +864,6 @@
             color: #475569;
         }
 
-        /* Scrollbar global */
         ::-webkit-scrollbar {
             width: 5px;
         }
@@ -896,10 +889,23 @@
                 top: 0;
                 bottom: 0;
                 z-index: 100;
+                width: 0;
+                overflow: hidden;
             }
 
-            .sidebar.closed {
-                width: 0;
+            .sidebar.mobile-open {
+                width: var(--sidebar-w-open);
+            }
+
+            .sidebar.mobile-open .nav-label,
+            .sidebar.mobile-open .nav-badge,
+            .sidebar.mobile-open .brand-text,
+            .sidebar.mobile-open .user-info,
+            .sidebar.mobile-open .nav-section-label,
+            .sidebar.mobile-open .logout-label {
+                opacity: 1;
+                pointer-events: auto;
+                transform: translateX(0);
             }
 
             .overlay.show {
@@ -936,13 +942,6 @@
                 </div>
             </div>
 
-            {{-- Toggle Button --}}
-            <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
-
             {{-- Navigation --}}
             <nav class="sidebar-nav">
 
@@ -962,7 +961,19 @@
 
                 <div class="nav-section-label">MANAJEMEN PENGGUNA</div>
 
-                {{-- 2. Data Pembeli --}}
+                {{-- 2. Data Pengguna Umum --}}
+                <a href="{{ route('admin.pengguna') }}" class="nav-item">
+                    <div class="nav-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <span class="nav-label">Data Pengguna</span>
+                    <span class="tooltip">Data Pengguna</span>
+                </a>
+
+                {{-- 3. Data Pembeli --}}
                 <a href="{{ route('admin.users') }}" class="nav-item">
                     <div class="nav-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -974,7 +985,7 @@
                     <span class="tooltip">Data Pembeli</span>
                 </a>
 
-                {{-- 3. Data Seller --}}
+                {{-- 4. Data Seller --}}
                 <a href="{{ route('admin.sellers') }}" class="nav-item">
                     <div class="nav-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -986,7 +997,7 @@
                     <span class="tooltip">Data Seller</span>
                 </a>
 
-                {{-- 4. Pengajuan Seller --}}
+                {{-- 5. Pengajuan Seller --}}
                 <a href="{{ route('admin.verifikasi') }}" class="nav-item">
                     <div class="nav-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -1000,7 +1011,7 @@
 
                 <div class="nav-section-label">MODERASI</div>
 
-                {{-- 5. Laporan Aktif --}}
+                {{-- 6. Laporan Aktif --}}
                 <a href="{{ route('admin.laporan') }}" class="nav-item">
                     <div class="nav-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -1036,7 +1047,7 @@
                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                         </div>
-                        <span class="nav-label">Keluar</span>
+                        <span class="logout-label">Keluar</span>
                     </button>
                 </form>
             </div>
@@ -1252,120 +1263,89 @@
 
             </div>
         </div>
-        <!-- Modal Logout -->
+
+        {{-- Modal Logout --}}
         <div id="logoutModal" style="
-    display:none; position:fixed; inset:0; z-index:9999;
-    background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);
-    align-items:center; justify-content:center;
-">
+            display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center;">
             <div style="
-        background:#fff; border-radius:20px; padding:32px 28px;
-        width:100%; max-width:360px; margin:16px;
-        box-shadow:0 20px 60px rgba(0,0,0,0.2);
-        animation:modalIn .25s cubic-bezier(0.4,0,0.2,1);
-    ">
+                background:#fff; border-radius:20px; padding:32px 28px;
+                width:100%; max-width:360px; margin:16px;
+                box-shadow:0 20px 60px rgba(0,0,0,0.2);
+                animation:modalIn .25s cubic-bezier(0.4,0,0.2,1);">
                 <div style="text-align:center; margin-bottom:20px;">
-                    <div style="
-                width:56px; height:56px; background:#fee2e2;
-                border-radius:50%; display:flex; align-items:center;
-                justify-content:center; margin:0 auto 14px;
-            ">
+                    <div
+                        style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#e05c5c" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                     </div>
-                    <div style="font-size:17px; font-weight:800; color:#1a2e24; margin-bottom:6px;">Keluar dari Panel
+                    <div style="font-size:17px;font-weight:800;color:#1a2e24;margin-bottom:6px;">Keluar dari Panel
                         Admin?</div>
-                    <div style="font-size:13px; color:#7a9488; font-weight:500;">Sesi Anda akan diakhiri. Pastikan semua
+                    <div style="font-size:13px;color:#7a9488;font-weight:500;">Sesi Anda akan diakhiri. Pastikan semua
                         pekerjaan sudah tersimpan.</div>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="closeLogoutModal()" style="
-                flex:1; padding:11px; border-radius:12px;
-                border:1.5px solid #e8eeeb; background:#fff;
-                font-family:'Plus Jakarta Sans',sans-serif;
-                font-size:13px; font-weight:700; color:#7a9488;
-                cursor:pointer; transition:all .2s;
-            " onmouseover="this.style.borderColor='#3dba7e';this.style.color='#1a2e24'"
+                <div style="display:flex;gap:10px;">
+                    <button onclick="closeLogoutModal()"
+                        style="flex:1;padding:11px;border-radius:12px;border:1.5px solid #e8eeeb;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#7a9488;cursor:pointer;"
+                        onmouseover="this.style.borderColor='#3dba7e';this.style.color='#1a2e24'"
                         onmouseout="this.style.borderColor='#e8eeeb';this.style.color='#7a9488'">
                         Batal
                     </button>
-                    <button onclick="document.getElementById('adminLogoutForm').submit()" style="
-                flex:1; padding:11px; border-radius:12px;
-                border:none; background:#e05c5c;
-                font-family:'Plus Jakarta Sans',sans-serif;
-                font-size:13px; font-weight:700; color:#fff;
-                cursor:pointer; transition:all .2s;
-            " onmouseover="this.style.background='#c94f4f'" onmouseout="this.style.background='#e05c5c'">
+                    <button onclick="document.getElementById('adminLogoutForm').submit()"
+                        style="flex:1;padding:11px;border-radius:12px;border:none;background:#e05c5c;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;"
+                        onmouseover="this.style.background='#c94f4f'" onmouseout="this.style.background='#e05c5c'">
                         Ya, Keluar
                     </button>
                 </div>
             </div>
         </div>
 
-        <style>
-            @keyframes modalIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.93) translateY(10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
-                }
-            }
-        </style>
     </div>{{-- end .layout --}}
 
+    <style>
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.93) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+
     <script>
-        // ── Sidebar toggle ──────────────────────────────────────
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-        const STORAGE_KEY = 'seara_sidebar_closed';
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('closed');
-            localStorage.setItem(STORAGE_KEY, sidebar.classList.contains('closed') ? '1' : '0');
-        }
 
         function openSidebar() {
-            sidebar.classList.remove('closed');
+            sidebar.classList.add('mobile-open');
             overlay.classList.add('show');
         }
 
         function closeSidebar() {
-            sidebar.classList.add('closed');
+            sidebar.classList.remove('mobile-open');
             overlay.classList.remove('show');
         }
 
-        // Restore state dari localStorage
-        if (localStorage.getItem(STORAGE_KEY) === '1') {
-            sidebar.classList.add('closed');
-        }
-
-        // Mobile: tampilkan hamburger, sembunyikan toggle bawaan
         function handleResize() {
             const isMobile = window.innerWidth <= 768;
             document.getElementById('mobileMenuBtn').style.display = isMobile ? 'flex' : 'none';
-            document.getElementById('sidebarToggle').style.display = isMobile ? 'none' : 'flex';
-            if (isMobile) {
-                sidebar.classList.add('closed');
+            if (!isMobile) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('show');
             }
         }
+
         handleResize();
         window.addEventListener('resize', handleResize);
 
-        // ── Logout ─────────────────────────────────────────────
-        // Hapus ini:
-        function confirmAdminLogout() {
-            if (confirm('Yakin ingin keluar dari panel admin?')) {
-                document.getElementById('adminLogoutForm').submit();
-            }
-        }
-
-        // Ganti dengan ini:
+        // ── Logout modal ────────────────────────────────────
         function confirmAdminLogout() {
             const modal = document.getElementById('logoutModal');
             modal.style.display = 'flex';
@@ -1375,7 +1355,6 @@
             document.getElementById('logoutModal').style.display = 'none';
         }
 
-        // Tutup modal jika klik area luar
         document.getElementById('logoutModal').addEventListener('click', function (e) {
             if (e.target === this) closeLogoutModal();
         });

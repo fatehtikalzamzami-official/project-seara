@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Order;
 
 class User extends Authenticatable
 {
@@ -32,16 +33,25 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'last_seen_at'      => 'datetime',
-            'last_login_at'     => 'datetime',
+            'password' => 'hashed',
+            'last_seen_at' => 'datetime',
+            'last_login_at' => 'datetime',
         ];
     }
 
     // ── Relasi
-    public function sellerApplication() { return $this->hasOne(SellerApplication::class); }
-    public function sellerProfile()     { return $this->hasOne(SellerProfile::class); }
-    public function seller()            { return $this->hasOne(Seller::class); }
+    public function sellerApplication()
+    {
+        return $this->hasOne(SellerApplication::class);
+    }
+    public function sellerProfile()
+    {
+        return $this->hasOne(SellerProfile::class);
+    }
+    public function seller()
+    {
+        return $this->hasOne(Seller::class);
+    }
 
     // ── Online status
     public function isOnline(): bool
@@ -51,8 +61,15 @@ class User extends Authenticatable
 
     public function onlineLabel(): string
     {
-        if ($this->isOnline()) return 'Online';
-        if (!$this->last_seen_at) return 'Belum pernah online';
+        if ($this->isOnline())
+            return 'Online';
+        if (!$this->last_seen_at)
+            return 'Belum pernah online';
         return 'Terakhir ' . $this->last_seen_at->diffForHumans();
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(\App\Models\Order::class, 'buyer_id');
     }
 }

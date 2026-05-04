@@ -14,6 +14,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BuyerProfileController;
 use App\Http\Controllers\DashboardControllerAdmin;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Admin\AdminUserController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -141,15 +142,18 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 
 // ─────────────────────────────────────────────────────────────
 //  ADMIN ROUTES  ← BAGIAN INI YANG DIUBAH
-//  - Hapus duplikasi route dashboard
-//  - Tambah admin.users, admin.sellers, admin.verifikasi, admin.laporan
-//  - Semua dalam satu group dengan middleware auth + role:admin
 // ─────────────────────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard — pakai DashboardControllerAdmin (ganti fn() yang lama)
     Route::get('/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('dashboard');
+
+
+    Route::get('/pengguna', [AdminUserController::class, 'index'])->name('pengguna');
+    Route::get('/pengguna/{user}', [AdminUserController::class, 'show'])->name('pengguna.show');
+    Route::patch('/pengguna/{user}/toggle', [AdminUserController::class, 'toggleStatus'])->name('pengguna.toggle');
+    Route::delete('/pengguna/{user}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
 
     // Data Pembeli (Buyer)
     Route::get('/users', function () {
@@ -158,7 +162,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Data Seller (Petani Terdaftar)
     Route::get('/sellers', function () {
-        return view('admin.sellers'); 
+        return view('admin.sellers');
     })->name('sellers');
 
     // Pengajuan Menjadi Seller (verifikasi)
@@ -170,7 +174,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Laporan Aktif
     Route::get('/laporan', function () {
-        return view('admin.laporan'); 
+        return view('admin.laporan');
     })->name('laporan');
 
     // Suspend / reinstate toko seller

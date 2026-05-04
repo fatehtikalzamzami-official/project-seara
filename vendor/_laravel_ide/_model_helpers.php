@@ -1718,6 +1718,7 @@ namespace App\Models {
      * @property-read \App\Models\User $buyer
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items
      * @property-read int|null $items_count
+     * @property-read \App\Models\User $user
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereOrderNumber($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereBuyerId($value)
@@ -4213,6 +4214,8 @@ namespace App\Models {
      * @property-read \App\Models\SellerApplication $sellerApplication
      * @property-read \App\Models\SellerProfile $sellerProfile
      * @property-read \App\Models\Seller $seller
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
+     * @property-read int|null $orders_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
@@ -4555,8 +4558,18 @@ namespace App\Models {
     /**
      * App\Models\Wishlist
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property int $harvest_id
+     * @property int $user_id
+     * @property int $id
      * @property-read \App\Models\User $user
      * @property-read \App\Models\Harvest $harvest
+     * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist whereHarvestId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Wishlist>|Wishlist query()
