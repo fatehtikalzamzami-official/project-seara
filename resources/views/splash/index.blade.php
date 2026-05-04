@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>SEARA – Pasar Tani Digital Indonesia</title>
+    <title>NUSATANI – Pasar Tani Digital Indonesia</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
@@ -1533,8 +1533,8 @@
         <div class="popup-box">
             <div class="popup-icon">🌿</div>
             <div class="popup-title" id="popupTitle">Akun Berhasil Dibuat!</div>
-            <p class="popup-msg" id="popupMsg">Selamat datang di SEARA. Anda akan diarahkan ke dashboard...</p><button
-                class="popup-btn" id="popupBtn">Mulai Sekarang →</button>
+            <p class="popup-msg" id="popupMsg">Selamat datang di NUSATANI. Anda akan diarahkan ke dashboard...</p>
+            <button class="popup-btn" id="popupBtn">Mulai Sekarang →</button>
         </div>
     </div>
 
@@ -1599,7 +1599,7 @@
                 $('tabDaftar').classList.toggle('active', !isMasuk);
                 $('formMasuk').style.display = isMasuk ? 'block' : 'none';
                 $('formDaftar').style.display = isMasuk ? 'none' : 'block';
-                $('panelTitle').innerHTML = isMasuk ? 'Selamat datang<br>di <span>SEARA</span>' : 'Buat akun<br><span>SEARA</span> Anda';
+                $('panelTitle').innerHTML = isMasuk ? 'Selamat datang<br>di <span>NUSATANI</span>' : 'Buat akun<br><span>NUSATANI</span> Anda';
                 $('panelSubtitle').textContent = isMasuk ? 'Masuk untuk mulai bertransaksi.' : 'Daftar gratis, mulai berjualan & berbelanja.';
                 $('googleBtnText').textContent = isMasuk ? 'Lanjutkan dengan Google' : 'Daftar dengan Google';
                 $('dividerText').textContent = isMasuk ? 'atau masuk dengan email' : 'atau daftar dengan email';
