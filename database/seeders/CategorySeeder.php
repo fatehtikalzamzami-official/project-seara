@@ -1,26 +1,27 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-public function run(): void
-{
-    $categories = [
-        'Sayuran',
-        'Buah',
-        'Rempah',
-        'Perkebunan'
-    ];
+    public function run(): void
+    {
+        $categories = [
+            'Sayuran',
+            'Buah',
+            'Rempah',
+            'Perkebunan',
+            'Umbi-umbian',
+            'Biji-bijian',
+        ];
 
-    foreach ($categories as $cat) {
-        Category::create(['name' => $cat]);
+        foreach ($categories as $cat) {
+            Category::firstOrCreate(['name' => $cat]);
+        }
+
+        $this->command->info('✅ CategorySeeder selesai — ' . count($categories) . ' kategori dibuat.');
     }
-}
 }
