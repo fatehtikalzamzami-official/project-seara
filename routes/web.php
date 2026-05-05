@@ -15,6 +15,7 @@ use App\Http\Controllers\BuyerProfileController;
 use App\Http\Controllers\DashboardControllerAdmin;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminPenggunaController;
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -152,8 +153,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/pengguna', [AdminUserController::class, 'index'])->name('pengguna');
     Route::get('/pengguna/{user}', [AdminUserController::class, 'show'])->name('pengguna.show');
+    Route::get('/pengguna/{user}/detail', [AdminUserController::class, 'show'])->name('pengguna.detail');
     Route::patch('/pengguna/{user}/toggle', [AdminUserController::class, 'toggleStatus'])->name('pengguna.toggle');
     Route::delete('/pengguna/{user}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
+
 
     // Data Pembeli (Buyer)
     Route::get('/users', function () {
