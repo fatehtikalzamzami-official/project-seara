@@ -111,8 +111,13 @@ class SellerApplicationController extends Controller
             'kota_kabupaten' => $sellerApplication->kota_kabupaten,
             'alamat_toko' => $sellerApplication->alamat_toko,
             'no_ktp' => $sellerApplication->no_ktp,
-            'foto_ktp_url' => $sellerApplication->foto_ktp ? Storage::url($sellerApplication->foto_ktp) : null,
-            'foto_selfie_url' => $sellerApplication->foto_selfie_ktp ? Storage::url($sellerApplication->foto_selfie_ktp) : null,
+            // ✅ Ganti $app → $sellerApplication
+            'foto_ktp_url' => $sellerApplication->foto_ktp
+                ? Storage::url($sellerApplication->foto_ktp)
+                : null,
+            'foto_selfie_url' => $sellerApplication->foto_selfie_ktp
+                ? Storage::url($sellerApplication->foto_selfie_ktp)
+                : null,
             'no_rekening' => $sellerApplication->no_rekening,
             'nama_bank' => $sellerApplication->nama_bank,
             'atas_nama_rekening' => $sellerApplication->atas_nama_rekening,
