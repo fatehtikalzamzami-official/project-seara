@@ -423,7 +423,7 @@
 
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="SEARA Logo">
+            <img src="{{ asset('assets/LOGO_FIKS_LIGHT.png') }}" alt="SEARA Logo">
         </a>
 
         {{-- Search --}}

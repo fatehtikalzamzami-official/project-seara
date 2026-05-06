@@ -684,7 +684,7 @@
                     <span class="tooltip">Data Pengguna</span>
                 </a>
 
-                <a href="{{ route('admin.verifikasi') }}"
+                <a href="{{ route('admin.verifikasi.index') }}"
                     class="nav-item {{ request()->routeIs('admin.verifikasi*') ? 'active' : '' }}">
                     <div class="nav-icon">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">

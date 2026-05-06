@@ -52,54 +52,82 @@ class SellerApplicationController extends Controller
         }
 
         $request->validate([
-            'nama_toko'            => 'required|string|max:100',
-            'deskripsi_toko'       => 'required|string|max:1000',
-            'kategori_utama'       => 'required|string|max:100',
-            'provinsi'             => 'required|string|max:100',
-            'kota_kabupaten'       => 'required|string|max:100',
-            'alamat_toko'          => 'required|string|max:500',
-            'no_ktp'               => 'required|string|size:16',
-            'foto_ktp'             => 'required|image|max:4096',
-            'foto_selfie_ktp'      => 'required|image|max:4096',
-            'no_rekening'          => 'required|string|max:30',
-            'nama_bank'            => 'required|string|max:50',
-            'atas_nama_rekening'   => 'required|string|max:100',
+            'nama_toko' => 'required|string|max:100',
+            'deskripsi_toko' => 'required|string|max:1000',
+            'kategori_utama' => 'required|string|max:100',
+            'provinsi' => 'required|string|max:100',
+            'kota_kabupaten' => 'required|string|max:100',
+            'alamat_toko' => 'required|string|max:500',
+            'no_ktp' => 'required|string|size:16',
+            'foto_ktp' => 'required|image|max:4096',
+            'foto_selfie_ktp' => 'required|image|max:4096',
+            'no_rekening' => 'required|string|max:30',
+            'nama_bank' => 'required|string|max:50',
+            'atas_nama_rekening' => 'required|string|max:100',
         ]);
 
         // Generate slug unik
         $baseSlug = Str::slug($request->nama_toko);
-        $slug     = $baseSlug;
-        $counter  = 1;
+        $slug = $baseSlug;
+        $counter = 1;
         while (SellerApplication::where('slug_toko', $slug)->exists()) {
             $slug = $baseSlug . '-' . $counter++;
         }
 
-        $fotoKtp    = $request->file('foto_ktp')->store('ktp', 'public');
+        $fotoKtp = $request->file('foto_ktp')->store('ktp', 'public');
         $fotoSelfie = $request->file('foto_selfie_ktp')->store('ktp-selfie', 'public');
 
         SellerApplication::create([
-            'user_id'              => $user->id,
-            'nama_toko'            => $request->nama_toko,
-            'slug_toko'            => $slug,
-            'deskripsi_toko'       => $request->deskripsi_toko,
-            'kategori_utama'       => $request->kategori_utama,
-            'provinsi'             => $request->provinsi,
-            'kota_kabupaten'       => $request->kota_kabupaten,
-            'alamat_toko'          => $request->alamat_toko,
-            'no_ktp'               => $request->no_ktp,
-            'foto_ktp'             => $fotoKtp,
-            'foto_selfie_ktp'      => $fotoSelfie,
-            'no_rekening'          => $request->no_rekening,
-            'nama_bank'            => $request->nama_bank,
-            'atas_nama_rekening'   => $request->atas_nama_rekening,
-            'status'               => 'pending',
-            'submitted_at'         => now(),
+            'user_id' => $user->id,
+            'nama_toko' => $request->nama_toko,
+            'slug_toko' => $slug,
+            'deskripsi_toko' => $request->deskripsi_toko,
+            'kategori_utama' => $request->kategori_utama,
+            'provinsi' => $request->provinsi,
+            'kota_kabupaten' => $request->kota_kabupaten,
+            'alamat_toko' => $request->alamat_toko,
+            'no_ktp' => $request->no_ktp,
+            'foto_ktp' => $fotoKtp,
+            'foto_selfie_ktp' => $fotoSelfie,
+            'no_rekening' => $request->no_rekening,
+            'nama_bank' => $request->nama_bank,
+            'atas_nama_rekening' => $request->atas_nama_rekening,
+            'status' => 'pending',
+            'submitted_at' => now(),
         ]);
 
         return redirect()->route('buyer.application.status')
             ->with('success', 'Pengajuan berhasil dikirim! Kami akan meninjau dalam 1–3 hari kerja.');
     }
-
+    public function detailJson(SellerApplication $sellerApplication)
+    {
+        $sellerApplication->load('user');
+        return response()->json([
+            'id' => $sellerApplication->id,
+            'nama_toko' => $sellerApplication->nama_toko,
+            'deskripsi_toko' => $sellerApplication->deskripsi_toko,
+            'kategori_utama' => $sellerApplication->kategori_utama,
+            'provinsi' => $sellerApplication->provinsi,
+            'kota_kabupaten' => $sellerApplication->kota_kabupaten,
+            'alamat_toko' => $sellerApplication->alamat_toko,
+            'no_ktp' => $sellerApplication->no_ktp,
+            'foto_ktp_url' => $sellerApplication->foto_ktp ? Storage::url($sellerApplication->foto_ktp) : null,
+            'foto_selfie_url' => $sellerApplication->foto_selfie_ktp ? Storage::url($sellerApplication->foto_selfie_ktp) : null,
+            'no_rekening' => $sellerApplication->no_rekening,
+            'nama_bank' => $sellerApplication->nama_bank,
+            'atas_nama_rekening' => $sellerApplication->atas_nama_rekening,
+            'status' => $sellerApplication->status,
+            'submitted_at' => $sellerApplication->submitted_at->format('d M Y H:i'),
+            'reviewed_at' => $sellerApplication->reviewed_at ? $sellerApplication->reviewed_at->format('d M Y H:i') : null,
+            'catatan_penolakan' => $sellerApplication->catatan_penolakan,
+            'user' => [
+                'id' => $sellerApplication->user->id,
+                'nama_lengkap' => $sellerApplication->user->nama_lengkap,
+                'email' => $sellerApplication->user->email,
+                'no_whatsapp' => $sellerApplication->user->no_whatsapp,
+            ]
+        ]);
+    }
     // ── Buyer: Status pengajuan ───────────────────────────────────────────
     public function status()
     {
@@ -124,12 +152,20 @@ class SellerApplicationController extends Controller
             ->latest('submitted_at')
             ->paginate(20);
 
-        $countByStatus = SellerApplication::selectRaw('status, count(*) as total')
+        // Ambil count dari database
+        $counts = SellerApplication::selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
 
-        return view('admin.applications.index', compact('applications', 'status', 'countByStatus'));
+        // Daftar semua status yang mungkin
+        $allStatuses = ['pending', 'reviewing', 'approved', 'rejected'];
+        $countByStatus = [];
+        foreach ($allStatuses as $s) {
+            $countByStatus[$s] = $counts[$s] ?? 0;
+        }
+
+        return view('admin.verifikasi', compact('applications', 'status', 'countByStatus'));
     }
 
     // ── Admin: Detail pengajuan ───────────────────────────────────────────
@@ -145,11 +181,11 @@ class SellerApplicationController extends Controller
         abort_unless($sellerApplication->status === 'pending', 422, 'Status tidak valid.');
 
         $sellerApplication->update([
-            'status'      => 'reviewing',
+            'status' => 'reviewing',
             'reviewed_by' => Auth::id(),
         ]);
 
-        return back()->with('success', 'Pengajuan ditandai sedang direview.');
+        return response()->json(['success' => true, 'message' => 'Pengajuan ditandai sedang direview.']);
     }
 
     // ── Admin: Setujui pengajuan → buat SellerProfile & ubah role user ───
@@ -165,32 +201,32 @@ class SellerApplicationController extends Controller
 
         // Generate slug unik untuk profil toko
         $baseSlug = $sellerApplication->slug_toko;
-        $slug     = $baseSlug;
-        $counter  = 1;
+        $slug = $baseSlug;
+        $counter = 1;
         while (SellerProfile::where('slug_toko', $slug)->withTrashed()->exists()) {
             $slug = $baseSlug . '-' . $counter++;
         }
 
         // Buat SellerProfile
         SellerProfile::create([
-            'user_id'            => $user->id,
-            'application_id'     => $sellerApplication->id,
-            'nama_toko'          => $sellerApplication->nama_toko,
-            'slug_toko'          => $slug,
-            'deskripsi_toko'     => $sellerApplication->deskripsi_toko,
-            'kategori_utama'     => $sellerApplication->kategori_utama,
-            'provinsi'           => $sellerApplication->provinsi,
-            'kota_kabupaten'     => $sellerApplication->kota_kabupaten,
-            'alamat_toko'        => $sellerApplication->alamat_toko,
-            'no_rekening'        => $sellerApplication->no_rekening,
-            'nama_bank'          => $sellerApplication->nama_bank,
+            'user_id' => $user->id,
+            'application_id' => $sellerApplication->id,
+            'nama_toko' => $sellerApplication->nama_toko,
+            'slug_toko' => $slug,
+            'deskripsi_toko' => $sellerApplication->deskripsi_toko,
+            'kategori_utama' => $sellerApplication->kategori_utama,
+            'provinsi' => $sellerApplication->provinsi,
+            'kota_kabupaten' => $sellerApplication->kota_kabupaten,
+            'alamat_toko' => $sellerApplication->alamat_toko,
+            'no_rekening' => $sellerApplication->no_rekening,
+            'nama_bank' => $sellerApplication->nama_bank,
             'atas_nama_rekening' => $sellerApplication->atas_nama_rekening,
-            'is_open'            => true,
-            'is_verified'        => true,
-            'verified_at'        => now(),
+            'is_open' => true,
+            'is_verified' => true,
+            'verified_at' => now(),
         ]);
 
-        // Buat Seller record (legacy / untuk relasi harvest)
+        // Buat Seller record (legacy)
         Seller::firstOrCreate(
             ['user_id' => $user->id],
             ['shop_name' => $sellerApplication->nama_toko]
@@ -198,14 +234,14 @@ class SellerApplicationController extends Controller
 
         // Update status aplikasi & role user
         $sellerApplication->update([
-            'status'      => 'approved',
+            'status' => 'approved',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
         ]);
 
         $user->update(['role' => 'seller']);
 
-        return back()->with('success', "Pengajuan {$sellerApplication->nama_toko} disetujui. Akun seller aktif.");
+        return response()->json(['success' => true, 'message' => 'Pengajuan disetujui. Akun seller aktif.']);
     }
 
     // ── Admin: Tolak pengajuan ────────────────────────────────────────────
@@ -222,12 +258,12 @@ class SellerApplicationController extends Controller
         ]);
 
         $sellerApplication->update([
-            'status'             => 'rejected',
-            'catatan_penolakan'  => $request->catatan_penolakan,
-            'reviewed_by'        => Auth::id(),
-            'reviewed_at'        => now(),
+            'status' => 'rejected',
+            'catatan_penolakan' => $request->catatan_penolakan,
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
         ]);
 
-        return back()->with('success', 'Pengajuan ditolak dan catatan dikirim ke pemohon.');
+        return response()->json(['success' => true, 'message' => 'Pengajuan ditolak.']);
     }
 }

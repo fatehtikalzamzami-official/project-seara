@@ -142,38 +142,40 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 });
 
 // ─────────────────────────────────────────────────────────────
-//  ADMIN ROUTES  ← BAGIAN INI YANG DIUBAH
+//  ADMIN ROUTES (sudah pakai middleware role:admin)
 // ─────────────────────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard — pakai DashboardControllerAdmin (ganti fn() yang lama)
+    // Dashboard
     Route::get('/dashboard', [DashboardControllerAdmin::class, 'indexAdmin'])->name('dashboard');
 
-
+    // Manajemen Pengguna (sudah ada)
     Route::get('/pengguna', [AdminUserController::class, 'index'])->name('pengguna');
     Route::get('/pengguna/{user}', [AdminUserController::class, 'show'])->name('pengguna.show');
     Route::get('/pengguna/{user}/detail', [AdminUserController::class, 'show'])->name('pengguna.detail');
     Route::patch('/pengguna/{user}/toggle', [AdminUserController::class, 'toggleStatus'])->name('pengguna.toggle');
     Route::delete('/pengguna/{user}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
 
-
-    // Data Pembeli (Buyer)
+    // Data Pembeli (opsional, bisa diarahkan ke AdminUserController dengan filter)
     Route::get('/users', function () {
         return view('admin.users');
     })->name('users');
 
-    // Data Seller (Petani Terdaftar)
+    // Data Seller (opsional)
     Route::get('/sellers', function () {
         return view('admin.sellers');
     })->name('sellers');
 
-    // Pengajuan Menjadi Seller (verifikasi)
-    Route::get('/verifikasi', [SellerApplicationController::class, 'index'])->name('verifikasi');
-    Route::get('/verifikasi/{sellerApplication}', [SellerApplicationController::class, 'show'])->name('verifikasi.show');
-    Route::post('/verifikasi/{sellerApplication}/reviewing', [SellerApplicationController::class, 'setReviewing'])->name('verifikasi.reviewing');
-    Route::post('/verifikasi/{sellerApplication}/approve', [SellerApplicationController::class, 'approve'])->name('verifikasi.approve');
-    Route::post('/verifikasi/{sellerApplication}/reject', [SellerApplicationController::class, 'reject'])->name('verifikasi.reject');
+    // ───────── PENGATURAN ULANG VERIFIKASI SELLER ─────────
+    // Hanya satu grup, tanpa duplikasi, menggunakan method dari SellerApplicationController
+    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
+        Route::get('/', [SellerApplicationController::class, 'index'])->name('index');          // admin.verifikasi.index
+        Route::get('/{sellerApplication}/detail', [SellerApplicationController::class, 'detailJson'])->name('detail'); // AJAX
+        Route::post('/{sellerApplication}/set-reviewing', [SellerApplicationController::class, 'setReviewing'])->name('set-reviewing');
+        Route::post('/{sellerApplication}/approve', [SellerApplicationController::class, 'approve'])->name('approve');
+        Route::post('/{sellerApplication}/reject', [SellerApplicationController::class, 'reject'])->name('reject');
+    });
 
     // Laporan Aktif
     Route::get('/laporan', function () {

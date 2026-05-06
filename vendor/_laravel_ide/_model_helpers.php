@@ -3448,8 +3448,8 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $submitted_at
-     * @property string|null $reviewed_at
+     * @property \Illuminate\Support\Carbon $submitted_at
+     * @property \Illuminate\Support\Carbon|null $reviewed_at
      * @property int|null $reviewed_by
      * @property string|null $catatan_penolakan
      * @property mixed $status

@@ -336,7 +336,7 @@
 
     <div class="page-header">
         <h1 class="page-title">Dashboard</h1>
-        <p class="page-sub">Selamat datang kembali — berikut ringkasan data terkini platform SEARA.</p>
+        <p class="page-sub">Selamat datang kembali — berikut ringkasan data terkini platform NUSATANI.</p>
     </div>
 
     {{-- Stats --}}
@@ -444,7 +444,7 @@
                 </div>
                 <span class="section-title">Pengajuan Seller — Menunggu Verifikasi</span>
             </div>
-            <a href="{{ route('admin.verifikasi') }}" class="section-link">Lihat Semua →</a>
+            <a href="{{ route('admin.verifikasi.index') }}" class="section-link">Lihat Semua →</a>
         </div>
 
         <table class="data-table">

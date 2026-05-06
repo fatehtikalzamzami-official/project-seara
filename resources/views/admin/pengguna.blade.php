@@ -708,7 +708,7 @@
 
     <div class="page-header">
         <h1 class="page-title">Data Pengguna</h1>
-        <p class="page-sub">Kelola semua pengguna platform SEARA — pembeli maupun seller.</p>
+        <p class="page-sub">Kelola semua pengguna platform NUSATANI — pembeli maupun seller.</p>
     </div>
 
     @if(session('success'))
@@ -901,18 +901,19 @@
                                     {{-- Trigger modal toggle --}}
                                     <button type="button" class="action-btn {{ $user->is_active ? 'nonaktif' : 'aktifkan' }}"
                                         onclick="openToggleModal(
-                                                                                                                    {{ $user->id }},
-                                                                                                                    '{{ addslashes($user->nama_lengkap) }}',
-                                                                                                                    {{ $user->is_active ? 'true' : 'false' }}
-                                                                                                                )">
+                                                                                                                                            {{ $user->id }},
+                                                                                                                                            '{{ addslashes($user->nama_lengkap) }}',
+                                                                                                                                            {{ $user->is_active ? 'true' : 'false' }}
+                                                                                                                                        )">
                                         {{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                     </button>
 
                                     {{-- Trigger modal hapus --}}
-                                    <button type="button" class="action-btn hapus" onclick="openHapusModal(
-                                                                                                                    {{ $user->id }},
-                                                                                                                    '{{ addslashes($user->nama_lengkap) }}'
-                                                                                                                )">
+                                    <button type="button" class="action-btn hapus"
+                                        onclick="openHapusModal(
+                                                                                                                                            {{ $user->id }},
+                                                                                                                                            '{{ addslashes($user->nama_lengkap) }}'
+                                                                                                                                        )">
                                         Hapus
                                     </button>
 
@@ -1064,9 +1065,9 @@
             document.getElementById('detailBody').innerHTML =
                 ['', '', '', '', ''].map(() =>
                     `<div class="detail-row">
-                                    <span class="skeleton" style="width:90px"></span>
-                                    <span class="skeleton" style="width:130px"></span>
-                                </div>`
+                                            <span class="skeleton" style="width:90px"></span>
+                                            <span class="skeleton" style="width:130px"></span>
+                                        </div>`
                 ).join('');
 
             openModal('modalDetail');
@@ -1099,52 +1100,52 @@
                     let sellerRow = '';
                     if (u.seller_profile) {
                         sellerRow = `
-                                    <div class="detail-row">
-                                        <span class="detail-key">Nama Toko</span>
-                                        <span class="detail-value">${u.seller_profile.nama_toko}</span>
-                                    </div>
-                                    <div class="detail-row">
-                                        <span class="detail-key">Total Transaksi</span>
-                                        <span class="detail-value">${u.seller_profile.total_transaksi}</span>
-                                    </div>
-                                    <div class="detail-row">
-                                        <span class="detail-key">Rating</span>
-                                        <span class="detail-value">⭐ ${u.seller_profile.rating}</span>
-                                    </div>`;
+                                            <div class="detail-row">
+                                                <span class="detail-key">Nama Toko</span>
+                                                <span class="detail-value">${u.seller_profile.nama_toko}</span>
+                                            </div>
+                                            <div class="detail-row">
+                                                <span class="detail-key">Total Transaksi</span>
+                                                <span class="detail-value">${u.seller_profile.total_transaksi}</span>
+                                            </div>
+                                            <div class="detail-row">
+                                                <span class="detail-key">Rating</span>
+                                                <span class="detail-value">⭐ ${u.seller_profile.rating}</span>
+                                            </div>`;
                     } else if (u.role === 'buyer') {
                         sellerRow = `
-                                    <div class="detail-row">
-                                        <span class="detail-key">Total Order</span>
-                                        <span class="detail-value">${u.orders_count} (${u.selesai_count} selesai)</span>
-                                    </div>`;
+                                            <div class="detail-row">
+                                                <span class="detail-key">Total Order</span>
+                                                <span class="detail-value">${u.orders_count} (${u.selesai_count} selesai)</span>
+                                            </div>`;
                     }
 
                     document.getElementById('detailBody').innerHTML = `
-                                <div class="detail-row">
-                                    <span class="detail-key">Role</span>
-                                    <span class="detail-value">${roleBadge}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-key">Status</span>
-                                    <span class="detail-value">${statusBadge}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-key">WhatsApp</span>
-                                    <span class="detail-value">${u.no_whatsapp}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-key">Login via</span>
-                                    <span class="detail-value">${loginBadge}</span>
-                                </div>
-                                ${sellerRow}
-                                <div class="detail-row">
-                                    <span class="detail-key">Bergabung</span>
-                                    <span class="detail-value">${u.created_at}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-key">Login terakhir</span>
-                                    <span class="detail-value">${u.last_login_at}</span>
-                                </div>`;
+                                        <div class="detail-row">
+                                            <span class="detail-key">Role</span>
+                                            <span class="detail-value">${roleBadge}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">Status</span>
+                                            <span class="detail-value">${statusBadge}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">WhatsApp</span>
+                                            <span class="detail-value">${u.no_whatsapp}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">Login via</span>
+                                            <span class="detail-value">${loginBadge}</span>
+                                        </div>
+                                        ${sellerRow}
+                                        <div class="detail-row">
+                                            <span class="detail-key">Bergabung</span>
+                                            <span class="detail-value">${u.created_at}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">Login terakhir</span>
+                                            <span class="detail-value">${u.last_login_at}</span>
+                                        </div>`;
                 })
                 .catch(() => {
                     document.getElementById('detailBody').innerHTML =
@@ -1165,8 +1166,8 @@
             if (isActive) {
                 icon.style.background = '#fee2e2';
                 icon.innerHTML = `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#e05c5c" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                            </svg>`;
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                    </svg>`;
                 title.textContent = 'Nonaktifkan Akun?';
                 desc.textContent = `Akun ${nama} akan dinonaktifkan dan tidak bisa login.`;
                 btn.className = 'modal-btn danger';
@@ -1174,8 +1175,8 @@
             } else {
                 icon.style.background = '#dcfce7';
                 icon.innerHTML = `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#166534" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>`;
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>`;
                 title.textContent = 'Aktifkan Akun?';
                 desc.textContent = `Akun ${nama} akan diaktifkan kembali.`;
                 btn.className = 'modal-btn primary';
