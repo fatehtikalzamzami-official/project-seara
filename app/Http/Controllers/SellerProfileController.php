@@ -129,6 +129,28 @@ class SellerProfileController extends Controller
     }
 
     /**
+     * Tampilan profil toko untuk seller (bukan form edit)
+     * Route: GET /seller/profil/lihat
+     */
+    public function view()
+    {
+        $user          = Auth::user();
+        $sellerProfile = SellerProfile::where('user_id', $user->id)->firstOrFail();
+        $seller        = Seller::where('user_id', $user->id)->first();
+
+        $harvests = collect();
+        if ($seller) {
+            $harvests = Harvest::with('product')
+                ->where('seller_id', $seller->id)
+                ->where('remaining_stock', '>', 0)
+                ->orderByDesc('harvest_date')
+                ->get();
+        }
+
+        return view('seller.profile-view', compact('sellerProfile', 'seller', 'harvests'));
+    }
+
+    /**
      * Form edit profil toko
      * Route: GET /seller/profil
      */

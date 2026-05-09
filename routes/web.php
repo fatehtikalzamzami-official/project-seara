@@ -143,6 +143,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     Route::put('/produk/{harvest}', [SellerProductController::class, 'update'])->name('products.update');
     Route::delete('/produk/{harvest}', [SellerProductController::class, 'destroy'])->name('products.destroy');
 
+    Route::get('/profil/lihat', [SellerProfileController::class, 'view'])->name('profile.view');
     Route::get('/profil', [SellerProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profil', [SellerProfileController::class, 'update'])->name('profile.update');
     Route::post('/profil/toggle', [SellerProfileController::class, 'toggleOpen'])->name('profile.toggle');

@@ -256,16 +256,21 @@
 <aside class="seller-sidebar">
 
     {{-- Profile card --}}
-    <div class="sidebar-profile">
-        <div class="sp-ava">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}</div>
-        <div class="sp-name">{{ auth()->user()->name ?? 'Penjual' }}</div>
+    <a href="{{ route('seller.profile.view') }}" class="sidebar-profile" style="display:block;text-decoration:none;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'" title="Lihat profil toko">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="sp-ava">{{ strtoupper(substr(auth()->user()->nama_lengkap ?? 'U', 0, 2)) }}</div>
+            <span style="font-size:10px;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:.5px;display:flex;align-items:center;gap:4px">
+                <i class="fa-solid fa-pen" style="font-size:9px"></i> Edit Profil
+            </span>
+        </div>
+        <div class="sp-name">{{ auth()->user()->nama_lengkap ?? 'Penjual' }}</div>
         <div class="sp-role">⭐ Petani Terverifikasi</div>
         <div class="sp-stats">
             <div class="sp-stat"><strong>12</strong><span>Produk</span></div>
             <div class="sp-stat"><strong>24</strong><span>Pesanan</span></div>
             <div class="sp-stat"><strong>4.9</strong><span>Rating</span></div>
         </div>
-    </div>
+    </a>
 
     {{-- Tombol balik ke buyer --}}
     <div style="padding:0 16px 14px;">
@@ -330,7 +335,7 @@
 
     <div class="sidebar-section">
         <span class="sidebar-label">Akun</span>
-        <a href="{{ route('seller.profile.edit') }}"
+        <a href="{{ route('seller.profile.view') }}"
            class="sidebar-item {{ request()->routeIs('seller.profile.*') ? 'active' : '' }}">
             <span class="si-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span>
             Profil Toko

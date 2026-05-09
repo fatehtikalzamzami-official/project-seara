@@ -1,625 +1,425 @@
 @extends('layouts.app')
 
-@section('title', ($sellerProfile->nama_toko ?? 'Toko Petani') . ' — SEARA')
+@section('title', ($sellerProfile->nama_toko ?? 'Profil Toko') . ' — SEARA')
+
+@section('hide-footer')@endsection
 
 @push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-/* ═══════════════════════════════════════
-   SELLER PROFILE — BUYER VIEW
-   ═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* ── Hero Banner ── */
-.sp-hero {
-    position: relative;
-    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 40%, #40916c 80%, #52b788 100%);
-    padding: 0;
-    overflow: hidden;
-    min-height: 240px;
-    display: flex;
-    align-items: flex-end;
+/* LAYOUT */
+.page-shell {
+  max-width: 1160px; margin: 0 auto;
+  padding: clamp(1.25rem,3vw,2rem) clamp(1rem,3vw,2rem);
+  display: grid; grid-template-columns: 320px 1fr;
+  gap: clamp(1rem,2vw,1.5rem); align-items: start;
 }
-.sp-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(ellipse 80% 60% at 80% 30%, rgba(82,183,136,.25) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(27,67,50,.4) 0%, transparent 60%);
-}
-.sp-hero-pattern {
-    position: absolute;
-    inset: 0;
-    background-image:
-        repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 40px),
-        repeating-linear-gradient(-45deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 40px);
-}
-.sp-hero-leaves {
-    position: absolute;
-    right: -20px; top: -20px;
-    font-size: 200px;
-    opacity: .06;
-    transform: rotate(20deg);
-    line-height: 1;
-    pointer-events: none;
-    user-select: none;
-}
-.sp-hero-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 28px 28px;
-    display: flex;
-    align-items: flex-end;
-    gap: 24px;
-}
+@media (max-width: 840px) { .page-shell { grid-template-columns: 1fr; } }
 
-/* Foto toko */
-.sp-shop-photo {
-    width: 100px; height: 100px;
-    border-radius: 20px;
-    border: 4px solid rgba(255,255,255,.25);
-    background: rgba(255,255,255,.1);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 48px;
-    flex-shrink: 0;
-    margin-bottom: 4px;
-    backdrop-filter: blur(8px);
-    overflow: hidden;
+/* HERO CARD */
+.hero-card {
+  background: var(--green-dark); border-radius: 20px; overflow: hidden;
+  border: 0.5px solid rgba(255,255,255,0.07);
+  position: sticky; top: 74px;
 }
-.sp-shop-photo img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 840px) { .hero-card { position: static; border-radius: 16px; } }
 
-.sp-hero-info { flex: 1; }
-.sp-shop-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px; font-weight: 700;
-    color: white; line-height: 1.2;
-    margin-bottom: 6px;
-    text-shadow: 0 2px 12px rgba(0,0,0,.2);
+.hero-top {
+  padding: 1.5rem 1.5rem 1.75rem; background: rgba(0,0,0,0.2); position: relative;
 }
-.sp-shop-category {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 12px; font-weight: 700;
-    background: rgba(255,255,255,.15);
-    color: rgba(255,255,255,.9);
-    padding: 4px 12px; border-radius: 20px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,.2);
-    margin-bottom: 10px;
+.hero-top::after {
+  content: ''; position: absolute; bottom: 0; left: 1.5rem; right: 1.5rem;
+  height: 0.5px; background: rgba(255,255,255,0.08);
 }
-.sp-badges-row {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+.hero-avatar {
+  width: 76px; height: 76px; border-radius: 50%; background: var(--green-mid);
+  border: 2.5px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display',serif; font-size: 22px; font-weight: 700;
+  color: white; margin-bottom: 14px; overflow: hidden;
 }
-.sp-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 800;
-    padding: 4px 10px; border-radius: 20px;
-    border: 1.5px solid;
+.hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.hero-name {
+  font-family: 'Playfair Display',serif; font-size: 21px; font-weight: 700; color: #fff;
+  letter-spacing: -0.025em; margin-bottom: 10px; line-height: 1.2;
 }
-.sp-badge.verified  { background: rgba(34,197,94,.15); color: #86efac; border-color: rgba(134,239,172,.3); }
-.sp-badge.open      { background: rgba(74,222,128,.15); color: #4ade80; border-color: rgba(74,222,128,.3); }
-.sp-badge.closed    { background: rgba(248,113,113,.15); color: #fca5a5; border-color: rgba(252,165,165,.3); }
-.sp-badge.loc       { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); border-color: rgba(255,255,255,.2); }
+.badge-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+.badge-verified { background: rgba(240,184,48,0.16); color: #f0c050; border: 0.5px solid rgba(240,184,48,0.28); }
+.badge-cat { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.78); border: 0.5px solid rgba(255,255,255,0.13); }
+.badge-open { background: rgba(74,200,120,0.15); color: #6ee89c; border: 0.5px solid rgba(74,200,120,0.28); }
+.badge-closed { background: rgba(220,80,80,0.15); color: #f09090; border: 0.5px solid rgba(220,80,80,0.28); }
+.hero-meta { font-size: 12px; color: rgba(255,255,255,0.38); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.hero-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); flex-shrink: 0; }
 
-.sp-hero-actions {
-    display: flex; flex-direction: column; gap: 8px;
-    align-self: flex-end; flex-shrink: 0;
-}
-.sp-action-btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 10px 18px; border-radius: 12px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px; font-weight: 800;
-    cursor: pointer; border: none;
-    transition: all .2s; text-decoration: none;
-    white-space: nowrap;
-}
-.sp-action-btn.primary { background: var(--accent); color: white; }
-.sp-action-btn.primary:hover { background: #e0521f; transform: translateY(-1px); }
-.sp-action-btn.ghost  { background: rgba(255,255,255,.15); color: white; border: 1.5px solid rgba(255,255,255,.3); backdrop-filter: blur(4px); }
-.sp-action-btn.ghost:hover { background: rgba(255,255,255,.25); }
+/* STATS */
+.stats-strip { display: grid; grid-template-columns: repeat(3,1fr); border-top: 0.5px solid rgba(255,255,255,0.06); }
+.stat-cell { padding: 15px 8px; text-align: center; border-right: 0.5px solid rgba(255,255,255,0.06); }
+.stat-cell:last-child { border-right: none; }
+.stat-val { font-family: 'Playfair Display',serif; font-size: 20px; font-weight: 700; color: var(--green-pale); line-height: 1; margin-bottom: 4px; }
+.stat-lbl { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em; }
 
-/* ── Body layout ── */
-.sp-body {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 28px 28px 60px;
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 24px;
-    align-items: start;
+/* CTA */
+.hero-cta { padding: 12px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.2); border-top: 0.5px solid rgba(255,255,255,0.05); }
+.btn-chat, .btn-wa {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 11px 8px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  font-family: 'Nunito',sans-serif; border: none; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s; text-decoration: none;
 }
+.btn-chat { background: var(--accent); color: #fff; }
+.btn-chat:hover { opacity: 0.88; }
+.btn-wa { background: #22c55e; color: #fff; }
+.btn-wa:hover { opacity: 0.88; }
+.btn-chat:active, .btn-wa:active { transform: scale(0.97); }
+.btn-chat i, .btn-wa i { font-size: 15px; }
 
-/* ── Card base ── */
-.sp-card {
-    background: white;
-    border-radius: 18px;
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-    margin-bottom: 20px;
-}
-.sp-card-head {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px; font-weight: 800;
-    color: var(--text-dark);
-    display: flex; align-items: center; gap: 8px;
-}
-.sp-card-body { padding: 20px; }
+/* INFO ROWS */
+.info-block { padding: 6px 14px 14px; border-top: 0.5px solid rgba(255,255,255,0.05); }
+.info-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid rgba(255,255,255,0.05); }
+.info-row:last-child { border-bottom: none; }
+.info-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.info-icon i { font-size: 15px; color: var(--green-pale); }
+.info-text { flex: 1; min-width: 0; }
+.info-label { font-size: 10px; color: rgba(255,255,255,0.32); margin-bottom: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
+.info-value { font-size: 13px; color: rgba(255,255,255,0.80); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.info-sub { font-size: 11px; color: rgba(255,255,255,0.30); margin-top: 1px; }
+.info-action { font-size: 12px; color: var(--green-light); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+.online-dot { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: #6ee89c; margin-top: 2px; }
+.online-dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; display: inline-block; }
 
-/* ── Stats strip ── */
-.sp-stats-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border-bottom: 1.5px solid var(--border);
-}
-.sp-stat {
-    padding: 20px 16px;
-    text-align: center;
-    border-right: 1px solid var(--border);
-}
-.sp-stat:last-child { border-right: none; }
-.sp-stat-val {
-    font-size: 24px; font-weight: 900;
-    color: var(--green-dark);
-    line-height: 1;
-    margin-bottom: 5px;
-    font-family: 'Playfair Display', serif;
-}
-.sp-stat-lbl {
-    font-size: 11px; color: var(--text-muted);
-    font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
-}
+/* MAIN */
+.main-col { display: flex; flex-direction: column; gap: 1.25rem; }
 
-/* ── Star rating ── */
-.star-row { display: flex; align-items: center; gap: 3px; }
-.star { font-size: 14px; }
-.star.full { color: #f59e0b; }
-.star.half { color: #f59e0b; }
-.star.empty { color: #d1d5db; }
+/* SECTION CARD */
+.section-card { background: white; border-radius: 16px; border: 0.5px solid var(--border); overflow: hidden; }
+.section-card-header { padding: 1rem 1.25rem 0.8rem; border-bottom: 0.5px solid var(--green-pale); display: flex; align-items: center; justify-content: space-between; }
+.section-card-title { font-family: 'Playfair Display',serif; font-size: 14px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 7px; }
+.section-card-title i { font-size: 16px; color: var(--green-main); }
+.section-card-count { font-size: 11px; font-weight: 600; background: var(--green-pale); color: var(--green-dark); padding: 3px 10px; border-radius: 100px; }
+.section-card-body { padding: 1rem 1.25rem; }
 
-/* ── Produk grid ── */
-.sp-products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 20px;
-}
-.sp-prod-card {
-    border-radius: 14px;
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    transition: all .22s;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    background: white;
-}
-.sp-prod-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,.1); border-color: var(--green-main); }
-.sp-prod-img {
-    height: 130px;
-    background: linear-gradient(135deg, var(--green-pale), #e8f5e9);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 52px;
-    position: relative;
-}
-.sp-prod-img img { width: 100%; height: 100%; object-fit: cover; }
-.sp-prod-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: var(--green-main); color: white;
-    font-size: 10px; font-weight: 800;
-    padding: 2px 8px; border-radius: 20px;
-}
-.sp-prod-info { padding: 12px; }
-.sp-prod-name { font-size: 13px; font-weight: 800; color: var(--text-dark); margin-bottom: 3px; }
-.sp-prod-price { font-size: 14px; font-weight: 900; color: var(--accent); }
-.sp-prod-unit  { font-size: 11px; color: var(--text-muted); }
-.sp-prod-stock { font-size: 11px; color: var(--green-main); font-weight: 700; margin-top: 4px; }
+/* ABOUT */
+.about-text { font-size: 14px; color: var(--text-mid); line-height: 1.8; }
 
-/* ── Info rows ── */
-.sp-info-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-}
-.sp-info-row:last-child { border-bottom: none; }
-.sp-info-icon { font-size: 18px; width: 28px; flex-shrink: 0; text-align: center; }
-.sp-info-label { color: var(--text-muted); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
-.sp-info-val   { color: var(--text-dark); font-weight: 600; }
+/* PRODUCT GRID */
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 9px; }
+.prod-card { background: var(--green-bg); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px; display: block; color: inherit; transition: transform 0.15s, box-shadow 0.15s; text-decoration: none; }
+.prod-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.prod-thumb { width: 100%; aspect-ratio: 1; background: var(--green-pale); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 8px; overflow: hidden; }
+.prod-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.prod-thumb i { font-size: 24px; color: var(--green-main); }
+.prod-name { font-size: 12px; font-weight: 600; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
+.prod-price { font-size: 12px; color: var(--accent); font-weight: 700; }
+.prod-stock { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+.prod-organic { display: inline-flex; align-items: center; gap: 3px; font-size: 9px; font-weight: 700; background: var(--green-pale); color: var(--green-dark); padding: 2px 6px; border-radius: 100px; margin-top: 4px; }
+.prod-more { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: var(--green-pale); border-color: var(--border); cursor: pointer; }
+.prod-more .prod-thumb { background: var(--green-pale); width: 100%; }
+.prod-more .prod-thumb i { color: var(--green-main); font-size: 22px; }
+.prod-more-label { font-size: 11px; font-weight: 700; color: var(--green-dark); text-align: center; }
 
-/* ── Jam operasional ── */
-.jam-table { width: 100%; font-size: 12px; }
-.jam-table tr td { padding: 4px 0; }
-.jam-table tr td:first-child { color: var(--text-muted); font-weight: 700; width: 90px; }
-.jam-table tr td:last-child { color: var(--text-dark); font-weight: 600; }
-.jam-today td { color: var(--green-dark) !important; font-weight: 800 !important; }
+/* RATING */
+.rating-summary { display: flex; align-items: center; gap: 16px; padding-bottom: 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 12px; }
+.rating-score { font-family: 'Playfair Display',serif; font-size: 44px; font-weight: 800; color: var(--text-dark); line-height: 1; }
+.rating-stars { color: #e8a020; font-size: 19px; margin-bottom: 4px; letter-spacing: 1px; }
+.rating-count { font-size: 12px; color: var(--text-muted); }
+.rating-empty { text-align: center; padding: 14px 0; }
+.rating-empty i { font-size: 26px; color: var(--border); display: block; margin-bottom: 6px; }
+.rating-empty p { font-size: 12px; color: var(--text-muted); }
 
-/* ── Pengiriman chips ── */
-.ship-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.ship-chip {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 700;
-    background: var(--green-pale); color: var(--green-dark);
-    padding: 4px 12px; border-radius: 20px;
-    border: 1px solid var(--border);
-}
+/* HOURS */
+.hours-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.hour-item { background: var(--green-bg); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.hour-item.today { background: var(--green-pale); border-color: var(--green-light); }
+.hour-day { font-size: 12px; font-weight: 700; color: var(--text-mid); margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
+.hour-item.today .hour-day { color: var(--green-dark); }
+.today-pip { font-size: 9px; background: var(--green-main); color: #fff; padding: 1px 5px; border-radius: 100px; font-weight: 700; }
+.hour-time { font-size: 11px; color: var(--text-muted); }
+.hour-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; margin-top: 5px; }
+.hour-open { background: var(--green-pale); color: var(--green-dark); }
+.hour-closed { background: #f4f4f4; color: var(--text-muted); }
 
-/* ── Tentang toko ── */
-.sp-about-text {
-    font-size: 13px; line-height: 1.8;
-    color: var(--text-mid);
-    white-space: pre-line;
-}
+/* SHIPPING */
+.ship-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.ship-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; background: var(--green-pale); color: var(--green-dark); padding: 5px 12px; border-radius: 100px; border: 0.5px solid var(--border); }
+.ship-chip i { font-size: 12px; }
 
-/* ── Empty state ── */
-.sp-empty {
-    text-align: center; padding: 48px 20px;
-    color: var(--text-muted);
-}
-.sp-empty .ico { font-size: 48px; margin-bottom: 10px; }
-.sp-empty p { font-size: 13px; }
-
-/* ── Back link ── */
-.sp-hero-content {
-    position: relative;
-}
-
-.sp-back {
-    position: absolute;
-    top: -70px; /* naik ke atas banner */
-    left: 0;
-    margin-left: 2.6%;
-    margin-bottom: 5%
-
-    background: rgba(0,0,0,0.4);
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 8px;
-    text-decoration: none;
-    backdrop-filter: blur(4px);
-}
-.sp-back:hover { border-color: var(--green-main); color: var(--green-main); background: var(--green-pale); }
-
-/* ── Animasi ── */
-@keyframes fadeUp {
-    from { opacity:0; transform:translateY(18px); }
-    to   { opacity:1; transform:translateY(0); }
-}
-.anim-1 { animation: fadeUp .4s .05s both; }
-.anim-2 { animation: fadeUp .4s .12s both; }
-.anim-3 { animation: fadeUp .4s .20s both; }
-
-/* Mobile */
-@media (max-width: 768px) {
-    .sp-body { grid-template-columns: 1fr; padding: 16px; }
-    .sp-hero-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 16px 20px; position: relative;}
-    .sp-hero-actions { flex-direction: row; align-self: auto; }
-    .sp-stats-strip { grid-template-columns: repeat(2, 1fr); }
-    .sp-products-grid { grid-template-columns: repeat(2, 1fr); }
-    .sp-shop-name { font-size: 22px; }
-}
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.hero-card { animation: fadeUp 0.38s 0.04s both; }
+.main-col > *:nth-child(1) { animation: fadeUp 0.38s 0.10s both; }
+.main-col > *:nth-child(2) { animation: fadeUp 0.38s 0.16s both; }
+.main-col > *:nth-child(3) { animation: fadeUp 0.38s 0.22s both; }
+.main-col > *:nth-child(4) { animation: fadeUp 0.38s 0.28s both; }
+.main-col > *:nth-child(5) { animation: fadeUp 0.38s 0.34s both; }
 </style>
 @endpush
 
 @section('content')
+<div class="page-shell">
 
-{{-- ══ HERO BANNER ══ --}}
-<div class="sp-hero anim-1"
-     style="
-        background: 
-        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-        url('{{ $sellerProfile->banner ? asset('storage/' . $sellerProfile->banner) : asset('images/default-banner.jpg') }}');
-        background-size: cover;
-        background-position: center;
-     ">
+  {{-- ══ SIDEBAR / HERO CARD ══ --}}
+  <aside>
+    <div class="hero-card">
 
-
-    <div class="sp-hero-pattern"></div>
-    <div class="sp-hero-leaves">🌿</div>
-    <div class="sp-hero-content">
-             {{-- Back link --}}
-<a href="{{ url()->previous() }}" class="sp-back">←</a>
-        {{-- Foto toko --}}
-        <div class="sp-shop-photo">
-            @if($sellerProfile->foto_toko)
-                <img src="{{ asset('storage/' . $sellerProfile->foto_toko) }}" alt="{{ $sellerProfile->nama_toko }}">
-            @else
-                🌾
-            @endif
+      <div class="hero-top">
+        <div class="hero-avatar">
+          @if($sellerProfile->foto_toko)
+            <img src="{{ asset('storage/' . $sellerProfile->foto_toko) }}" alt="{{ $sellerProfile->nama_toko }}">
+          @else
+            {{ strtoupper(substr($sellerProfile->nama_toko ?? 'T', 0, 2)) }}
+          @endif
         </div>
 
-        {{-- Info utama --}}
-        <div class="sp-hero-info">
-            <div class="sp-shop-name">{{ $sellerProfile->nama_toko }}</div>
-            <div class="sp-shop-category">🌱 {{ $sellerProfile->kategori_utama }}</div>
-            <div class="sp-badges-row">
-                @if($sellerProfile->is_verified)
-                    <span class="sp-badge verified">✓ Terverifikasi SEARA</span>
-                @endif
-                @if($sellerProfile->is_open)
-                    <span class="sp-badge open">● Buka Sekarang</span>
+        <div class="hero-name">{{ $sellerProfile->nama_toko ?? 'Nama Toko' }}</div>
+
+        <div class="badge-row">
+          @if($sellerProfile->is_verified ?? false)
+            <span class="badge badge-verified">
+              <i class="ti ti-shield-check" style="font-size:11px"></i> Petani Terverifikasi
+            </span>
+          @endif
+          @if($sellerProfile->kategori_utama)
+            <span class="badge badge-cat">{{ $sellerProfile->kategori_utama }}</span>
+          @endif
+          @if($sellerProfile->is_open)
+            <span class="badge badge-open">● Buka</span>
+          @else
+            <span class="badge badge-closed">● Tutup</span>
+          @endif
+        </div>
+
+        <div class="hero-meta">
+          @if($sellerProfile->created_at)
+            <span>Bergabung {{ $sellerProfile->created_at->translatedFormat('M Y') }}</span>
+          @endif
+          @if($sellerProfile->kota_kabupaten)
+            <span class="hero-meta-dot"></span>
+            <span>{{ $sellerProfile->kota_kabupaten }}@if($sellerProfile->provinsi), {{ $sellerProfile->provinsi }}@endif</span>
+          @endif
+        </div>
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat-cell">
+          <div class="stat-val">{{ $harvests->count() ?? 0 }}</div>
+          <div class="stat-lbl">Produk</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val">{{ $sellerProfile->total_transaksi ?? 0 }}</div>
+          <div class="stat-lbl">Pesanan</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val">{{ number_format($sellerProfile->rating ?? 0, 1) }} ★</div>
+          <div class="stat-lbl">Rating</div>
+        </div>
+      </div>
+
+      <div class="hero-cta">
+        @auth
+          <a href="{{ route('chat.show', $seller->user_id) }}" class="btn-chat">
+            <i class="ti ti-message-circle"></i> Chat Petani
+          </a>
+        @else
+          <a href="{{ route('login') }}" class="btn-chat">
+            <i class="ti ti-message-circle"></i> Chat Petani
+          </a>
+        @endauth
+
+        @if($seller->user->no_whatsapp ?? null)
+          <a href="https://wa.me/62{{ ltrim($seller->user->no_whatsapp, '0') }}?text=Halo%20{{ urlencode($sellerProfile->nama_toko) }}%2C%20saya%20melihat%20toko%20Anda%20di%20SEARA"
+             target="_blank" class="btn-wa">
+            <i class="ti ti-brand-whatsapp"></i> WhatsApp
+          </a>
+        @else
+          <span class="btn-wa" style="opacity:0.4;cursor:default;">
+            <i class="ti ti-brand-whatsapp"></i> WhatsApp
+          </span>
+        @endif
+      </div>
+
+      <div class="info-block">
+        <div class="info-row">
+          <div class="info-icon"><i class="ti ti-user"></i></div>
+          <div class="info-text">
+            <div class="info-label">Nama Petani</div>
+            <div class="info-value">{{ $seller->user->nama_lengkap ?? '-' }}</div>
+            <div class="online-dot">Online</div>
+          </div>
+        </div>
+
+        @if($sellerProfile->kota_kabupaten || $sellerProfile->alamat_toko)
+        <div class="info-row">
+          <div class="info-icon"><i class="ti ti-map-pin"></i></div>
+          <div class="info-text">
+            <div class="info-label">Lokasi</div>
+            <div class="info-value">{{ $sellerProfile->kota_kabupaten ?? '' }}@if($sellerProfile->provinsi), {{ $sellerProfile->provinsi }}@endif</div>
+            @if($sellerProfile->alamat_toko)
+              <div class="info-sub">{{ $sellerProfile->alamat_toko }}</div>
+            @endif
+          </div>
+        </div>
+        @endif
+
+        @if($seller->user->no_whatsapp ?? null)
+        <div class="info-row">
+          <div class="info-icon"><i class="ti ti-brand-whatsapp"></i></div>
+          <div class="info-text">
+            <div class="info-label">WhatsApp</div>
+            <div class="info-value">{{ $seller->user->no_whatsapp }}</div>
+          </div>
+          <a href="https://wa.me/62{{ ltrim($seller->user->no_whatsapp, '0') }}" target="_blank" class="info-action">Hubungi →</a>
+        </div>
+        @endif
+
+        @if($sellerProfile->verified_at ?? null)
+        <div class="info-row">
+          <div class="info-icon"><i class="ti ti-shield-check"></i></div>
+          <div class="info-text">
+            <div class="info-label">Verifikasi SEARA</div>
+            <div class="info-value" style="color:#6ee89c;">Terverifikasi {{ $sellerProfile->verified_at->translatedFormat('d M Y') }}</div>
+          </div>
+        </div>
+        @endif
+      </div>
+    </div>
+  </aside>
+
+  {{-- ══ MAIN CONTENT ══ --}}
+  <main class="main-col">
+
+    {{-- TENTANG TOKO --}}
+    @if($sellerProfile->deskripsi_toko)
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="section-card-title"><i class="ti ti-info-circle"></i> Tentang Toko</div>
+      </div>
+      <div class="section-card-body">
+        <p class="about-text">{{ $sellerProfile->deskripsi_toko }}</p>
+      </div>
+    </div>
+    @endif
+
+    {{-- PRODUK --}}
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="section-card-title"><i class="ti ti-basket"></i> Produk Tersedia</div>
+        <span class="section-card-count">{{ $harvests->count() }} item</span>
+      </div>
+      <div class="section-card-body">
+        <div class="product-grid">
+          @forelse($harvests->take(5) as $harvest)
+            <a href="{{ route('buyer.product.show', $harvest->id) }}" class="prod-card">
+              <div class="prod-thumb">
+                @if($harvest->product->foto ?? null)
+                  <img src="{{ asset('storage/' . $harvest->product->foto) }}" alt="{{ $harvest->product->nama_produk }}">
                 @else
-                    <span class="sp-badge closed">● Tutup</span>
+                  {{ $harvest->product->emoji ?? '🌿' }}
                 @endif
-                @if($sellerProfile->kota_kabupaten)
-                    <span class="sp-badge loc">📍 {{ $sellerProfile->kota_kabupaten }}, {{ $sellerProfile->provinsi }}</span>
-                @endif
-            </div>
-        </div>
+              </div>
+              <div class="prod-name">{{ $harvest->product->nama_produk ?? '-' }}</div>
+              <div class="prod-price">Rp {{ number_format($harvest->price_per_unit, 0, ',', '.') }}/{{ $harvest->product->satuan ?? 'kg' }}</div>
+              <div class="prod-stock">Stok: {{ $harvest->remaining_stock }} {{ $harvest->product->satuan ?? 'kg' }}</div>
+              @if($harvest->is_organic)
+                <span class="prod-organic"><i class="ti ti-leaf" style="font-size:9px"></i> Organik</span>
+              @endif
+            </a>
+          @empty
+            <p style="color:var(--text-muted);font-size:13px;grid-column:1/-1;">Belum ada produk tersedia.</p>
+          @endforelse
 
-        {{-- Tombol aksi --}}
-        <div class="sp-hero-actions">
-            @if($activeHarvest)
-                <form method="POST" action="{{ route('chat.open') }}" style="display:inline;">
-                    @csrf
-                    <input type="hidden" name="seller_user_id" value="{{ $seller->user_id }}">
-                    <input type="hidden" name="harvest_id" value="{{ $activeHarvest->id }}">
-                    <button type="submit" class="sp-action-btn primary">💬 Chat Petani</button>
-                </form>
-            @endif
-            @if($seller->user->no_whatsapp)
-                <a href="https://wa.me/{{ preg_replace('/\D/', '', $seller->user->no_whatsapp) }}?text=Halo%20{{ urlencode($sellerProfile->nama_toko) }}%2C%20saya%20melihat%20toko%20Anda%20di%20SEARA"
-                   target="_blank" class="sp-action-btn ghost">📱 WhatsApp</a>
-            @endif
+          @if($harvests->count() > 5)
+            <div class="prod-card prod-more">
+              <div class="prod-thumb"><i class="ti ti-dots"></i></div>
+              <div class="prod-more-label">+{{ $harvests->count() - 5 }} produk lagi</div>
+            </div>
+          @endif
         </div>
+      </div>
     </div>
+
+    {{-- ULASAN --}}
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="section-card-title"><i class="ti ti-star"></i> Ulasan Pembeli</div>
+        <span class="section-card-count">{{ $sellerProfile->total_ulasan ?? 0 }} ulasan</span>
+      </div>
+      <div class="section-card-body">
+        @if(($sellerProfile->rating ?? 0) > 0)
+          <div class="rating-summary">
+            <div class="rating-score">{{ number_format($sellerProfile->rating, 1) }}</div>
+            <div>
+              <div class="rating-stars">
+                @for($i = 1; $i <= 5; $i++)
+                  {{ $i <= round($sellerProfile->rating) ? '★' : '☆' }}
+                @endfor
+              </div>
+              <div class="rating-count">Berdasarkan {{ $sellerProfile->total_ulasan ?? 0 }} ulasan pembeli</div>
+            </div>
+          </div>
+        @endif
+        <div class="rating-empty">
+          <i class="ti ti-message-circle"></i>
+          <p>Detail ulasan belum tersedia. Periksa kembali nanti.</p>
+        </div>
+      </div>
+    </div>
+
+    {{-- JAM OPERASIONAL --}}
+    @if($sellerProfile->jam_operasional ?? null)
+    @php
+      $jamOps = is_array($sellerProfile->jam_operasional)
+        ? $sellerProfile->jam_operasional
+        : json_decode($sellerProfile->jam_operasional, true);
+      $hariIni = strtolower(now()->locale('id')->dayName);
+    @endphp
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="section-card-title"><i class="ti ti-clock"></i> Jam Operasional</div>
+      </div>
+      <div class="section-card-body">
+        <div class="hours-grid">
+          @foreach($jamOps as $hari => $jam)
+            @php $isToday = $hari === $hariIni; @endphp
+            <div class="hour-item {{ $isToday ? 'today' : '' }}">
+              <div class="hour-day">
+                {{ ucfirst($hari) }}
+                @if($isToday)<span class="today-pip">Hari ini</span>@endif
+              </div>
+              <div class="hour-time">{{ $jam === 'Tutup' ? '-' : $jam }}</div>
+              <span class="hour-badge {{ $jam === 'Tutup' ? 'hour-closed' : 'hour-open' }}">
+                {{ $jam === 'Tutup' ? 'Tutup' : 'Buka' }}
+              </span>
+            </div>
+          @endforeach
+        </div>
+      </div>
+    </div>
+    @endif
+
+    {{-- PENGIRIMAN --}}
+    @if($sellerProfile->metode_pengiriman ?? null)
+    @php
+      $metode = is_array($sellerProfile->metode_pengiriman)
+        ? $sellerProfile->metode_pengiriman
+        : json_decode($sellerProfile->metode_pengiriman, true);
+    @endphp
+    <div class="section-card">
+      <div class="section-card-header">
+        <div class="section-card-title"><i class="ti ti-truck"></i> Layanan Pengiriman</div>
+      </div>
+      <div class="section-card-body">
+        <div class="ship-chips">
+          @foreach($metode as $m)
+            <span class="ship-chip"><i class="ti ti-check"></i> {{ $m }}</span>
+          @endforeach
+        </div>
+      </div>
+    </div>
+    @endif
+
+  </main>
 </div>
-
-{{-- ══ STATS STRIP ══ --}}
-<div style="max-width:1100px;margin:0 auto;padding:0 28px;" class="anim-2">
-    <div class="sp-card" style="margin-top:20px;">
-        <div class="sp-stats-strip">
-            <div class="sp-stat">
-                <div class="sp-stat-val">
-                    @if($sellerProfile->rating > 0)
-                        {{ number_format($sellerProfile->rating, 1) }}★
-                    @else
-                        —
-                    @endif
-                </div>
-                <div class="sp-stat-lbl">Rating Toko</div>
-                @if($sellerProfile->total_ulasan > 0)
-                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">{{ $sellerProfile->total_ulasan }} ulasan</div>
-                @endif
-            </div>
-            <div class="sp-stat">
-                <div class="sp-stat-val">{{ $sellerProfile->total_produk ?: $harvests->count() }}</div>
-                <div class="sp-stat-lbl">Produk Aktif</div>
-            </div>
-            <div class="sp-stat">
-                <div class="sp-stat-val">
-                    @if($sellerProfile->total_transaksi >= 1000)
-                        {{ number_format($sellerProfile->total_transaksi / 1000, 1) }}rb
-                    @else
-                        {{ $sellerProfile->total_transaksi }}
-                    @endif
-                </div>
-                <div class="sp-stat-lbl">Transaksi</div>
-            </div>
-            <div class="sp-stat">
-                <div class="sp-stat-val">
-                    {{ $sellerProfile->verified_at ? $sellerProfile->verified_at->diffForHumans(null, true) : '—' }}
-                </div>
-                <div class="sp-stat-lbl">Bergabung</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- ══ BODY GRID ══ --}}
-<div class="sp-body anim-3">
-
-    {{-- ── KOLOM KIRI: Produk & Deskripsi ── --}}
-    <div>
-
-        {{-- Deskripsi Toko --}}
-        @if($sellerProfile->deskripsi_toko)
-        <div class="sp-card">
-            <div class="sp-card-head">🌿 Tentang Toko</div>
-            <div class="sp-card-body">
-                <p class="sp-about-text">{{ $sellerProfile->deskripsi_toko }}</p>
-            </div>
-        </div>
-        @endif
-
-        {{-- Produk/Panen Tersedia --}}
-        <div class="sp-card">
-            <div class="sp-card-head">
-                🌾 Produk Tersedia
-                <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--text-muted);">{{ $harvests->count() }} item</span>
-            </div>
-
-            @if($harvests->isEmpty())
-                <div class="sp-empty">
-                    <div class="ico">📭</div>
-                    <p>Belum ada produk tersedia saat ini.<br>Cek lagi nanti ya!</p>
-                </div>
-            @else
-                <div class="sp-products-grid">
-                    @foreach($harvests as $harvest)
-                        <a href="{{ route('buyer.product.show', $harvest->id) }}" class="sp-prod-card">
-                            <div class="sp-prod-img">
-                                @if($harvest->product->image_path ?? false)
-                                    <img src="{{ asset('storage/' . $harvest->product->image_path) }}" alt="{{ $harvest->product->name }}">
-                                @else
-                                    {{ $harvest->product->emoji ?? '🌾' }}
-                                @endif
-                                @if($harvest->remaining_stock > 0)
-                                    <span class="sp-prod-badge">Tersedia</span>
-                                @endif
-                            </div>
-                            <div class="sp-prod-info">
-                                <div class="sp-prod-name">{{ $harvest->product->name }}</div>
-                                <div class="sp-prod-price">
-                                    Rp {{ number_format($harvest->price_per_unit, 0, ',', '.') }}
-                                    <span class="sp-prod-unit">/ {{ $harvest->product->unit ?? 'kg' }}</span>
-                                </div>
-                                @if($harvest->remaining_stock)
-                                    <div class="sp-prod-stock">🟢 Stok: {{ number_format($harvest->remaining_stock, 0, ',', '.') }} {{ $harvest->product->unit ?? 'kg' }}</div>
-                                @endif
-                                @if($harvest->harvest_date)
-                                    <div style="font-size:11px;color:var(--text-muted);margin-top:3px;">
-                                        🗓 Panen {{ \Carbon\Carbon::parse($harvest->harvest_date)->format('d M Y') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-
-    </div>
-
-    {{-- ── KOLOM KANAN: Info & Operasional ── --}}
-    <div>
-
-        {{-- Info Petani --}}
-        <div class="sp-card">
-            <div class="sp-card-head">👨‍🌾 Info Petani</div>
-            <div class="sp-card-body">
-                {{-- Identitas --}}
-                <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
-                    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--green-pale),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">
-                        {{ $seller->user->avatar ? '📸' : '👤' }}
-                    </div>
-                    <div>
-                        <div style="font-size:15px;font-weight:800;color:var(--text-dark);">{{ $seller->user->nama_lengkap ?? $seller->user->name }}</div>
-                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Pemilik Toko</div>
-                        @if($seller->user->isOnline())
-                            <div style="font-size:11px;font-weight:700;color:#16a34a;margin-top:3px;display:flex;align-items:center;gap:5px;">
-                                <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
-                                Online Sekarang
-                            </div>
-                        @else
-                            <div style="font-size:11px;color:var(--text-muted);margin-top:3px;">
-                                Terakhir aktif {{ $seller->user->onlineLabel() }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Detail info --}}
-                @if($sellerProfile->kota_kabupaten)
-                <div class="sp-info-row">
-                    <div class="sp-info-icon">📍</div>
-                    <div>
-                        <div class="sp-info-label">Lokasi</div>
-                        <div class="sp-info-val">{{ $sellerProfile->kota_kabupaten }}, {{ $sellerProfile->provinsi }}</div>
-                        @if($sellerProfile->alamat_toko)
-                            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">{{ $sellerProfile->alamat_toko }}</div>
-                        @endif
-                    </div>
-                </div>
-                @endif
-
-                @if($seller->user->no_whatsapp)
-                <div class="sp-info-row">
-                    <div class="sp-info-icon">📱</div>
-                    <div>
-                        <div class="sp-info-label">WhatsApp</div>
-                        <a href="https://wa.me/{{ preg_replace('/\D/', '', $seller->user->no_whatsapp) }}"
-                           target="_blank"
-                           style="color:var(--green-main);font-weight:700;font-size:13px;text-decoration:none;">
-                            {{ $seller->user->no_whatsapp }}
-                        </a>
-                    </div>
-                </div>
-                @endif
-
-                @if($sellerProfile->is_verified && $sellerProfile->verified_at)
-                <div class="sp-info-row">
-                    <div class="sp-info-icon">✅</div>
-                    <div>
-                        <div class="sp-info-label">Verifikasi SEARA</div>
-                        <div class="sp-info-val" style="color:var(--green-main);">Terverifikasi {{ $sellerProfile->verified_at->format('d M Y') }}</div>
-                    </div>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Jam Operasional --}}
-        @if($sellerProfile->jam_operasional)
-        <div class="sp-card">
-            <div class="sp-card-head">🕐 Jam Operasional</div>
-            <div class="sp-card-body" style="padding:12px 20px;">
-                @php
-                    $hariMap = [
-                        'senin'  => 'Senin',
-                        'selasa' => 'Selasa',
-                        'rabu'   => 'Rabu',
-                        'kamis'  => 'Kamis',
-                        'jumat'  => 'Jumat',
-                        'sabtu'  => 'Sabtu',
-                        'minggu' => 'Minggu',
-                    ];
-                    $hariIni = strtolower(\Carbon\Carbon::now()->locale('id')->dayName);
-                    // fallback ke inggris jika locale belum di-set
-                    $hariIngMap = ['monday'=>'senin','tuesday'=>'selasa','wednesday'=>'rabu','thursday'=>'kamis','friday'=>'jumat','saturday'=>'sabtu','sunday'=>'minggu'];
-                    $hariIniEn = strtolower(now()->format('l'));
-                    $hariIniKey = $hariIngMap[$hariIniEn] ?? '';
-                @endphp
-                <table class="jam-table">
-                    @foreach($hariMap as $key => $label)
-                        @if(isset($sellerProfile->jam_operasional[$key]))
-                        <tr class="{{ $hariIniKey === $key ? 'jam-today' : '' }}">
-                            <td>
-                                {{ $label }}
-                                @if($hariIniKey === $key)
-                                    <span style="font-size:10px;background:var(--green-main);color:white;padding:1px 5px;border-radius:5px;margin-left:4px;">Hari ini</span>
-                                @endif
-                            </td>
-                            <td>{{ $sellerProfile->jam_operasional[$key] }}</td>
-                        </tr>
-                        @endif
-                    @endforeach
-                </table>
-            </div>
-        </div>
-        @endif
-
-        {{-- Metode Pengiriman --}}
-        @php $metode = is_array($sellerProfile->metode_pengiriman) ? $sellerProfile->metode_pengiriman : json_decode($sellerProfile->metode_pengiriman ?? '[]', true); @endphp
-        @if(!empty($metode))
-        <div class="sp-card">
-            <div class="sp-card-head">🚚 Layanan Pengiriman</div>
-            <div class="sp-card-body">
-                <div class="ship-chips">
-                    @foreach($metode as $mitra)
-                        <span class="ship-chip">✓ {{ $mitra }}</span>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- CTA Chat --}}
-        @if($activeHarvest)
-        <div class="sp-card" style="background:linear-gradient(135deg,var(--green-pale),#e8f5e9);border-color:var(--green-light);">
-            <div class="sp-card-body" style="text-align:center;padding:24px;">
-                <div style="font-size:32px;margin-bottom:8px;">💬</div>
-                <div style="font-size:15px;font-weight:800;color:var(--green-dark);margin-bottom:6px;">Ada yang mau ditanyakan?</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Chat langsung dengan petani untuk nego harga atau tanya stok</div>
-                <form method="POST" action="{{ route('chat.open') }}" style="display:inline;">
-                    @csrf
-                    <input type="hidden" name="seller_user_id" value="{{ $seller->user_id }}">
-                    <input type="hidden" name="harvest_id" value="{{ $activeHarvest->id }}">
-                    <button type="submit"
-                        style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;background:var(--green-main);color:white;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:background .2s;"
-                        onmouseover="this.style.background='var(--green-dark)'"
-                        onmouseout="this.style.background='var(--green-main)'">
-                        💬 Mulai Chat
-                    </button>
-                </form>
-            </div>
-        </div>
-        @endif
-
-    </div>
-</div>
-
 @endsection
