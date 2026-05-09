@@ -17,6 +17,10 @@ use App\Http\Controllers\DashboardControllerAdmin;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminPenggunaController;
+use App\Http\Controllers\Seller\SellerChatController;
+use App\Http\Controllers\Seller\SellerLaporanController;
+use App\Http\Controllers\Seller\SellerPengaturanController;
+
 
 // ─────────────────────────────────────────────────────────────
 //  PUBLIC ROUTES
@@ -128,6 +132,8 @@ Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('b
     Route::get('/daftar-seller', [SellerApplicationController::class, 'create'])->name('apply.create');
     Route::post('/daftar-seller', [SellerApplicationController::class, 'store'])->name('apply.store');
     Route::get('/status-pengajuan', [SellerApplicationController::class, 'status'])->name('application.status');
+
+
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -147,6 +153,42 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     Route::get('/profil', [SellerProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profil', [SellerProfileController::class, 'update'])->name('profile.update');
     Route::post('/profil/toggle', [SellerProfileController::class, 'toggleOpen'])->name('profile.toggle');
+
+    // Chat Seller
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('/', [SellerChatController::class, 'index'])->name('index');
+        Route::get('/{chatRoom}', [SellerChatController::class, 'show'])->name('show');
+        Route::post('/{chatRoom}/send', [SellerChatController::class, 'send'])->name('send');
+        Route::get('/{chatRoom}/poll', [SellerChatController::class, 'poll'])->name('poll');
+    });
+
+    // Laporan Seller
+    Route::get('/laporan', [SellerLaporanController::class, 'index'])
+        ->name('laporan.index');
+
+    Route::get('/laporan/export', [SellerLaporanController::class, 'export'])
+        ->name('laporan.export');
+
+    Route::get('/pengaturan', [SellerPengaturanController::class, 'index'])
+        ->name('settings.index');
+
+    Route::put('/pengaturan/profil', [SellerPengaturanController::class, 'updateProfile'])
+        ->name('settings.update.profile');
+
+    Route::put('/pengaturan/password', [SellerPengaturanController::class, 'updatePassword'])
+        ->name('settings.update.password');
+
+    Route::put('/pengaturan/notifikasi', [SellerPengaturanController::class, 'updateNotifikasi'])
+        ->name('settings.update.notifikasi');
+
+    Route::put('/pengaturan/toko', [SellerPengaturanController::class, 'updateToko'])
+        ->name('settings.update.toko');
+
+    Route::put('/pengaturan/rekening', [SellerPengaturanController::class, 'updateRekening'])
+        ->name('settings.update.rekening');
+
+    Route::delete('/pengaturan/akun', [SellerPengaturanController::class, 'deleteAccount'])
+        ->name('settings.delete.account');
 });
 
 // ─────────────────────────────────────────────────────────────
