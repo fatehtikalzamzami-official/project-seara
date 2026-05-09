@@ -12,16 +12,22 @@ class Harvest extends Model
         'harvest_date',
         'remaining_stock',
         'price_per_unit',
-        'is_organic'
+        'is_organic',
+        'kebun_lokasi',
+        'metode_tanam',
+        'masa_simpan_hari',
+        'kondisi_produk',
+        'berat_bersih',
+        'minimal_pembelian',
     ];
 
     public function product()
-{
-    return $this->belongsTo(Product::class);
-}
+    {
+        return $this->belongsTo(Product::class);
+    }
 
-public function seller()
-{
-    return $this->belongsTo(SellerProfile::class);
-}
+    public function seller()
+    {
+        return $this->belongsTo(SellerProfile::class);
+    }
 }

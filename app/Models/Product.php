@@ -8,7 +8,14 @@ class Product extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['name', 'category_id', 'unit'];
+    protected $fillable = [
+        'name',
+        'category_id',
+        'unit',
+        'description',
+        'status',
+        'photo',
+    ];
 
     public function category()
     {

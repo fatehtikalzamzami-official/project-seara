@@ -107,11 +107,17 @@
         .badge-organic{background:var(--green-dark);color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
         .badge-low{background:#fef3c7;color:#92400e;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
         .badge-out{background:#fee2e2;color:#b91c1c;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
-        .pc-thumb{height:140px;background:linear-gradient(135deg,var(--green-pale),#d1fae5);display:flex;align-items:center;justify-content:center;font-size:56px}
+        .badge-preorder{background:#ede9fe;color:#5b21b6;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
+        .pc-thumb{height:140px;background:linear-gradient(135deg,var(--green-pale),#d1fae5);display:flex;align-items:center;justify-content:center;font-size:56px;overflow:hidden;position:relative}
+        .pc-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
         .pc-body{padding:14px}
         .pc-category{font-size:10px;font-weight:800;color:var(--green-main);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
         .pc-name{font-size:15px;font-weight:900;color:var(--text-dark);margin-bottom:2px;line-height:1.3}
-        .pc-harvest{font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:4px}
+        .pc-harvest{font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+        .pc-agri-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+        .pc-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--green-pale);color:var(--green-dark)}
+        .pc-tag.metode{background:#eff6ff;color:#1d4ed8}
+        .pc-tag.kondisi{background:#fef9c3;color:#92400e}
         .pc-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
         .pc-price{font-size:17px;font-weight:900;color:var(--green-dark)}
         .pc-price span{font-size:11px;font-weight:700;color:var(--text-muted)}
@@ -140,22 +146,38 @@
         /* Modal */
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
         .modal-overlay.open{opacity:1;pointer-events:auto}
-        .modal{background:white;border-radius:16px;width:100%;max-width:520px;overflow:hidden;transform:translateY(20px);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+        .modal{background:white;border-radius:16px;width:100%;max-width:580px;overflow:hidden;transform:translateY(20px);transition:transform .25s;box-shadow:0 20px 60px rgba(0,0,0,.18)}
         .modal-overlay.open .modal{transform:translateY(0)}
         .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
         .modal-head h2{font-size:16px;font-weight:900;color:var(--text-dark);display:flex;align-items:center;gap:8px}
         .modal-close{background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);padding:4px;border-radius:6px;transition:color .18s}
         .modal-close:hover{color:var(--text-dark)}
-        .modal-body{padding:22px;max-height:70vh;overflow-y:auto}
+        .modal-body{padding:22px;max-height:75vh;overflow-y:auto}
+
+        /* Section divider inside modal */
+        .form-section{margin-bottom:18px}
+        .form-section-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;color:var(--green-dark);background:var(--green-pale);border-radius:8px;padding:7px 12px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+
         .form-group{margin-bottom:14px}
         .form-label{display:block;font-size:12px;font-weight:800;color:var(--text-mid);margin-bottom:5px}
         .form-label .req{color:var(--accent)}
-        .form-input,.form-select{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text-dark);background:white;outline:none;transition:border-color .2s}
-        .form-input:focus,.form-select:focus{border-color:var(--green-main);box-shadow:0 0 0 3px rgba(45,134,83,.1)}
+        .form-input,.form-select,.form-textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text-dark);background:white;outline:none;transition:border-color .2s}
+        .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green-main);box-shadow:0 0 0 3px rgba(45,134,83,.1)}
+        .form-textarea{resize:vertical;min-height:72px}
         .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
         .form-hint{font-size:11px;color:var(--text-muted);font-weight:600;margin-top:3px}
         .toggle-wrap{display:flex;align-items:center;gap:10px;padding:12px;background:var(--green-pale);border-radius:9px;cursor:pointer}
         .toggle-wrap label{font-size:13px;font-weight:700;color:var(--green-dark);cursor:pointer;display:flex;align-items:center;gap:6px}
+
+        /* Photo preview */
+        .photo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+        .photo-upload-area:hover{border-color:var(--green-main);background:var(--green-pale)}
+        .photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+        .photo-upload-area i{font-size:22px;color:var(--text-muted);margin-bottom:6px;display:block}
+        .photo-upload-area p{font-size:12px;font-weight:700;color:var(--text-muted)}
+        .photo-preview{width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:8px;display:none}
+
         .modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;border-top:1px solid var(--border);background:#fafcfa}
 
         /* Toast */
@@ -173,7 +195,7 @@
             .seller-sidebar{display:none}
             .seller-main{padding:16px}
             .stats-bar{grid-template-columns:1fr 1fr}
-            .form-row{grid-template-columns:1fr}
+            .form-row,.form-row-3{grid-template-columns:1fr}
         }
     </style>
 </head>
@@ -322,6 +344,7 @@
                     'rempah', 'bumbu' => '🌶️', default => '🌱'
                 };
                 $stockClass = $harvest->remaining_stock == 0 ? 'out' : ($harvest->remaining_stock <= 10 ? 'low' : '');
+                $statusProduct = $harvest->product->status ?? 'tersedia';
             @endphp
             <div class="product-card"
                 data-name="{{ strtolower($harvest->product->name) }}"
@@ -332,14 +355,22 @@
                     @if($harvest->is_organic)
                     <span class="badge-organic"><i class="fa-solid fa-leaf"></i> Organik</span>
                     @endif
-                    @if($harvest->remaining_stock == 0)
+                    @if($statusProduct === 'pre-order')
+                    <span class="badge-preorder">Pre-Order</span>
+                    @elseif($harvest->remaining_stock == 0 || $statusProduct === 'habis')
                     <span class="badge-out">Habis</span>
                     @elseif($harvest->remaining_stock <= 10)
                     <span class="badge-low">Menipis</span>
                     @endif
                 </div>
 
-                <div class="pc-thumb">{{ $emoji }}</div>
+                <div class="pc-thumb">
+                    @if($harvest->product->photo)
+                        <img src="{{ asset('storage/' . $harvest->product->photo) }}" alt="{{ $harvest->product->name }}">
+                    @else
+                        {{ $emoji }}
+                    @endif
+                </div>
 
                 <div class="pc-body">
                     <div class="pc-category">{{ $harvest->product->category->name ?? 'Umum' }}</div>
@@ -348,6 +379,22 @@
                         <i class="fa-regular fa-calendar"></i>
                         Panen: {{ \Carbon\Carbon::parse($harvest->harvest_date)->isoFormat('D MMM YYYY') }}
                     </div>
+
+                    {{-- Tags pertanian --}}
+                    @if($harvest->metode_tanam || $harvest->kondisi_produk || $harvest->kebun_lokasi)
+                    <div class="pc-agri-tags">
+                        @if($harvest->metode_tanam)
+                        <span class="pc-tag metode"><i class="fa-solid fa-seedling"></i> {{ ucfirst($harvest->metode_tanam) }}</span>
+                        @endif
+                        @if($harvest->kondisi_produk)
+                        <span class="pc-tag kondisi">{{ strtoupper(str_replace('_', ' ', $harvest->kondisi_produk)) }}</span>
+                        @endif
+                        @if($harvest->kebun_lokasi)
+                        <span class="pc-tag"><i class="fa-solid fa-location-dot"></i> {{ Str::limit($harvest->kebun_lokasi, 18) }}</span>
+                        @endif
+                    </div>
+                    @endif
+
                     <div class="pc-meta">
                         <div class="pc-price">
                             Rp {{ number_format($harvest->price_per_unit, 0, ',', '.') }}
@@ -358,7 +405,24 @@
                         </div>
                     </div>
                     <div class="pc-actions">
-                        <button class="pc-btn edit" onclick="openEditModal({{ $harvest->id }}, {{ $harvest->product_id }}, '{{ $harvest->harvest_date }}', {{ $harvest->remaining_stock }}, {{ $harvest->price_per_unit }}, {{ $harvest->is_organic ? 'true' : 'false' }})">
+                        <button class="pc-btn edit" onclick="openEditModal({{ $harvest->id }},
+                            '{{ addslashes($harvest->product->name) }}',
+                            {{ $harvest->product->category_id ?? 'null' }},
+                            '{{ $harvest->product->unit ?? '' }}',
+                            '{{ addslashes($harvest->product->description ?? '') }}',
+                            '{{ $harvest->product->status ?? 'tersedia' }}',
+                            '{{ $harvest->harvest_date }}',
+                            {{ $harvest->remaining_stock }},
+                            {{ $harvest->price_per_unit }},
+                            {{ $harvest->is_organic ? 'true' : 'false' }},
+                            '{{ addslashes($harvest->kebun_lokasi ?? '') }}',
+                            '{{ $harvest->metode_tanam ?? '' }}',
+                            {{ $harvest->masa_simpan_hari ?? 'null' }},
+                            '{{ $harvest->kondisi_produk ?? '' }}',
+                            {{ $harvest->berat_bersih ?? 'null' }},
+                            {{ $harvest->minimal_pembelian ?? 1 }},
+                            '{{ $harvest->product->photo ? asset('storage/' . $harvest->product->photo) : '' }}'
+                        )">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
                         <button class="pc-btn delete" onclick="confirmDelete({{ $harvest->id }}, '{{ $harvest->product->name }}')">
@@ -388,42 +452,159 @@
             <h2 id="modalTitle"><i class="fa-solid fa-plus" style="color:var(--green-main)"></i> Tambah Produk</h2>
             <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form id="productForm" method="POST" action="{{ route('seller.products.store') }}">
+        <form id="productForm" method="POST" action="{{ route('seller.products.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
             <input type="hidden" name="harvest_id" id="harvestId">
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Produk <span class="req">*</span></label>
-                    <select name="product_id" id="productSelect" class="form-select" required>
-                        <option value="">-- Pilih Produk --</option>
-                        @foreach($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->unit }}) — {{ $product->category->name ?? '-' }}</option>
-                        @endforeach
-                    </select>
-                    <span class="form-hint">Produk yang tersedia di database. Hubungi admin untuk tambah produk baru.</span>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Tanggal Panen <span class="req">*</span></label>
-                        <input type="date" name="harvest_date" id="harvestDate" class="form-input" required>
+
+                {{-- ══ SECTION 1: DATA UTAMA PRODUK ══ --}}
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-box"></i> Data Utama Produk
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Stok <span class="req">*</span></label>
-                        <input type="number" name="remaining_stock" id="remainingStock" class="form-input" placeholder="cth: 50" min="0" required>
+                        <label class="form-label">Nama Produk <span class="req">*</span></label>
+                        <input type="text" name="product_name" id="productName" class="form-input"
+                            placeholder="cth: Tomat Merah, Cabai Hijau, Bayam..." required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Kategori <span class="req">*</span></label>
+                            <select name="category_id" id="categorySelect" class="form-select" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Satuan <span class="req">*</span></label>
+                            <select name="unit" id="unitInput" class="form-select" required>
+                                <option value="">-- Pilih Satuan --</option>
+                                <option value="kg">kg</option>
+                                <option value="gram">gram</option>
+                                <option value="ikat">ikat</option>
+                                <option value="karung">karung</option>
+                                <option value="liter">liter</option>
+                                <option value="buah">buah</option>
+                                <option value="lusin">lusin</option>
+                                <option value="pak">pak</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi Produk</label>
+                        <textarea name="description" id="productDescription" class="form-textarea"
+                            placeholder="Ceritakan keunggulan produk Anda, cara tanam, dsb..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Harga per Satuan (Rp) <span class="req">*</span></label>
+                            <input type="number" name="price_per_unit" id="pricePerUnit" class="form-input"
+                                placeholder="cth: 8000" min="0" step="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Stok <span class="req">*</span></label>
+                            <input type="number" name="remaining_stock" id="remainingStock" class="form-input"
+                                placeholder="cth: 50" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Status Produk <span class="req">*</span></label>
+                            <select name="status" id="productStatus" class="form-select" required>
+                                <option value="tersedia">✅ Tersedia</option>
+                                <option value="habis">❌ Habis</option>
+                                <option value="pre-order">🕐 Pre-Order</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Foto Produk</label>
+                            <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+                                <input type="file" name="photo" id="photoInput" accept="image/*"
+                                    onchange="previewPhoto(this)" style="display:none">
+                                <i class="fa-solid fa-camera"></i>
+                                <p>Klik untuk upload foto</p>
+                                <img id="photoPreview" class="photo-preview" alt="Preview">
+                            </div>
+                            <span class="form-hint">JPG/PNG/WEBP, maks. 2MB</span>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Harga per Satuan (Rp) <span class="req">*</span></label>
-                    <input type="number" name="price_per_unit" id="pricePerUnit" class="form-input" placeholder="cth: 8000" min="0" step="100" required>
+
+                {{-- ══ SECTION 2: DATA KHUSUS PERTANIAN ══ --}}
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-tractor"></i> Data Khusus Pertanian
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Panen <span class="req">*</span></label>
+                            <input type="date" name="harvest_date" id="harvestDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lokasi Kebun</label>
+                            <input type="text" name="kebun_lokasi" id="kebunLokasi" class="form-input"
+                                placeholder="cth: Lembang, Bandung Barat">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Metode Tanam</label>
+                            <select name="metode_tanam" id="metodeTanam" class="form-select">
+                                <option value="">-- Pilih Metode --</option>
+                                <option value="organik">🌿 Organik</option>
+                                <option value="hidroponik">💧 Hidroponik</option>
+                                <option value="konvensional">🌾 Konvensional</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Kondisi Produk</label>
+                            <select name="kondisi_produk" id="kondisiProduk" class="form-select">
+                                <option value="">-- Pilih Kondisi --</option>
+                                <option value="fresh">🟢 Fresh</option>
+                                <option value="grade_a">🅰️ Grade A</option>
+                                <option value="grade_b">🅱️ Grade B</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label class="form-label">Masa Simpan (hari)</label>
+                            <input type="number" name="masa_simpan_hari" id="masaSimpan" class="form-input"
+                                placeholder="cth: 7" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Berat Bersih (kg)</label>
+                            <input type="number" name="berat_bersih" id="beratBersih" class="form-input"
+                                placeholder="cth: 0.5" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Min. Pembelian</label>
+                            <input type="number" name="minimal_pembelian" id="minimalPembelian" class="form-input"
+                                placeholder="cth: 1" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <div class="toggle-wrap" onclick="document.getElementById('isOrganic').click()">
+                        <input type="checkbox" name="is_organic" id="isOrganic" value="1"
+                            style="width:18px;height:18px;accent-color:var(--green-main)">
+                        <label for="isOrganic">
+                            <i class="fa-solid fa-leaf" style="color:var(--green-main)"></i>
+                            Tandai sebagai Produk Organik (tanpa pestisida/kimia)
+                        </label>
+                    </div>
                 </div>
-                <div class="toggle-wrap" onclick="document.getElementById('isOrganic').click()">
-                    <input type="checkbox" name="is_organic" id="isOrganic" value="1" style="width:18px;height:18px;accent-color:var(--green-main)">
-                    <label for="isOrganic">
-                        <i class="fa-solid fa-leaf" style="color:var(--green-main)"></i>
-                        Produk Organik (tanpa pestisida/kimia)
-                    </label>
-                </div>
+
             </div>
             <div class="modal-foot">
                 <button type="button" class="btn-outline" onclick="closeModal()">Batal</button>
@@ -460,28 +641,83 @@
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Berhasil!</span></div>
 
 <script>
+// ── Photo preview ──
+function previewPhoto(input) {
+    const preview = document.getElementById('photoPreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// ── Reset form ──
+function resetForm() {
+    document.getElementById('productName').value = '';
+    document.getElementById('categorySelect').value = '';
+    document.getElementById('unitInput').value = '';
+    document.getElementById('productDescription').value = '';
+    document.getElementById('pricePerUnit').value = '';
+    document.getElementById('remainingStock').value = '';
+    document.getElementById('productStatus').value = 'tersedia';
+    document.getElementById('photoInput').value = '';
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('harvestDate').value = '';
+    document.getElementById('kebunLokasi').value = '';
+    document.getElementById('metodeTanam').value = '';
+    document.getElementById('kondisiProduk').value = '';
+    document.getElementById('masaSimpan').value = '';
+    document.getElementById('beratBersih').value = '';
+    document.getElementById('minimalPembelian').value = '1';
+    document.getElementById('isOrganic').checked = false;
+}
+
 // ── Modal Tambah ──
 function openModal() {
     document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-plus" style="color:var(--green-main)"></i> Tambah Produk';
     document.getElementById('productForm').action = '{{ route("seller.products.store") }}';
     document.getElementById('formMethod').value = 'POST';
-    document.getElementById('productSelect').value = '';
-    document.getElementById('harvestDate').value = '';
-    document.getElementById('remainingStock').value = '';
-    document.getElementById('pricePerUnit').value = '';
-    document.getElementById('isOrganic').checked = false;
+    resetForm();
     document.getElementById('modalOverlay').classList.add('open');
 }
 
-function openEditModal(id, productId, harvestDate, stock, price, isOrganic) {
+// ── Modal Edit ──
+function openEditModal(id, productName, categoryId, unit, description, status,
+                       harvestDate, stock, price, isOrganic,
+                       kebunLokasi, metodeTanam, masaSimpan, kondisiProduk,
+                       beratBersih, minimalPembelian, photoUrl) {
     document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen" style="color:var(--green-main)"></i> Edit Produk';
     document.getElementById('productForm').action = `/seller/produk/${id}`;
     document.getElementById('formMethod').value = 'PUT';
-    document.getElementById('productSelect').value = productId;
-    document.getElementById('harvestDate').value = harvestDate.substring(0, 10);
-    document.getElementById('remainingStock').value = stock;
-    document.getElementById('pricePerUnit').value = price;
-    document.getElementById('isOrganic').checked = isOrganic;
+
+    document.getElementById('productName').value       = productName;
+    document.getElementById('categorySelect').value    = categoryId;
+    document.getElementById('unitInput').value         = unit;
+    document.getElementById('productDescription').value= description;
+    document.getElementById('productStatus').value     = status;
+    document.getElementById('harvestDate').value       = harvestDate.substring(0, 10);
+    document.getElementById('remainingStock').value    = stock;
+    document.getElementById('pricePerUnit').value      = price;
+    document.getElementById('isOrganic').checked       = isOrganic;
+    document.getElementById('kebunLokasi').value       = kebunLokasi;
+    document.getElementById('metodeTanam').value       = metodeTanam;
+    document.getElementById('masaSimpan').value        = masaSimpan || '';
+    document.getElementById('kondisiProduk').value     = kondisiProduk;
+    document.getElementById('beratBersih').value       = beratBersih || '';
+    document.getElementById('minimalPembelian').value  = minimalPembelian;
+
+    // Tampilkan foto existing jika ada
+    const preview = document.getElementById('photoPreview');
+    if (photoUrl) {
+        preview.src = photoUrl;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+
     document.getElementById('modalOverlay').classList.add('open');
 }
 
@@ -499,16 +735,16 @@ function closeDeleteOnBg(e) { if (e.target.id === 'deleteOverlay') closeDelete()
 
 // ── Filter produk ──
 function filterProducts() {
-    const q       = document.getElementById('searchInput').value.toLowerCase();
-    const cat     = document.getElementById('filterCategory').value;
-    const stockF  = document.getElementById('filterStock').value;
+    const q      = document.getElementById('searchInput').value.toLowerCase();
+    const cat    = document.getElementById('filterCategory').value;
+    const stockF = document.getElementById('filterStock').value;
     document.querySelectorAll('#productGrid .product-card').forEach(card => {
         const name    = card.dataset.name;
         const cardCat = card.dataset.category;
         const stock   = card.dataset.stock;
-        const show    = (!q || name.includes(q))
-                     && (!cat || cardCat === cat)
-                     && (!stockF || stock === stockF);
+        const show = (!q || name.includes(q))
+                  && (!cat || cardCat === cat)
+                  && (!stockF || stock === stockF);
         card.style.display = show ? '' : 'none';
     });
 }
@@ -516,7 +752,10 @@ function filterProducts() {
 // ── Auto dismiss alert ──
 @if(session('success') || session('error'))
 setTimeout(() => {
-    document.querySelectorAll('.alert').forEach(el => el.style.transition = 'opacity .5s', el.style.opacity = '0');
+    document.querySelectorAll('.alert').forEach(el => {
+        el.style.transition = 'opacity .5s';
+        el.style.opacity = '0';
+    });
 }, 4000);
 @endif
 </script>
