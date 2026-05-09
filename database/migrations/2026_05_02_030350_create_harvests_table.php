@@ -10,26 +10,29 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('harvests', function (Blueprint $table) {
-        $table->id();
+    {
+        Schema::create('harvests', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('seller_id')
-              ->constrained()
-              ->cascadeOnDelete();
+            // FK ke seller_profiles (bukan sellers) karena approval hanya mengisi seller_profiles
+            $table->unsignedBigInteger('seller_id');
+            $table->foreign('seller_id')
+                  ->references('id')
+                  ->on('seller_profiles')
+                  ->cascadeOnDelete();
 
-        $table->foreignId('product_id')
-              ->constrained()
-              ->cascadeOnDelete();
+            $table->foreignId('product_id')
+                  ->constrained()
+                  ->cascadeOnDelete();
 
-        $table->dateTime('harvest_date');
-        $table->integer('remaining_stock');
-        $table->decimal('price_per_unit', 10, 2);
-        $table->boolean('is_organic')->default(false);
+            $table->date('harvest_date');
+            $table->integer('remaining_stock');
+            $table->decimal('price_per_unit', 10, 2);
+            $table->boolean('is_organic')->default(false);
 
-        $table->timestamps();
-    });
-}
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

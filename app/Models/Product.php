@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    /**
+     * Tabel products tidak memiliki kolom created_at / updated_at.
+     * Jika Anda ingin timestamps, tambahkan $table->timestamps() di migration
+     * dan set $timestamps = true (default).
+     *
+     * Saat ini timestamps = false agar tidak error saat insert.
+     */
     public $timestamps = false;
 
     protected $fillable = [

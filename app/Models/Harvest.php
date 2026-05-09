@@ -26,8 +26,12 @@ class Harvest extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * Sebelumnya menunjuk ke Seller (tabel sellers) yang tidak pernah diisi.
+     * Sekarang menunjuk ke SellerProfile (tabel seller_profiles).
+     */
     public function seller()
     {
-        return $this->belongsTo(SellerProfile::class);
+        return $this->belongsTo(SellerProfile::class, 'seller_id');
     }
 }

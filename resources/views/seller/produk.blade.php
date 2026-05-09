@@ -37,32 +37,7 @@
         /* Layout */
         .seller-wrap{display:flex;min-height:100vh}
 
-        /* Sidebar */
-        .seller-sidebar{width:240px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
-        .sidebar-section{padding:0 16px;margin-bottom:6px}
-        .sidebar-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:6px 8px 4px;display:block}
-        .sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:700;color:var(--text-mid);text-decoration:none;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'Nunito',sans-serif;transition:all .18s;position:relative}
-        .sidebar-item:hover{background:var(--green-pale);color:var(--green-dark)}
-        .sidebar-item.active{background:linear-gradient(135deg,var(--green-pale),#d1fae5);color:var(--green-dark)}
-        .sidebar-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--green-mid);border-radius:0 3px 3px 0}
-        .sidebar-item .si-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--green-pale);flex-shrink:0;transition:background .18s;font-size:14px;color:var(--green-dark)}
-        .sidebar-item:hover .si-icon,.sidebar-item.active .si-icon{background:#c6f6d5}
-        .sidebar-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px}
-        .sidebar-divider{height:1px;background:var(--border);margin:8px 16px}
-        .sidebar-profile{margin:0 16px 20px;background:linear-gradient(135deg,var(--green-dark),#1e5c38);border-radius:12px;padding:16px}
-        .sp-ava{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;margin-bottom:10px}
-        .sp-name{font-size:13px;font-weight:800;color:white;margin-bottom:2px}
-        .sp-role{font-size:10px;color:#a8e6c3;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-        .sp-stats{display:flex;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12)}
-        .sp-stat{text-align:center}
-        .sp-stat strong{display:block;font-size:15px;font-weight:900;color:white}
-        .sp-stat span{font-size:10px;color:rgba(255,255,255,.6);font-weight:600}
-        .back-buyer-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:white;text-decoration:none;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
-        .back-buyer-btn:hover{border-color:var(--green-main);transform:translateY(-1px)}
-        .back-buyer-icon{width:32px;height:32px;border-radius:8px;flex-shrink:0;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green-dark)}
-        .back-buyer-text{flex:1}
-        .back-buyer-label{display:block;font-size:12px;font-weight:800;color:var(--text-dark);line-height:1.2}
-        .back-buyer-sub{display:block;font-size:10px;font-weight:700;color:var(--text-muted);margin-top:1px;text-transform:uppercase;letter-spacing:.5px}
+        /* Sidebar — styles dipindah ke partials/seller_sidebar.blade.php */
 
         /* Main */
         .seller-main{flex:1;padding:24px;overflow-x:hidden}
@@ -108,7 +83,8 @@
         .badge-low{background:#fef3c7;color:#92400e;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
         .badge-out{background:#fee2e2;color:#b91c1c;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
         .badge-preorder{background:#ede9fe;color:#5b21b6;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
-        .pc-thumb{height:140px;background:linear-gradient(135deg,var(--green-pale),#d1fae5);display:flex;align-items:center;justify-content:center;font-size:56px;overflow:hidden;position:relative}
+        .pc-thumb{height:140px;background:linear-gradient(135deg,var(--green-pale),#d1fae5);display:flex;align-items:center;justify-content:center;font-size:56px;overflow:hidden;position:relative;cursor:pointer;text-decoration:none}
+        .pc-thumb:hover{opacity:.9}
         .pc-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
         .pc-body{padding:14px}
         .pc-category{font-size:10px;font-weight:800;color:var(--green-main);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
@@ -204,55 +180,7 @@
 <div class="seller-wrap">
 
     <!-- ══ SIDEBAR ══ -->
-    <aside class="seller-sidebar">
-        <div class="sidebar-profile">
-            <div class="sp-ava">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-            <div class="sp-name">{{ Auth::user()->name }}</div>
-            <div class="sp-role">⭐ Petani Terverifikasi</div>
-            <div class="sp-stats">
-                <div class="sp-stat"><strong>{{ $harvests->total() }}</strong><span>Produk</span></div>
-                <div class="sp-stat"><strong>{{ $sellerProfile->total_transaksi ?? 0 }}</strong><span>Transaksi</span></div>
-                <div class="sp-stat"><strong>{{ number_format($sellerProfile->rating ?? 0, 1) }}</strong><span>Rating</span></div>
-            </div>
-        </div>
-
-        <div style="padding:0 16px 14px;">
-            <a href="{{ route('buyer.dashboard') }}" class="back-buyer-btn">
-                <span class="back-buyer-icon"><i class="fa-solid fa-arrow-left-long"></i></span>
-                <span class="back-buyer-text">
-                    <span class="back-buyer-label">Kembali ke Marketplace</span>
-                    <span class="back-buyer-sub">Mode Pembeli</span>
-                </span>
-            </a>
-        </div>
-
-        <div class="sidebar-section">
-            <span class="sidebar-label">Utama</span>
-            <a href="{{ route('seller.dashboard') }}" class="sidebar-item">
-                <span class="si-icon"><i class="fa-solid fa-house-chimney"></i></span> Dashboard
-            </a>
-        </div>
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section">
-            <span class="sidebar-label">Kelola</span>
-            <a href="{{ route('seller.products.index') }}" class="sidebar-item active">
-                <span class="si-icon"><i class="fa-solid fa-wheat-awn"></i></span> Produk Saya
-            </a>
-            <a href="{{ route('seller.profile.edit') }}" class="sidebar-item">
-                <span class="si-icon"><i class="fa-solid fa-store"></i></span> Profil Toko
-            </a>
-        </div>
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section">
-            <span class="sidebar-label">Akun</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="sidebar-item">
-                    <span class="si-icon"><i class="fa-solid fa-right-from-bracket"></i></span> Keluar
-                </button>
-            </form>
-        </div>
-    </aside>
+    @include('partials.seller_sidebar')
 
     <!-- ══ MAIN ══ -->
     <main class="seller-main">
@@ -364,17 +292,17 @@
                     @endif
                 </div>
 
-                <div class="pc-thumb">
+                <a href="{{ route('buyer.product.show', $harvest->product->id) }}" class="pc-thumb" title="Lihat detail produk">
                     @if($harvest->product->photo)
                         <img src="{{ asset('storage/' . $harvest->product->photo) }}" alt="{{ $harvest->product->name }}">
                     @else
                         {{ $emoji }}
                     @endif
-                </div>
+                </a>
 
                 <div class="pc-body">
                     <div class="pc-category">{{ $harvest->product->category->name ?? 'Umum' }}</div>
-                    <div class="pc-name">{{ $harvest->product->name }}</div>
+                    <a href="{{ route('buyer.product.show', $harvest->product->id) }}" class="pc-name" style="text-decoration:none;color:inherit;display:block;">{{ $harvest->product->name }}</a>
                     <div class="pc-harvest">
                         <i class="fa-regular fa-calendar"></i>
                         Panen: {{ \Carbon\Carbon::parse($harvest->harvest_date)->isoFormat('D MMM YYYY') }}
