@@ -587,37 +587,40 @@
 
                         {{-- Menu --}}
                         <a href="{{ route('buyer.dashboard') }}" class="udrop-item">
-                            <span class="udrop-icon">🏠</span> Dashboard
-                        </a>
-                        <a href="{{ route('buyer.profile') }}" class="udrop-item">
-                            <span class="udrop-icon">👤</span> Profil Saya
-                        </a>
-                        <a href="{{ route('orders.index') }}" class="udrop-item">
-                            <span class="udrop-icon">📋</span> Pesanan Saya
-                        </a>
-                        <a href="{{ route('cart.index') }}" class="udrop-item">
-                            <span class="udrop-icon">🛒</span> Keranjang Belanja
-                        </a>
-                        <a href="{{ route('chat.index') }}" class="udrop-item">
-                            <span class="udrop-icon">💬</span> Chat Petani
+                            <span class="udrop-icon"><i class="fa-solid fa-house"></i></span> Dashboard
                         </a>
 
+                        <a href="{{ route('buyer.profile') }}" class="udrop-item">
+                            <span class="udrop-icon"><i class="fa-solid fa-user"></i></span> Profil Saya
+                        </a>
+
+                        <a href="{{ route('orders.index') }}" class="udrop-item">
+                            <span class="udrop-icon"><i class="fa-solid fa-clipboard-list"></i></span> Pesanan Saya
+                        </a>
+
+                        <a href="{{ route('cart.index') }}" class="udrop-item">
+                            <span class="udrop-icon"><i class="fa-solid fa-cart-shopping"></i></span> Keranjang Belanja
+                        </a>
+
+                        <a href="{{ route('chat.index') }}" class="udrop-item">
+                            <span class="udrop-icon"><i class="fa-solid fa-comments"></i></span> Chat Petani
+                        </a>
                         @if(Auth::user()->role === 'buyer')
                             @php $application = Auth::user()->sellerApplication; @endphp
                             <div class="udrop-divider"></div>
                             @if(!$application || $application->status === 'rejected')
                                 <a href="{{ route('buyer.apply.create') }}" class="udrop-item udrop-item-seller">
-                                    <span class="udrop-icon">🌾</span> Jadi Seller
+                                    <span class="udrop-icon"><i class="fa-solid fa-store"></i></span> Jadi Seller
                                 </a>
                             @elseif(in_array($application->status, ['pending', 'reviewing']))
                                 <a href="{{ route('buyer.application.status') }}" class="udrop-item" style="opacity:0.75">
-                                    <span class="udrop-icon">⏳</span> Pengajuan Diproses...
+                                    <span class="udrop-icon"><i class="fa-solid fa-clock"></i></span> Pengajuan Diproses...
                                 </a>
                             @endif
                         @elseif(Auth::user()->role === 'seller')
                             <div class="udrop-divider"></div>
                             <a href="{{ route('seller.dashboard') }}" class="udrop-item udrop-item-seller">
-                                <span class="udrop-icon">🌾</span> Dashboard Seller
+                                <span class="udrop-icon"><i class="fa-solid fa-store"></i></span> Dashboard Seller
                             </a>
                         @endif
 
@@ -626,7 +629,7 @@
                         {{-- Logout --}}
                         {{-- ✅ Sesudah --}} <button type="button" class="udrop-item udrop-logout"
                             onclick="openLogoutModal()">
-                            <span class="udrop-icon">🚪</span> Keluar
+                            <span class="udrop-icon"><i class="fa-solid fa-sign-out-alt"></i></span> Keluar
                         </button>
 
                     </div>
