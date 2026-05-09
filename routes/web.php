@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SellerApplicationController;
+use App\Http\Controllers\SellerProductController;
 use App\Http\Controllers\SellerProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
@@ -135,6 +136,12 @@ Route::middleware(['auth', 'role:buyer,seller,admin'])->prefix('buyer')->name('b
 
 Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
     Route::get('/dashboard', [SellerProfileController::class, 'dashboard'])->name('dashboard');
+
+    // Produk Seller
+    Route::get('/produk', [SellerProductController::class, 'index'])->name('products.index');
+    Route::post('/produk', [SellerProductController::class, 'store'])->name('products.store');
+    Route::put('/produk/{harvest}', [SellerProductController::class, 'update'])->name('products.update');
+    Route::delete('/produk/{harvest}', [SellerProductController::class, 'destroy'])->name('products.destroy');
 
     Route::get('/profil', [SellerProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profil', [SellerProfileController::class, 'update'])->name('profile.update');
