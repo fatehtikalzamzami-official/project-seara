@@ -17,6 +17,7 @@ class SellerProfile extends Model
         'deskripsi_toko',
         'kategori_utama',
         'foto_toko',
+        'banner_toko',
         'rating',
         'total_ulasan',
         'total_produk',
