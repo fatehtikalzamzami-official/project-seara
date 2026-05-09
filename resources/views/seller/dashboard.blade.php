@@ -1465,13 +1465,13 @@
 
             <!-- Profile card -->
             <div class="sidebar-profile">
-                <div class="sp-ava">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-                <div class="sp-name">{{ Auth::user()->name }}</div>
+                <div class="sp-ava">BU</div>
+                <div class="sp-name">Budi Santoso</div>
                 <div class="sp-role">⭐ Petani Terverifikasi</div>
                 <div class="sp-stats">
-                    <div class="sp-stat"><strong>{{ $sellerProfile->total_produk ?? $harvests->total() }}</strong><span>Produk</span></div>
-                    <div class="sp-stat"><strong>{{ $sellerProfile->total_transaksi ?? 0 }}</strong><span>Pesanan</span></div>
-                    <div class="sp-stat"><strong>{{ number_format($sellerProfile->rating ?? 0, 1) }}</strong><span>Rating</span></div>
+                    <div class="sp-stat"><strong>12</strong><span>Produk</span></div>
+                    <div class="sp-stat"><strong>24</strong><span>Pesanan</span></div>
+                    <div class="sp-stat"><strong>4.9</strong><span>Rating</span></div>
                 </div>
             </div>
 
@@ -1511,10 +1511,10 @@
 
             <div class="sidebar-section">
                 <span class="sidebar-label">Kelola</span>
-                <a href="{{ route('seller.products.index') }}" class="sidebar-item">
+                <button class="sidebar-item" onclick="showPage('produk', this)">
                     <span class="si-icon"><i class="fa-solid fa-wheat-awn" aria-hidden="true"></i></span>
                     Produk Saya
-                </a>
+                </button>
                 <button class="sidebar-item" onclick="showPage('panen', this)">
                     <span class="si-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
                     Jadwal Panen
@@ -1534,10 +1534,10 @@
             <div class="sidebar-section">
                 <span class="sidebar-label">Akun</span>
                 <!-- STEP 4: Profil Toko mengarah ke halaman profilToko -->
-                <a href="{{ route('seller.profile.edit') }}" class="sidebar-item" onclick="">
+                <button class="sidebar-item" onclick="showPage('profilToko', this)">
                     <span class="si-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span>
                     Profil Toko
-                </a>
+                </button>
                 <button class="sidebar-item" onclick="showPage('pengaturan', this)">
                     <span class="si-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></span>
                     Pengaturan
@@ -1579,7 +1579,7 @@
                     </div>
                     <div class="page-header-right">
                         <a href="#" class="btn-outline"><i class="fa-solid fa-download"></i> Unduh Laporan</a>
-                        <a href="{{ route('seller.products.index') }}" class="btn-green"><i class="fa-solid fa-plus"></i> Tambah Produk</a>
+                        <a href="#" class="btn-green"><i class="fa-solid fa-plus"></i> Tambah Produk</a>
                     </div>
                 </div>
 
@@ -1656,7 +1656,7 @@
                                 <h3><span class="dot"></span> Aksi Cepat</h3>
                             </div>
                             <div class="quick-actions">
-                                <a href="{{ route('seller.products.index') }}" class="qa-btn"><span class="qa-icon"
+                                <a href="#" class="qa-btn"><span class="qa-icon"
                                         style="background:#f0fdf4;color:var(--green-dark)"><i
                                             class="fa-solid fa-seedling"></i></span> Tambah Produk</a>
                                 <a href="#" class="qa-btn"><span class="qa-icon"
@@ -1805,7 +1805,7 @@
                     <div class="card">
                         <div class="card-head">
                             <h3><span class="dot"></span> Produk Terlaris</h3>
-                            <a href="{{ route('seller.products.index') }}" class="card-action">Kelola →</a>
+                            <a href="#" class="card-action">Kelola →</a>
                         </div>
                         <div class="card-body">
                             <div class="prod-row">
