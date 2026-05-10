@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,           // 5. daftar produk per kategori
             SellerSeeder::class,            // 6. tabel sellers (FK ke users)
             HarvestSeeder::class,           // 7. data panen: FK ke sellers & products
+            OrderSeeder::class,             // 8. data order & order_items dummy
         ]);
     }
 }
