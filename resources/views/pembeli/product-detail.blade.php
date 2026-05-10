@@ -106,8 +106,13 @@
 .qty-total-label { font-size: 13px; color: var(--text-muted); }
 .qty-total-val { font-size: 20px; font-weight: 900; color: var(--green-dark); }
 
+
+.btn-cart,
+.btn-buy{
+    height: 54px;
+}
 /* ── CTA ── */
-.cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width:100%;}
 .btn-cart {
     padding: 14px; border-radius: 12px;
     border: 2px solid var(--green-main); background: transparent;
@@ -115,6 +120,8 @@
     font-size: 14px; font-weight: 800; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 6px;
     transition: all .2s;
+    height: 54px;
+    width: 100%;
 }
 .btn-cart:hover { background: var(--green-pale); }
 .btn-buy {
@@ -124,6 +131,7 @@
     font-size: 14px; font-weight: 800; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 6px;
     transition: all .2s;
+    height: 54px;
 }
 .btn-buy:hover { background: var(--green-dark); border-color: var(--green-dark); }
 .btn-secondary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
@@ -144,6 +152,7 @@
     font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 700;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
     transition: all .2s;
+    width: 100%
 }
 .btn-chat:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
 .btn-chat.active { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
@@ -458,7 +467,7 @@
 <div>
     <div class="cta-grid">
         {{-- Tombol Keranjang --}}
-        <form method="POST" action="{{ route('cart.store') }}" id="cartForm">
+        <form method="POST" action="{{ route('cart.store') }}" id="cartForm" style="display:contents;">
             @csrf
             <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
             <input type="hidden" name="quantity" id="cartQty" value="1">
