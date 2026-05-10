@@ -262,7 +262,87 @@
         }
     }
 
-    /* Modal CSS dikelola per-halaman, bukan di sidebar */
+    /* ── Modal Global (dipakai sidebar & halaman) ── */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .45);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s;
+    }
+
+    .modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 600px;
+        overflow: hidden;
+        transform: translateY(20px);
+        transition: transform .25s;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    }
+
+    .modal-overlay.open .modal {
+        transform: translateY(0);
+    }
+
+    .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .modal-head h2 {
+        font-size: 16px;
+        font-weight: 900;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--text-muted);
+        padding: 4px;
+        border-radius: 6px;
+        transition: color .18s;
+    }
+
+    .modal-close:hover {
+        color: var(--text-dark);
+    }
+
+    .modal-body {
+        padding: 22px;
+        max-height: 72vh;
+        overflow-y: auto;
+    }
+
+    .modal-foot {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding: 16px 22px;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
 </style>
 
 <aside class="seller-sidebar">
