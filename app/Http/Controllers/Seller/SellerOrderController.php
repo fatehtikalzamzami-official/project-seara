@@ -72,7 +72,26 @@ class SellerOrderController extends Controller
     }
 
     /**
-     * Update status pesanan.
+     * Tampilkan detail satu pesanan untuk seller.
+     */
+    public function show(Order $order)
+    {
+        $sellerId = Auth::id();
+
+        $hasItem = $order->items()->where('seller_user_id', $sellerId)->exists();
+        if (!$hasItem) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        $order->load([
+            'items' => fn($q) => $q->where('seller_user_id', $sellerId)->with('harvest.product.category'),
+            'buyer',
+        ]);
+
+        return view('seller.pesanan.show', compact('order'));
+    }
+
+    /**
      * Seller hanya boleh mengubah status pesanan yang ada item miliknya,
      * dan hanya transisi status yang valid.
      */

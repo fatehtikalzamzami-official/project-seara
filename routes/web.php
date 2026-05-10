@@ -218,6 +218,9 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     Route::get('/pesanan', [SellerOrderController::class, 'index'])
         ->name('orders.index');
 
+    Route::get('/pesanan/{order}', [SellerOrderController::class, 'show'])
+        ->name('orders.show');
+
     Route::patch('/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])
         ->name('orders.updateStatus');
 

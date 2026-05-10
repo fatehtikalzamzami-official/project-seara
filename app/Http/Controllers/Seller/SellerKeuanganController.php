@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Models\HarvestSchedule;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -139,6 +141,20 @@ class SellerKeuanganController extends Controller
             ];
         }
 
+        // ── Jadwal panen mendatang (30 hari ke depan) ─────────────────────
+        $jadwalMendatang = HarvestSchedule::forSeller($sellerUserId)
+            ->whereNotIn('status', ['selesai', 'gagal'])
+            ->where('estimasi_panen', '>=', now())
+            ->where('estimasi_panen', '<=', now()->addDays(30))
+            ->orderBy('estimasi_panen')
+            ->get();
+
+        // ── Riwayat penarikan dana terbaru ─────────────────────────────────
+        $riwayatWithdrawal = Withdrawal::forSeller($sellerUserId)
+            ->latest()
+            ->limit(5)
+            ->get();
+
         return view('seller.keuangan', compact(
             'orders',
             'sellerProfile',
@@ -155,6 +171,8 @@ class SellerKeuanganController extends Controller
             'summaryProcessing',
             'summaryCancelled',
             'chartData',
+            'jadwalMendatang',
+            'riwayatWithdrawal',
         ));
     }
 
