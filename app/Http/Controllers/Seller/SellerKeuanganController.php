@@ -79,6 +79,9 @@ class SellerKeuanganController extends Controller
             ->whereHas('order', fn($q) => $q->whereIn('status', ['delivered']))
             ->sum('subtotal');
 
+        // Saldo tersedia untuk penarikan
+        $saldoTersedia = $danaDicairkan;
+
         // Jumlah pesanan menunggu cair (processing + shipped)
         $pesananMenungguCair = Order::whereHas('items', fn($q) => $q->where('seller_user_id', $sellerUserId))
             ->whereIn('status', ['processing', 'shipped', 'paid'])
@@ -143,6 +146,7 @@ class SellerKeuanganController extends Controller
             'pendapatanBulanIni',
             'pesananBulanIni',
             'danaDicairkan',
+            'saldoTersedia',
             'pesananMenungguCair',
             'totalPesananSelesai',
             'rataRataOrder',

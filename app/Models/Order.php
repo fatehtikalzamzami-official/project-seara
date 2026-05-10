@@ -27,6 +27,8 @@ class Order extends Model
         'paid_at',
         'buyer_notes',
         'cancel_reason',
+        'kurir',
+        'nomor_resi',
     ];
 
     protected $casts = [
@@ -109,3 +111,5 @@ class Order extends Model
         return $this->belongsTo(\App\Models\User::class, 'buyer_id');
     }
 }
+
+// ── Boot: auto-update SellerProfile.total_transaksi saat order delivered ──

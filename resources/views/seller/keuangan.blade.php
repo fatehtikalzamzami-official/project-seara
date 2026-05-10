@@ -1317,7 +1317,7 @@
                 <div class="stat-card yellow">
                     <div class="stat-icon yellow"><i class="fa-solid fa-wallet"></i></div>
                     <div class="stat-label">Dapat Dicairkan</div>
-                    <div class="stat-value">Rp {{ number_format($danaDicairkan, 0, ',', '.') }}</div>
+                    <div class="stat-value">Rp {{ number_format($saldoTersedia, 0, ',', '.') }}</div>
                     <div class="stat-sub">{{ $pesananMenungguCair }} pesanan diproses</div>
                 </div>
 
@@ -1455,7 +1455,7 @@
                             {{ $sellerProfile->atas_nama_rekening ?? 'Nama Pemilik' }}
                         </div>
                         <div class="bank-balance-label">Saldo Dapat Dicairkan</div>
-                        <div class="bank-balance-val">Rp {{ number_format($danaDicairkan, 0, ',', '.') }}</div>
+                        <div class="bank-balance-val">Rp {{ number_format($saldoTersedia, 0, ',', '.') }}</div>
                     </div>
 
                     <div class="bank-actions">
@@ -1468,6 +1468,91 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ── JADWAL PANEN MENDATANG (Integrasi) ── -->
+            @if($jadwalMendatang->count() > 0)
+            <div class="table-card anim-4" style="margin-bottom:20px">
+                <div class="table-card-head">
+                    <h3>
+                        <i class="fa-solid fa-seedling" style="color:var(--green-main)"></i>
+                        Estimasi Panen Mendatang
+                        <span style="background:var(--green-pale);color:var(--green-dark);font-size:11px;padding:2px 9px;border-radius:20px;font-weight:800">
+                            {{ $jadwalMendatang->count() }} jadwal
+                        </span>
+                    </h3>
+                    <a href="{{ route('seller.jadwal.index') }}" style="font-size:13px;color:var(--green-main);font-weight:700;text-decoration:none">
+                        Lihat Semua <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div style="padding:0 20px 16px;display:flex;flex-wrap:wrap;gap:12px">
+                    @foreach($jadwalMendatang as $jadwal)
+                    @php $info = $jadwal->status_info; $sisaHari = $jadwal->sisa_hari; @endphp
+                    <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;min-width:200px;flex:1">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                            <span style="font-size:18px">{{ $info['icon'] }}</span>
+                            <span style="font-weight:800;font-size:14px;color:var(--text-dark)">{{ $jadwal->nama_tanaman }}</span>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">
+                            <i class="fa-regular fa-calendar"></i>
+                            Panen: {{ $jadwal->estimasi_panen->format('d M Y') }}
+                        </div>
+                        @if($jadwal->estimasi_kuantitas)
+                        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            Est. {{ number_format($jadwal->estimasi_kuantitas, 0, ',', '.') }} {{ $jadwal->satuan ?? 'kg' }}
+                        </div>
+                        @endif
+                        <span style="background:{{ $info['bg'] }};color:{{ $info['color'] }};font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700">
+                            {{ $sisaHari <= 0 ? 'Sudah lewat' : ($sisaHari === 1 ? 'Besok' : $sisaHari . ' hari lagi') }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- ── RIWAYAT PENARIKAN TERBARU (Integrasi) ── -->
+            @if($riwayatWithdrawal->count() > 0)
+            <div class="table-card anim-4" style="margin-bottom:20px">
+                <div class="table-card-head">
+                    <h3>
+                        <i class="fa-solid fa-money-bill-transfer" style="color:var(--green-main)"></i>
+                        Penarikan Dana Terbaru
+                    </h3>
+                    <a href="{{ route('seller.keuangan.riwayat') }}" style="font-size:13px;color:var(--green-main);font-weight:700;text-decoration:none">
+                        Lihat Semua <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                    <thead>
+                        <tr style="border-bottom:1.5px solid var(--border)">
+                            <th style="padding:10px 16px;text-align:left;color:var(--text-muted);font-weight:700">Tanggal</th>
+                            <th style="padding:10px 16px;text-align:left;color:var(--text-muted);font-weight:700">Jumlah</th>
+                            <th style="padding:10px 16px;text-align:left;color:var(--text-muted);font-weight:700">Diterima</th>
+                            <th style="padding:10px 16px;text-align:left;color:var(--text-muted);font-weight:700">Bank</th>
+                            <th style="padding:10px 16px;text-align:left;color:var(--text-muted);font-weight:700">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($riwayatWithdrawal as $wd)
+                        <tr style="border-bottom:1px solid var(--border)">
+                            <td style="padding:10px 16px;color:var(--text-mid)">{{ $wd->created_at->format('d/m/Y') }}</td>
+                            <td style="padding:10px 16px;font-weight:700;color:var(--text-dark)">Rp {{ number_format($wd->jumlah, 0, ',', '.') }}</td>
+                            <td style="padding:10px 16px;color:var(--green-main);font-weight:700">Rp {{ number_format($wd->diterima, 0, ',', '.') }}</td>
+                            <td style="padding:10px 16px;color:var(--text-mid)">{{ $wd->nama_bank ?? '-' }}</td>
+                            <td style="padding:10px 16px">
+                                <span style="background:{{ $wd->status_color }}22;color:{{ $wd->status_color }};font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700">
+                                    {{ $wd->status_label }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            @endif
 
             <!-- ── TRANSACTION TABLE ── -->
             <div class="table-card anim-4">
@@ -1667,7 +1752,7 @@
                         <div class="withdrawal-info-row">
                             <span class="withdrawal-info-label">Saldo Tersedia</span>
                             <span class="withdrawal-info-val" style="color:var(--green-dark)">
-                                Rp {{ number_format($danaDicairkan, 0, ',', '.') }}
+                                Rp {{ number_format($saldoTersedia, 0, ',', '.') }}
                             </span>
                         </div>
                     </div>
@@ -1675,7 +1760,7 @@
                     <div class="form-group">
                         <label class="form-label">Jumlah Penarikan (Rp) <span class="req">*</span></label>
                         <input type="number" name="jumlah" id="withdrawAmount" class="form-input"
-                            placeholder="cth: 500000" min="50000" max="{{ $danaDicairkan }}" step="1000" required
+                            placeholder="cth: 500000" min="50000" max="{{ $saldoTersedia }}" step="1000" required
                             oninput="updateWithdrawPreview()">
                         <div class="form-hint">Minimum penarikan: Rp 50.000 &bull; Biaya admin: Rp 2.500</div>
                     </div>
