@@ -807,87 +807,92 @@
             border-color: var(--green-main);
         }
 
-        /* ── Modal ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .45);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .25s;
-        }
+/* ── Modal ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.45);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 48px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+}
 
-        .modal-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
 
-        .modal {
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 600px;
-            overflow: hidden;
-            transform: translateY(20px);
-            transition: transform .25s;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
-        }
+.modal {
+    background: white;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 860px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    transition: transform .25s;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    overflow: hidden;
+}
 
-        .modal-overlay.open .modal {
-            transform: translateY(0);
-        }
+.modal-overlay.open .modal {
+    transform: translateY(0);
+}
 
-        .modal-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 22px;
-            border-bottom: 1px solid var(--border);
-        }
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 32px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
 
-        .modal-head h2 {
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.modal-head h2 {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .modal-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: var(--text-muted);
-            padding: 4px;
-            border-radius: 6px;
-            transition: color .18s;
-        }
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-muted);
+    padding: 4px;
+    border-radius: 6px;
+    transition: color .18s;
+}
 
-        .modal-close:hover {
-            color: var(--text-dark);
-        }
+.modal-close:hover {
+    color: var(--text-dark);
+}
 
-        .modal-body {
-            padding: 22px;
-            max-height: 72vh;
-            overflow-y: auto;
-        }
+.modal-body {
+    padding: 28px 32px;
+    overflow-y: auto;          /* ← scroll ada di dalam body, bukan overlay */
+    flex: 1;
+}
 
-        .modal-foot {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            padding: 16px 22px;
-            border-top: 1px solid var(--border);
-            background: #fafcfa;
-        }
+.modal-foot {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 18px 32px;
+    border-top: 1px solid var(--border);
+    background: #fafcfa;
+    flex-shrink: 0;
+}
 
         /* Form */
         .form-section {
@@ -1207,9 +1212,6 @@
                     <i class="fa-solid fa-calendar-xmark"></i>
                     <h3>Belum ada jadwal panen</h3>
                     <p>Mulai rencanakan siklus panen Anda agar hasil kebun lebih terorganisir.</p>
-                    <button class="btn-green" onclick="openModal()" style="margin:0 auto">
-                        <i class="fa-solid fa-plus"></i> Buat Jadwal Pertama
-                    </button>
                 </div>
             @else
 
@@ -1461,7 +1463,7 @@
                 <h2 id="modalTitle"><i class="fa-solid fa-plus" style="color:var(--green-main)"></i> Tambah Jadwal</h2>
                 <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="jadwalForm" method="POST" action="{{ route('seller.jadwal.store') }}">
+            <form id="jadwalForm" method="POST" action="{{ route('seller.jadwal.store') }}" style="display:contents">
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
 
@@ -1615,7 +1617,7 @@
             </div>
             <div class="modal-foot">
                 <button class="btn-outline" onclick="closeDelete()">Batal</button>
-                <form id="deleteForm" method="POST">
+                <form id="deleteForm" method="POST" style="display:contents">
                     @csrf @method('DELETE')
                     <button type="submit"
                         style="padding:9px 18px;background:#b91c1c;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:white;cursor:pointer">
@@ -1688,7 +1690,7 @@
         /* ── Modal Tambah ── */
         function openModal() {
             document.getElementById('modalTitle').innerHTML =
-                '<i class="fa-solid fa-plus" style="color:var(--green-main)"></i> Tambah Jadwal Panen';
+                '<i class="fa-solid fa-plus" style="color:var(--green-main)"></i> Tambah Jadwal Panen 1';
             document.getElementById('jadwalForm').action = '{{ route("seller.jadwal.store") }}';
             document.getElementById('formMethod').value = 'POST';
             resetForm();

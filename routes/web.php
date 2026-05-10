@@ -224,13 +224,20 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     Route::get('/pesanan/{order}/print', [SellerOrderController::class, 'print'])
         ->name('orders.print');
 
-    //Jadwal Panen Seller
-    Route::resource('jadwal', SellerJadwalPanenController::class)
-        ->only(['index', 'store', 'update', 'destroy'])
-        ->names('jadwal');
+    // Jadwal Panen Seller
+Route::resource('jadwal', SellerJadwalPanenController::class)
+    ->only(['index', 'store', 'update', 'destroy'])
+    ->names('jadwal');
 
-    Route::patch('jadwal/{jadwal}/status', [SellerJadwalPanenController::class, 'updateStatus'])
-        ->name('jadwal.status');
+Route::patch('jadwal/{jadwal}/status', [
+    SellerJadwalPanenController::class,
+    'updateStatus'
+])->name('jadwal.status');
+
+Route::get('jadwal/{jadwal}/edit-data', [
+    SellerJadwalPanenController::class,
+    'editData'
+])->name('jadwal.editData');
 });
 
 // ─────────────────────────────────────────────────────────────
