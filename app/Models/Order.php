@@ -71,13 +71,13 @@ class Order extends Model
     public function statusLabel(): string
     {
         return match ($this->status) {
-            'pending_payment' => '⏳ Menunggu Pembayaran',
-            'paid' => '💳 Sudah Dibayar',
-            'processing' => '📦 Diproses',
-            'shipped' => '🚚 Dikirim',
-            'delivered' => '✅ Diterima',
-            'cancelled' => '❌ Dibatalkan',
-            'refunded' => '↩️ Dikembalikan',
+            'pending_payment' => 'Menunggu Bayar',
+            'paid' => 'Sudah Dibayar',
+            'processing' => 'Diproses',
+            'shipped' => 'Dikirim',
+            'delivered' => 'Selesai',
+            'cancelled' => 'Dibatalkan',
+            'refunded' => 'Direfund',
             default => $this->status,
         };
     }

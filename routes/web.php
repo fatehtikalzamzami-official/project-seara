@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\AdminPenggunaController;
 use App\Http\Controllers\Seller\SellerChatController;
 use App\Http\Controllers\Seller\SellerLaporanController;
 use App\Http\Controllers\Seller\SellerPengaturanController;
+use App\Http\Controllers\Seller\SellerKeuanganController;
+use App\Http\Controllers\Seller\SellerOrderController;
 
 
 // ─────────────────────────────────────────────────────────────
@@ -189,6 +191,35 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
 
     Route::delete('/pengaturan/akun', [SellerPengaturanController::class, 'deleteAccount'])
         ->name('settings.delete.account');
+
+    // Keuangan Seller
+    Route::prefix('keuangan')->name('keuangan.')->group(function () {
+
+        Route::get('/', [SellerKeuanganController::class, 'index'])
+            ->name('index');
+
+        Route::get('/export', [SellerKeuanganController::class, 'export'])
+            ->name('export');
+
+        Route::post('/withdraw', [SellerKeuanganController::class, 'withdraw'])
+            ->name('withdraw');
+
+        Route::get('/riwayat', [SellerKeuanganController::class, 'riwayat'])
+            ->name('riwayat');
+
+        Route::get('/invoice/{order}', [SellerKeuanganController::class, 'invoice'])
+            ->name('invoice');
+    });
+
+    // Pesanan Seller
+    Route::get('/pesanan', [SellerOrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::patch('/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
+
+    Route::get('/pesanan/{order}/print', [SellerOrderController::class, 'print'])
+        ->name('orders.print');
 });
 
 // ─────────────────────────────────────────────────────────────

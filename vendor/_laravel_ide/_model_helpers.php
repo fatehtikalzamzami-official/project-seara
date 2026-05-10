@@ -3833,7 +3833,7 @@ namespace App\Models {
     /**
      * App\Models\SellerProfile
      *
-     * @property string|null $banner
+     * @property string|null $banner_toko
      * @property \Illuminate\Support\Carbon|null $deleted_at
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
@@ -3888,7 +3888,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile whereDeletedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile whereBanner($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile whereBannerToko($value)
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<SellerProfile>|SellerProfile query()

@@ -304,10 +304,10 @@
             <span class="si-icon"><i class="fa-solid fa-house-chimney" aria-hidden="true"></i></span>
             Dashboard
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="{{ route('seller.orders.index') }}" class="sidebar-item">
             <span class="si-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span>
             Pesanan Masuk
-            <span class="sidebar-badge">3</span>
+            <span class="sidebar-badge"></span>
         </a>
         <a href="{{ route('seller.chat.index') }}"
             class="sidebar-item {{ request()->routeIs('seller.chat.*') ? 'active' : '' }}">
@@ -334,7 +334,8 @@
             <span class="si-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
             Laporan Penjualan
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="{{ route('seller.keuangan.index') }}"
+            class="sidebar-item {{ request()->routeIs('seller.keuangan.*') ? 'active' : '' }}">
             <span class="si-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
             Keuangan
         </a>
