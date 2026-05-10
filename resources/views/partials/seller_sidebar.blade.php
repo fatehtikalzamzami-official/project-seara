@@ -325,7 +325,7 @@
             <span class="si-icon"><i class="fa-solid fa-wheat-awn" aria-hidden="true"></i></span>
             Produk Saya
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="{{ route('seller.jadwal.index') }}" class="sidebar-item">
             <span class="si-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
             Jadwal Panen
         </a>
