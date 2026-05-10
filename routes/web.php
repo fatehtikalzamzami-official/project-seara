@@ -23,6 +23,7 @@ use App\Http\Controllers\Seller\SellerPengaturanController;
 use App\Http\Controllers\Seller\SellerKeuanganController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerJadwalPanenController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Models\HarvestSchedule;
 
 
@@ -269,9 +270,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
 
     // Laporan Aktif
-    Route::get('/laporan', function () {
-        return view('admin.laporan');
-    })->name('laporan');
+    Route::get('/laporan',                         [LaporanController::class, 'index'])         ->name('laporan');
+Route::get('/laporan/{report}',                [LaporanController::class, 'show'])          ->name('laporan.show');
+Route::patch('/laporan/{report}/start-review', [LaporanController::class, 'startReview'])  ->name('laporan.startReview');
+Route::post('/laporan/{report}/resolve',       [LaporanController::class, 'resolve'])       ->name('laporan.resolve');
+Route::patch('/laporan/{report}/priority',     [LaporanController::class, 'updatePriority'])->name('laporan.priority');
 
     // Suspend / reinstate toko seller
     Route::post('/toko/{sellerProfile}/suspend', [SellerProfileController::class, 'suspend'])->name('stores.suspend');
