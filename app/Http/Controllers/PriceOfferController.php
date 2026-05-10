@@ -46,7 +46,10 @@ class PriceOfferController extends Controller
             'quantity'       => $request->quantity,
             'buyer_note'     => $request->buyer_note,
             'expires_at'     => now()->addHours(24),
+            'status'         => 'pending',
         ]);
+
+        $offer = $offer->fresh();
 
         // Kirim notifikasi otomatis ke chat room jika ada
         if ($request->chat_room_id) {
@@ -144,6 +147,17 @@ class PriceOfferController extends Controller
         $priceOffer->update(['status' => 'cancelled']);
 
         return response()->json(['success' => true, 'offer' => $this->offerPayload($priceOffer->fresh())]);
+    }
+
+    // ── Fetch single offer detail (AJAX)
+    public function show(PriceOffer $priceOffer)
+    {
+        $user = Auth::user();
+        abort_unless(
+            $priceOffer->buyer_id === $user->id || $priceOffer->seller_user_id === $user->id,
+            403
+        );
+        return response()->json(['offer' => $this->offerPayload($priceOffer)]);
     }
 
     // ── Cek status tawaran aktif (polling AJAX)

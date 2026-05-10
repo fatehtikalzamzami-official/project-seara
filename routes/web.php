@@ -117,6 +117,7 @@ Route::middleware(['auth'])->prefix('offers')->name('offers.')->group(function (
     Route::post('/{priceOffer}/counter', [PriceOfferController::class, 'counter'])->name('counter');
     Route::post('/{priceOffer}/cancel', [PriceOfferController::class, 'cancel'])->name('cancel');
     Route::get('/status', [PriceOfferController::class, 'status'])->name('status');
+    Route::get('/{priceOffer}', [PriceOfferController::class, 'show'])->name('show');
 });
 
 // ─────────────────────────────────────────────────────────────

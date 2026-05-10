@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->integer('quantity')->default(1);
 
             // pending | accepted | rejected | countered | cancelled
-            $table->enum('status', ['pending','accepted','rejected','countered','cancelled'])
+            $table->enum('status', ['pending','accepted','rejected','countered','cancelled','completed'])
                   ->default('pending');
 
             $table->text('buyer_note')->nullable();

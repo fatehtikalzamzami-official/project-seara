@@ -13,6 +13,10 @@ class PriceOffer extends Model
         'status', 'buyer_note', 'seller_note', 'expires_at',
     ];
 
+    protected $attributes = [
+        'status' => 'pending',
+    ];
+
     protected $casts = [
         'original_price' => 'decimal:2',
         'offer_price'    => 'decimal:2',

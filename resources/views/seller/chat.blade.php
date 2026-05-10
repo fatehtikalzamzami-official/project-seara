@@ -1101,7 +1101,7 @@
                     <div class="rooms-list" id="roomsList">
                         @forelse($rooms as $room)
                             @php
-                                $uid = Auth::id();
+                                $uid = $activeRoom->seller_id ?? Auth::id();
                                 $other = $room->otherUser($uid);
                                 $unread = $room->unreadCount($uid);
                                 $lastMsg = $room->lastMessage;
@@ -1186,7 +1186,7 @@
                             @endif
 
                             @php $lastDate = null;
-                            $myId = Auth::id(); @endphp
+                            $myId = $activeRoom->seller_id; @endphp
                             @foreach($activeMessages as $msg)
                                 @php
                                     $msgDate = $msg->created_at->format('Y-m-d');
@@ -1209,7 +1209,8 @@
                                     <div class="msg-grp" style="max-width:70%;">
                                         @if($offerObj)
                                             <div class="offer-card {{ $isMine ? 'mine-card' : '' }}"
-                                                data-offer-id="{{ $offerObj->id }}">
+                                                data-offer-id="{{ $offerObj->id }}"
+                                                id="offer-card-{{ $offerObj->id }}">
                                                 <div class="offer-card-head">💰 Penawaran Harga</div>
                                                 <div class="offer-price-row">
                                                     <span class="offer-price-new">Rp
@@ -1232,7 +1233,7 @@
                                                 <div class="offer-status {{ $offerObj->status }}">{{ $offerObj->statusLabel() }}
                                                 </div>
                                                 {{-- Seller menerima/menolak/tawar balik --}}
-                                                @if($offerObj->isPending() && !$isMine && Auth::id() === ($activeRoom->harvest->seller->user_id ?? -1))
+                                                @if($offerObj->isPending() && !$isMine && $activeRoom->seller_id === ($activeRoom->harvest->seller->user_id ?? -1))
                                                     <div class="offer-actions">
                                                         <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅
                                                             Terima</button>
@@ -1240,13 +1241,6 @@
                                                             onclick="openCounterModal({{ $offerObj->id }}, {{ $offerObj->offer_price }})">🔄
                                                             Tawar Balik</button>
                                                         <button class="offer-btn reject" onclick="rejectOffer({{ $offerObj->id }})">❌
-                                                            Tolak</button>
-                                                    </div>
-                                                @elseif($offerObj->isCountered() && $isMine)
-                                                    <div class="offer-actions">
-                                                        <button class="offer-btn accept" onclick="acceptOffer({{ $offerObj->id }})">✅
-                                                            Terima Tawar Balik</button>
-                                                        <button class="offer-btn reject" onclick="rejectOffer({{ $offerObj->id }})">🚫
                                                             Tolak</button>
                                                     </div>
                                                 @endif
@@ -1335,7 +1329,7 @@
     <script>
         @if(isset($activeRoom))
             const ROOM_ID = {{ $activeRoom->id }};
-            const MY_ID = {{ Auth::id() }};
+            const MY_ID = {{ $activeRoom->seller_id ?? Auth::id() }}; // fixed from room, not session
             const MY_INIT = '{{ strtoupper(substr(Auth::user()->nama_lengkap ?? Auth::user()->name ?? "U", 0, 2)) }}';
             const OTHER_INIT = '{{ strtoupper(substr($activeOther->nama_lengkap ?? $activeOther->name ?? "U", 0, 2)) }}';
             let lastId = {{ $activeMessages->last()?->id ?? 0 }};
@@ -1367,19 +1361,92 @@
             }
 
             function renderBubble(msg) {
-                const isMine = msg.is_mine;
+                const isMine = (msg.sender_id !== undefined) ? (msg.sender_id === MY_ID) : msg.is_mine;
                 const init = isMine ? MY_INIT : OTHER_INIT;
                 const div = document.createElement('div');
                 div.className = 'msg-row ' + (isMine ? 'mine' : '');
                 div.dataset.id = msg.id;
-                const cleanBody = msg.body.replace(/\[offer:\d+\]/, '').trim();
-                div.innerHTML = `
-            <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
-            <div class="msg-grp">
-                <div class="bubble ${isMine ? 'mine' : 'other'}" style="white-space:pre-line">${escHtml(cleanBody)}</div>
-                <div class="btime">${msg.time}</div>
-            </div>`;
+                const offerMatch = msg.body.match(/\[offer:(\d+)\]/);
+                if (offerMatch) {
+                    const offerId = offerMatch[1];
+                    const cleanBody = msg.body.replace(/\[offer:\d+\]/, '').trim();
+                    div.innerHTML = `
+                        <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
+                        <div class="msg-grp" style="max-width:70%">
+                            <div class="offer-card ${isMine ? 'mine-card' : ''}" data-offer-id="${offerId}" id="offer-card-${offerId}">
+                                <div class="offer-card-head">💰 Penawaran Harga</div>
+                                <div style="font-size:12px;color:var(--text-muted)">⏳ Memuat detail...</div>
+                                ${cleanBody ? `<div class="bubble ${isMine ? 'mine' : 'other'}" style="white-space:pre-line;margin-top:8px">${escHtml(cleanBody)}</div>` : ''}
+                            </div>
+                            <div class="btime">${msg.time}</div>
+                        </div>`;
+                    fetchAndRenderOffer(offerId);
+                } else {
+                    const cleanBody = msg.body.replace(/\[offer:\d+\]/, '').trim();
+                    div.innerHTML = `
+                        <div class="msg-ava ${isMine ? 'mine' : ''}">${init}</div>
+                        <div class="msg-grp">
+                            <div class="bubble ${isMine ? 'mine' : 'other'}" style="white-space:pre-line">${escHtml(cleanBody)}</div>
+                            <div class="btime">${msg.time}</div>
+                        </div>`;
+                }
                 return div;
+            }
+
+            async function fetchAndRenderOffer(offerId) {
+                try {
+                    const res = await fetch(`/offers/${offerId}`, {
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                    });
+                    const data = await res.json();
+                    if (!data.offer) return;
+                    const card = document.getElementById(`offer-card-${offerId}`);
+                    if (!card) return;
+                    renderOfferCardContent(card, data.offer);
+                } catch(e) {}
+            }
+
+            function renderOfferCardContent(card, offer) {
+                const isSeller = true; // we are always seller in this view
+                const isMine = card.classList.contains('mine-card'); // offer was sent by buyer, so !isMine
+                const origFmt = Number(offer.original_price).toLocaleString('id-ID');
+                const priceFmt = Number(offer.counter_price || offer.offer_price).toLocaleString('id-ID');
+                const disc = offer.discount_pct;
+                const qty = offer.quantity;
+
+                let actionsHtml = '';
+                if (offer.status === 'pending' && !isMine) {
+                    // Seller can act on buyer's pending offer
+                    actionsHtml = `<div class="offer-actions">
+                        <button class="offer-btn accept" onclick="acceptOffer(${offer.id})">✅ Terima</button>
+                        <button class="offer-btn counter" onclick="openCounterModal(${offer.id}, ${offer.offer_price})">🔄 Tawar Balik</button>
+                        <button class="offer-btn reject" onclick="rejectOffer(${offer.id})">❌ Tolak</button>
+                    </div>`;
+                }
+
+                let counterHtml = '';
+                if (offer.counter_price && offer.status === 'countered') {
+                    counterHtml = `<div style="font-size:12px;color:#0369a1;font-weight:700;margin-bottom:8px;">🔄 Tawar balik: Rp ${Number(offer.counter_price).toLocaleString('id-ID')}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="offer-card-head">💰 Penawaran Harga</div>
+                    <div class="offer-price-row">
+                        <span class="offer-price-new">Rp ${priceFmt}</span>
+                        <span class="offer-price-old">Rp ${origFmt}</span>
+                        <span class="offer-disc">-${disc}%</span>
+                    </div>
+                    <div class="offer-qty">Jumlah: ${qty} unit</div>
+                    ${offer.buyer_note ? `<div class="offer-note">"${escHtml(offer.buyer_note)}"</div>` : ''}
+                    ${offer.seller_note && offer.status !== 'pending' ? `<div class="offer-note" style="background:#e0f2fe">Penjual: "${escHtml(offer.seller_note)}"</div>` : ''}
+                    ${counterHtml}
+                    <div class="offer-status ${offer.status}">${offer.status_label}</div>
+                    ${actionsHtml}
+                `;
+            }
+
+            function refreshOfferCard(offerId) {
+                fetchAndRenderOffer(offerId);
             }
 
             async function sendMessage() {
@@ -1393,7 +1460,7 @@
                 document.getElementById('quickRow').style.display = 'none';
 
                 try {
-                    const res = await fetch(`/chat/${ROOM_ID}/send`, {
+                    const res = await fetch(`/seller/chat/${ROOM_ID}/send`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1415,7 +1482,7 @@
 
             async function pollMessages() {
                 try {
-                    const res = await fetch(`/chat/${ROOM_ID}/poll?since=${lastId}`, {
+                    const res = await fetch(`/seller/chat/${ROOM_ID}/poll?since=${lastId}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -1479,16 +1546,20 @@
             // ── Offer actions (Seller) ──
             @if(isset($activeRoom) && $activeRoom->harvest)
                     async function acceptOffer(offerId) {
-                        if (!confirm('Terima tawaran ini?')) return;
-                        try {
-                            const res = await fetch(`/offers/${offerId}/accept`, {
-                                method: 'POST',
-                                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
-                            });
-                            const data = await res.json();
-                            if (data.success) { showToast('✅ Tawaran diterima!'); setTimeout(() => location.reload(), 800); }
-                        } catch (e) { }
-                    }
+                    if (!confirm('Terima tawaran ini?')) return;
+                    try {
+                        const res = await fetch(`/offers/${offerId}/accept`, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            showToast('✅ Tawaran diterima!');
+                            const card = document.getElementById(`offer-card-${offerId}`);
+                            if (card) renderOfferCardContent(card, data.offer);
+                        }
+                    } catch (e) { showToast('Gagal, coba lagi.'); }
+                }
 
                 async function rejectOffer(offerId) {
                     const note = prompt('Alasan penolakan (opsional):') ?? '';
@@ -1499,8 +1570,12 @@
                             body: JSON.stringify({ seller_note: note })
                         });
                         const data = await res.json();
-                        if (data.success) { showToast('❌ Tawaran ditolak.'); setTimeout(() => location.reload(), 800); }
-                    } catch (e) { }
+                        if (data.success) {
+                            showToast('❌ Tawaran ditolak.');
+                            const card = document.getElementById(`offer-card-${offerId}`);
+                            if (card) renderOfferCardContent(card, data.offer);
+                        }
+                    } catch (e) { showToast('Gagal, coba lagi.'); }
                 }
 
                 function openCounterModal(offerId, offerPrice) {
@@ -1526,8 +1601,13 @@
                             body: JSON.stringify({ counter_price: price, seller_note: note })
                         });
                         const data = await res.json();
-                        if (data.success) { closeCounterModal(); showToast('🔄 Tawar balik terkirim!'); setTimeout(() => location.reload(), 800); }
-                    } catch (e) { }
+                        if (data.success) {
+                            closeCounterModal();
+                            showToast('🔄 Tawar balik terkirim!');
+                            const card = document.getElementById(`offer-card-${id}`);
+                            if (card) renderOfferCardContent(card, data.offer);
+                        }
+                    } catch (e) { showToast('Gagal, coba lagi.'); }
                 }
             @endif
 

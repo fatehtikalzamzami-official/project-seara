@@ -56,9 +56,10 @@ class SellerChatController extends Controller
     // ── Helper: render view seller dengan room aktif
     private function loadRoom(ChatRoom $chatRoom, int $userId, $rooms, int $totalUnread)
     {
-        // Tandai pesan masuk sebagai dibaca
+        // Tandai pesan masuk sebagai dibaca (seller_id = always the seller in this room)
+        $sellerId = $chatRoom->seller_id;
         ChatMessage::where('chat_room_id', $chatRoom->id)
-            ->where('sender_id', '!=', $userId)
+            ->where('sender_id', '!=', $sellerId)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
@@ -78,16 +79,15 @@ class SellerChatController extends Controller
     // ── Kirim pesan (AJAX)
     public function send(Request $request, ChatRoom $chatRoom)
     {
-        $userId = Auth::id();
-
-        abort_unless($chatRoom->seller_id === $userId, 403);
+        // Seller controller: sender is always the seller of the room, regardless of session
+        $senderId = $chatRoom->seller_id;
 
         $request->validate(['body' => 'required|string|max:2000']);
 
         ChatMessage::create([
             'chat_room_id' => $chatRoom->id,
-            'sender_id' => $userId,
-            'body' => $request->body,
+            'sender_id'    => $senderId,
+            'body'         => $request->body,
         ]);
 
         $chatRoom->update(['last_message_at' => now()]);
@@ -96,12 +96,12 @@ class SellerChatController extends Controller
             $messages = $chatRoom->messages()->with('sender')
                 ->orderBy('created_at')->get()
                 ->map(fn($m) => [
-                    'id' => $m->id,
-                    'body' => $m->body,
+                    'id'        => $m->id,
+                    'body'      => $m->body,
                     'sender_id' => $m->sender_id,
-                    'is_mine' => $m->sender_id === $userId,
-                    'time' => $m->created_at->format('H:i'),
-                    'sender' => $m->sender->nama_lengkap ?? $m->sender->name,
+                    'is_mine'   => $m->sender_id === $senderId,
+                    'time'      => $m->created_at->format('H:i'),
+                    'sender'    => $m->sender->nama_lengkap ?? $m->sender->name,
                 ]);
 
             return response()->json(['messages' => $messages]);

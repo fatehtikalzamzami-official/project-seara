@@ -109,24 +109,19 @@ class ChatController extends Controller
     // ── Kirim pesan (form POST biasa — no websocket needed)
     public function send(Request $request, ChatRoom $chatRoom)
     {
-        $userId = Auth::id();
-
-        abort_unless(
-            $chatRoom->buyer_id === $userId || $chatRoom->seller_id === $userId,
-            403
-        );
+        // Buyer controller: sender is always the buyer of the room, regardless of session
+        $senderId = $chatRoom->buyer_id;
 
         $request->validate(['body' => 'required|string|max:2000']);
 
         ChatMessage::create([
             'chat_room_id' => $chatRoom->id,
-            'sender_id'    => $userId,
+            'sender_id'    => $senderId,
             'body'         => $request->body,
         ]);
 
         $chatRoom->update(['last_message_at' => now()]);
 
-        // Kalau request JSON (AJAX polling), kembalikan pesan terbaru
         if ($request->expectsJson()) {
             $messages = $chatRoom->messages()->with('sender')
                 ->orderBy('created_at')->get()
@@ -134,7 +129,7 @@ class ChatController extends Controller
                     'id'        => $m->id,
                     'body'      => $m->body,
                     'sender_id' => $m->sender_id,
-                    'is_mine'   => $m->sender_id === $userId,
+                    'is_mine'   => $m->sender_id === $senderId,
                     'time'      => $m->created_at->format('H:i'),
                     'sender'    => $m->sender->nama_lengkap ?? $m->sender->name,
                 ]);
@@ -148,17 +143,12 @@ class ChatController extends Controller
     // ── Polling AJAX: ambil pesan baru sejak ID tertentu
     public function poll(Request $request, ChatRoom $chatRoom)
     {
-        $userId = Auth::id();
-        abort_unless(
-            $chatRoom->buyer_id === $userId || $chatRoom->seller_id === $userId,
-            403
-        );
-
+        // Buyer controller: "mine" = messages sent by buyer_id
+        $myId = $chatRoom->buyer_id;
         $since = $request->input('since', 0);
 
-        // Tandai pesan masuk sebagai dibaca
         ChatMessage::where('chat_room_id', $chatRoom->id)
-            ->where('sender_id', '!=', $userId)
+            ->where('sender_id', '!=', $myId)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
@@ -167,11 +157,12 @@ class ChatController extends Controller
             ->where('id', '>', $since)
             ->get()
             ->map(fn($m) => [
-                'id'      => $m->id,
-                'body'    => $m->body,
-                'is_mine' => $m->sender_id === $userId,
-                'time'    => $m->created_at->format('H:i'),
-                'sender'  => $m->sender->nama_lengkap ?? $m->sender->name,
+                'id'        => $m->id,
+                'body'      => $m->body,
+                'sender_id' => $m->sender_id,
+                'is_mine'   => $m->sender_id === $myId,
+                'time'      => $m->created_at->format('H:i'),
+                'sender'    => $m->sender->nama_lengkap ?? $m->sender->name,
             ]);
 
         return response()->json(['messages' => $messages]);

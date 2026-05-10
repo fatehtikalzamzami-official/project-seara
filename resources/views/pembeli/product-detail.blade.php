@@ -511,6 +511,7 @@
                     @csrf
                     <input type="hidden" name="harvest_id" value="{{ $harvest->id }}">
                     <input type="hidden" name="chat_room_id" id="offerChatRoomId" value="">
+                     <input type="hidden" name="seller_user_id" id="offerSellerUserId" value="{{ $harvest->seller->user_id }}">
 
                     <div style="margin-bottom:12px;">
                         <label style="font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
@@ -989,7 +990,7 @@ async function submitOffer() {
     const qty      = document.getElementById('offerQty').value;
     const note     = document.querySelector('[name="buyer_note"]').value;
     const harvestId= document.querySelector('[name="harvest_id"]').value;
-    const sellerUserId = document.querySelector('[name="seller_user_id"]').value;
+    const sellerUserId = document.getElementById('offerSellerUserId').value;
 
     errEl.style.display = 'none';
 
